@@ -1,0 +1,15 @@
+{
+	"name" : "basic_string",
+	"targetType": "executable",
+	"version": "0.1.0",
+	"authors" : [
+		"submada"
+	],
+
+	"dependencies" : { 
+	},
+	"copyright" : "Copyright © 2016, submada",
+	"description" : "TODO",
+	"license" : "proprietary",
+	"dflags" : ["-dip1000"]
+}
