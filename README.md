@@ -73,7 +73,7 @@ pure nothrow @safe @nogc unittest {
 
     str.replace(1, 2, "xyz");
 
-    assert(str == "1xyz456789", (()@trusted => str[])());
+    assert(str == "1xyz456789");
   }
 }
 ```
