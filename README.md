@@ -20,6 +20,18 @@ pure nothrow @safe @nogc unittest {
     32                  //additional padding to increas max size of small string (small string does not allocate memory).
   );
 
+  //copy:
+  {
+    String a = "123";
+    String b = a;
+    
+    a = "456"d;
+    
+    assert(a == "456");
+    assert(b == "123");
+  }
+  
+  
   //append:
   {
     String str = "12";
