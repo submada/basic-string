@@ -12,7 +12,7 @@ import std.meta : AliasSeq;
 debug import std.stdio : writeln;
 
 /**
-    Detect whether symbol or type T is a `BasicString`
+    True if `T` is a [BasicString] or implicitly converts to one, otherwise false.
 */
 template isBasicString(T...)
 if(T.length == 1){
