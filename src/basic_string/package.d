@@ -2584,7 +2584,7 @@ private{
 
 	//mallocator:
 	version(D_BetterC){
-		package struct Mallocator{
+		private struct Mallocator{
 			import std.experimental.allocator.common : platformAlignment;
 
 			enum uint alignment = platformAlignment;
@@ -2622,7 +2622,7 @@ private{
 		}
 	}
 	else{
-		package import std.experimental.allocator.mallocator : Mallocator;
+		import std.experimental.allocator.mallocator : Mallocator;
 	}
 
 	
