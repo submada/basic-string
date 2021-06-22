@@ -1,17 +1,24 @@
 # basic_string - mutable nogc string struct
 ## C++-style string for D using `std.experimental.allocator`.
 
-The `BasicString` is the generalization of struct string for character type char, wchar and dchar.
+The `BasicString` is the generalization of struct string for character type `char`, `wchar` and `dchar`.
 
 `Allocator` is template argument instead of using `theAllocator` so
 that string can be used in `@nogc` code. Default allocator is `Mallocator`
 
+`BasicString` use Small String Optimization (SSO)
 
 Sample code:
 
 ```d
 pure nothrow @safe @nogc unittest {
-  alias String = BasicString!(char);
+  import std.experimental.allocator.mallocator : Mallocator;
+
+  alias String = BasicString!(
+    char,               //character type
+    Mallocator,         //allocator type (can be stateless or with state)
+    32                  //additional padding to increas max size of small string (small string does not allocate memory).
+  );
 
   //append:
   {
@@ -23,9 +30,9 @@ pure nothrow @safe @nogc unittest {
     str.append('8');
 
     assert(str == "12345678");
-    
+
     str.clear();
-    
+
     assert(str.empty);
 
   }
