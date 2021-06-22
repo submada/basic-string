@@ -2,7 +2,7 @@
     Mutable @nogc @safe string struct using `std.experimental.allocator` for allocations.
 
     License:   $(HTTP www.boost.org/LICENSE_1_0.txt, Boost License 1.0).
-    Authors:   $(HTTP https://github.com/submada/basic_string, Adam Búš)
+    Authors:   $(HTTP github.com/submada/basic_string, Adam Búš)
 */
 module basic_string;
 

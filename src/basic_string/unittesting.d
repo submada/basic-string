@@ -204,13 +204,13 @@ class TestStateAllocator(bool Realloc){
 
 version(unittest)
 version(basic_string_unittest){
-    auto trustedSlice(S)(auto ref scope S str)@trusted{
+    private auto trustedSlice(S)(auto ref scope S str)@trusted{
         return str[];
     }
-    auto trustedSlice(S)(auto ref scope S str, size_t b, size_t e)@trusted{
+    private auto trustedSlice(S)(auto ref scope S str, size_t b, size_t e)@trusted{
         return str[b .. e];
     }
-    auto trustedSliceToEnd(S)(auto ref scope S str, size_t b)@trusted{
+    private auto trustedSliceToEnd(S)(auto ref scope S str, size_t b)@trusted{
         return str[b .. $];
     }
 
