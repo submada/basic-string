@@ -42,22 +42,22 @@ template BasicString(
     size_t _Padding = 0,
 )
 if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
-    import std.experimental.allocator.common :  stateSize;
-    import std.range : isInputRange, ElementEncodingType, isRandomAccessRange;
-    import std.traits : Unqual, isIntegral, hasMember, isArray;
+    private import std.experimental.allocator.common :  stateSize;
+    private import std.range : isInputRange, ElementEncodingType, isRandomAccessRange;
+    private import std.traits : Unqual, isIntegral, hasMember, isArray;
 
-    import basic_string.encoding : decode, encode, strideBack, codeLength;
+    private import basic_string.encoding : decode, encode, strideBack, codeLength;
 
-    enum isOtherString(T) = true
+    private enum isOtherString(T) = true
         && isSomeString!T
         && !is(Unqual!(ElementEncodingType!T) == Unqual!_Char);
 
-    enum isSmallCharArray(T) = is(T : C[N], C, size_t N)
+    private enum isSmallCharArray(T) = is(T : C[N], C, size_t N)
         && isSomeChar!C
         && (N <= Short.capacity)
         && (C.sizeof <= _Char.sizeof);
 
-    enum isCharArray(T) = is(T : C[N], C, size_t N)
+    private enum isCharArray(T) = is(T : C[N], C, size_t N)
         && isSomeChar!C;
 
     version(BigEndian){
@@ -65,7 +65,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
     }
     else version(LittleEndian){
 
-        struct Long{
+        private struct Long{
             size_t capacity;
             size_t length;
             _Char* ptr;
@@ -79,16 +79,16 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         }
 
         static if((Long.sizeof / _Char.sizeof) <= ubyte.max)
-            alias ShortLength = ubyte;
+            private alias ShortLength = ubyte;
         else static if((Long.sizeof / _Char.sizeof) <= ushort.max)
-            alias ShortLength = ushort;
+            private alias ShortLength = ushort;
         else static if((Long.sizeof / _Char.sizeof) <= uint.max)
-            alias ShortLength = uint;
+            private alias ShortLength = uint;
         else static if((Long.sizeof / _Char.sizeof) <= ulong.max)
-            alias ShortLength = ulong;
+            private alias ShortLength = ulong;
         else static assert(0, "no impl");
 
-        struct Short{
+        private struct Short{
             static assert((Long.sizeof - Header.sizeof) % _Char.sizeof == 0);
 
             union Header{
@@ -119,7 +119,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
     else static assert(0, "no impl");
 
 
-    struct _Impl{}
+    private struct _Impl{}
 
 	
     struct BasicString{
