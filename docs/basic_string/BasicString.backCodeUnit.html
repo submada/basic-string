@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Function BasicString.backCodeUnit</title>
+		<title>BasicString.backCodeUnit - multiple declarations</title>
 		<link rel="stylesheet" type="text/css" href="../styles/ddox.css"/>
 		<link rel="stylesheet" href="../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../scripts/jquery.js">/**/</script><script type="text/javascript" src="../scripts/ddox.js">/**/</script>
@@ -28,7 +28,48 @@ $('#symbolSearchPane').show();</script>
 			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Function BasicString.backCodeUnit</h1><p>Returns the last character(utf8: <code class="lang-d"><span class="typ">char</span></code>, utf16: <code class="lang-d"><span class="typ">wchar</span></code>, utf32: <code class="lang-d"><span class="typ">dchar</span></code>) of the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code>.
+			<h1>BasicString.backCodeUnit - multiple declarations</h1>
+			<nav class="page-nav">
+				<ul>
+					<li>
+						<a href="#0">
+							Function <code>BasicString.backCodeUnit</code>
+						</a>
+					</li>
+					<li>
+						<a href="#1">
+							Function <code>BasicString.backCodeUnit</code>
+						</a>
+					</li>
+				</ul>
+			</nav><h2 id="0">Function BasicString.backCodeUnit</h2><p>Returns last utf code point(<code class="lang-d"><span class="typ">dchar</span></code>) of the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code>.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="typ">dchar</span> <span class="pln">backCodeUnit</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">const </span><span class="typ">dchar</span> <span class="pln">val</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">pure nothrow @nogc @property scope @trusted</span><span class="pun">;</span>
+					</div>
+				</code>
+			</div>
+			<section><p>This function shall not be called on empty strings.
+</p>
+</section>
+
+			<section><h3>Examples</h3>
+<pre class="code"><code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123á"</span><span class="pun">;
+
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">backCodePoint </span><span class="pun">== </span><span class="str">'á'</span><span class="pun">);</span></code></pre>
+
+<pre class="code"><code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123á"</span><span class="pun">;
+</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">backCodePoint </span><span class="pun">= </span><span class="str">'4'</span><span class="pun">;
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"1234"</span><span class="pun">);</span></code></pre>
+</section>
+<h2 id="1">Function BasicString.backCodeUnit</h2><p>Returns the last character(utf8: <code class="lang-d"><span class="typ">char</span></code>, utf16: <code class="lang-d"><span class="typ">wchar</span></code>, utf32: <code class="lang-d"><span class="typ">dchar</span></code>) of the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code>.
 </p>
 			<div class="prototype">
 				<code class="lang-d">
@@ -49,7 +90,7 @@ $('#symbolSearchPane').show();</script>
 </p>
 </section>
 
-			<section><h2>Examples</h2>
+			<section><h3>Examples</h3>
 <pre class="code"><code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123"</span><span class="pun">;
 
 </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">backCodeUnit </span><span class="pun">== </span><span class="str">'3'</span><span class="pun">);</span></code></pre>

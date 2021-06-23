@@ -633,6 +633,12 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
                 assert(str.backCodePoint == 'á');
                 --------------------
+
+                --------------------
+                BasicString!char str = "123á";
+                str.backCodePoint = '4';
+                assert(str == "1234");
+                --------------------
         */
         public @property dchar backCodePoint()const scope pure nothrow @trusted @nogc{
             auto chars = this._chars;
@@ -653,6 +659,27 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             }
         }
 
+        /// ditto
+        public @property dchar backCodeUnit(const dchar val)scope pure nothrow @trusted @nogc{
+            auto chars = this._chars;
+
+            if(chars.length == 0)
+                return dchar.init;
+
+
+            static if(is(Char == dchar)){
+                return this.backCodeUnit(val);
+            }
+            else{
+                const ubyte len = strideBack(chars);
+                if(len == 0)
+                    return dchar.init;
+
+                this._length = (chars.length - len);
+                this.append(val);
+                return val;
+            }
+        }
 
 
         /**

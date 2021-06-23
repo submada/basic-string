@@ -45,6 +45,10 @@ $('#symbolSearchPane').show();</script>
 <pre class="code"><code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123á"</span><span class="pun">;
 
 </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">backCodePoint </span><span class="pun">== </span><span class="str">'á'</span><span class="pun">);</span></code></pre>
+
+<pre class="code"><code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123á"</span><span class="pun">;
+</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">backCodePoint </span><span class="pun">= </span><span class="str">'4'</span><span class="pun">;
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"1234"</span><span class="pun">);</span></code></pre>
 </section>
 
 			<footer>
