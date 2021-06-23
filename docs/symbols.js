@@ -7,7 +7,7 @@ var symbols = [
 {name: 'basic_string.BasicString.append', kind: "functiondeclaration", path: './basic_string/BasicString.append.html', attributes: ["scope"]},
 {name: 'basic_string.BasicString.back', kind: "aliasdeclaration", path: './basic_string/BasicString.back.html', attributes: []},
 {name: 'basic_string.BasicString.backCodePoint', kind: "functiondeclaration", path: './basic_string/BasicString.backCodePoint.html', attributes: ["const", "pure", "nothrow", "nogc", "property", "scope", "trusted"]},
-{name: 'basic_string.BasicString.backCodeUnit', kind: "functiondeclaration", path: './basic_string/BasicString.backCodeUnit.html', attributes: ["pure", "nothrow", "nogc", "property", "scope", "trusted"]},
+{name: 'basic_string.BasicString.backCodeUnit', kind: "functiondeclaration", path: './basic_string/BasicString.backCodeUnit.html', attributes: ["const", "pure", "nothrow", "nogc", "property", "scope", "trusted"]},
 {name: 'basic_string.BasicString.build', kind: "functiondeclaration", path: './basic_string/BasicString.build.html', attributes: []},
 {name: 'basic_string.BasicString.capacity', kind: "functiondeclaration", path: './basic_string/BasicString.capacity.html', attributes: ["const", "pure", "nothrow", "nogc", "property", "scope", "trusted"]},
 {name: 'basic_string.BasicString.Char', kind: "aliasdeclaration", path: './basic_string/BasicString.Char.html', attributes: []},

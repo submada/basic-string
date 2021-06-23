@@ -660,17 +660,16 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         }
 
         /// ditto
-        public @property dchar backCodeUnit(const dchar val)scope pure nothrow @trusted @nogc{
+        public @property dchar backCodePoint(const dchar val)scope pure nothrow @trusted @nogc{
             auto chars = this._chars;
-
-            if(chars.length == 0)
-                return dchar.init;
-
 
             static if(is(Char == dchar)){
                 return this.backCodeUnit(val);
             }
             else{
+                if(chars.length == 0)
+                    return dchar.init;
+
                 const ubyte len = strideBack(chars);
                 if(len == 0)
                     return dchar.init;
@@ -712,7 +711,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             auto chars = this._chars;
 
             return (chars.length == 0)
-                ? *chars.ptr
+                ? Char.init
                 : chars[$ - 1];
         }
 
@@ -721,7 +720,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             auto chars = this._chars;
 
             return (chars.length == 0)
-                ? (*chars.ptr = val)
+                ? Char.init
                 : (chars[$ - 1] = val);
         }
 
