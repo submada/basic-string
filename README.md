@@ -7,8 +7,11 @@ The `BasicString` is the generalization of struct string for character type `cha
 that string can be used in `@nogc` code. Default allocator is `Mallocator`
 
 `BasicString` use Small String Optimization (SSO)
+
 Works with pure, @safe, @nogc and nothrow (depends on `Allocator`).
+
 Compatible with -betterC and -dip1000.
+
 Does not rely on runtime type information (TypeInfo).
 
 Sample code:
