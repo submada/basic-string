@@ -12,7 +12,7 @@ import std.meta : AliasSeq;
 debug import std.stdio : writeln;
 
 /**
-    True if `T` is a [BasicString] or implicitly converts to one, otherwise false.
+    True if `T` is a `BasicString` or implicitly converts to one, otherwise false.
 */
 template isBasicString(T...)
 if(T.length == 1){
@@ -23,9 +23,9 @@ if(T.length == 1){
 /**
     The `BasicString` is the generalization of struct string for character of type `char`, `wchar` or `dchar`.
 
-    `BasicString` use utf8, utf16 and utf32 encoding.
+    `BasicString` use utf-8, utf-16 or utf-32 encoding.
 
-    `BasicString` use _sso(Small String Optimization).
+    `BasicString` use SSO (Small String Optimization).
 
     Template parameters:
 
