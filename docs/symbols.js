@@ -46,5 +46,6 @@ var symbols = [
 {name: 'basic_string.BasicString.small', kind: "functiondeclaration", path: './basic_string/BasicString.small.html', attributes: ["const", "pure", "nothrow", "nogc", "property", "scope", "safe"]},
 {name: 'basic_string.BasicString.this', kind: "functiondeclaration", path: './basic_string/BasicString.this.html', attributes: ["scope", "pure", "nothrow", "nogc", "scope", "safe"]},
 {name: 'basic_string.BasicString.toHash', kind: "functiondeclaration", path: './basic_string/BasicString.toHash.html', attributes: ["const", "pure", "nothrow", "nogc", "safe"]},
+{name: 'basic_string.BasicString.valid', kind: "functiondeclaration", path: './basic_string/BasicString.valid.html', attributes: ["const", "pure", "nothrow", "nogc", "property", "scope", "safe"]},
 {name: 'basic_string.isBasicString', kind: "enummemberdeclaration", path: './basic_string/isBasicString.html', attributes: []},
 ];

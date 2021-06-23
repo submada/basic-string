@@ -566,6 +566,15 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 
         /**
+            Return `true` if string is valid utf string.
+        */
+        public @property bool valid()const scope pure nothrow @safe @nogc{
+            return validate(this._chars);
+        }
+
+
+
+        /**
             Returns first utf code point(`dchar`) of the `BasicString`.
 
             This function shall not be called on empty strings.

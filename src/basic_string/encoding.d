@@ -38,6 +38,8 @@ if (isSomeChar!C){
 }
 
 
+private enum dchar replacementDchar = '\uFFFD';
+
 
 /*
     Modification of std.utf.encode where output buffer is not fixed array but slice.
@@ -50,7 +52,6 @@ package template encode(To){
     }
 
 
-    enum dchar replacementDchar = '\uFFFD';
 
     //https://github.com/dlang/phobos/blob/master/std/utf.d#L2264
     size_t encode_impl(char[] buf, dchar c) @safe pure nothrow @nogc{
@@ -147,7 +148,6 @@ package template decode(S){
     import std.range : ElementEncodingType, ElementType, isInputRange, empty, isRandomAccessRange, hasSlicing, hasLength;
     import std.traits : isSomeString, isSomeChar;
 
-    private enum dchar replacementDchar = '\uFFFD';
 
     private template codeUnitLimit(S)
     if (isSomeChar!(ElementEncodingType!S)){
@@ -407,6 +407,21 @@ package template decode(S){
         }
     }
 
+}
+
+
+
+package bool validate(S)(ref S str)pure nothrow @trusted @nogc{
+    import std.range : empty;
+
+
+    while(!str.empty){
+        const d = decode(str);
+        if(d == replacementDchar)
+            return false;
+    }
+
+    return true;
 }
 
 
