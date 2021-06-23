@@ -569,7 +569,8 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             Return `true` if string is valid utf string.
         */
         public @property bool valid()const scope pure nothrow @safe @nogc{
-            return validate(this._chars);
+            import basic_string.encoding : validate;
+            return validate(this._chars[]);
         }
 
 

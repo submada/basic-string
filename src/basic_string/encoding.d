@@ -411,7 +411,7 @@ package template decode(S){
 
 
 
-package bool validate(S)(ref S str)pure nothrow @trusted @nogc{
+package bool validate(S)(auto ref S str)pure nothrow @trusted @nogc{
     import std.range : empty;
 
 
