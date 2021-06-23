@@ -3,18 +3,19 @@
 
 The `BasicString` is the generalization of struct string for character type `char`, `wchar` and `dchar`.
 
+## Features
 `Allocator` is template argument instead of using `theAllocator` so
-that string can be used in `@nogc` code. Default allocator is `Mallocator`
+that string can be used in `@nogc` code. Default allocator is `Mallocator`.
 
 `BasicString` use Small String Optimization (SSO)
 
 Works with `pure`, `@safe`, `@nogc` and `nothrow`.
 
-Compatible with -betterC and -dip1000.
+Compatible with `-betterC` and `-dip1000`.
 
 Does not rely on runtime type information (`TypeInfo`).
 
-## Sample code:
+## Example
 
 ```d
 pure nothrow @safe @nogc unittest {
