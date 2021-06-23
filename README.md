@@ -8,11 +8,11 @@ that string can be used in `@nogc` code. Default allocator is `Mallocator`
 
 `BasicString` use Small String Optimization (SSO)
 
-Works with pure, @safe, @nogc and nothrow (depends on `Allocator`).
+Works with `pure`, `@safe`, `@nogc` and `nothrow`.
 
 Compatible with -betterC and -dip1000.
 
-Does not rely on runtime type information (TypeInfo).
+Does not rely on runtime type information (`TypeInfo`).
 
 Sample code:
 
