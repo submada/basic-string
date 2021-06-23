@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>BasicString.this - multiple declarations</title>
+		<link rel="stylesheet" type="text/css" href="../styles/ddox.css"/>
+		<link rel="stylesheet" href="../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../scripts/jquery.js">/**/</script><script type="text/javascript" src="../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="setupDdox();">
+		<nav id="main-nav">
+			<noscript>
+				<p style="color: red">The search functionality needs JavaScript enabled</p>
+			</noscript>
+			<div id="symbolSearchPane" style="display: none">
+				<form action="#" method="GET">
+					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+				</form>
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../";
+$('#symbolSearchPane').show();</script>
+			</div>
+			<ul class="tree-view">
+				<li>
+					<div class="module selected">
+						<a href="../basic_string.html">basic_string</a>
+					</div>
+				</li>
+			</ul>
+		</nav>
+		<div id="main-contents">
+			<h1>BasicString.this - multiple declarations</h1>
+			<nav class="page-nav">
+				<ul>
+					<li>
+						<a href="#0">
+							Function <code>BasicString.this</code>
+						</a>
+					</li>
+					<li>
+						<a href="#1">
+							Function <code>BasicString.this</code>
+						</a>
+					</li>
+					<li>
+						<a href="#2">
+							Function <code>BasicString.this</code>
+						</a>
+					</li>
+					<li>
+						<a href="#3">
+							Function <code>BasicString.this</code>
+						</a>
+					</li>
+					<li>
+						<a href="#4">
+							Function <code>BasicString.this</code>
+						</a>
+					</li>
+				</ul>
+			</nav><h2 id="0">Function BasicString.this</h2><p>Constructs a empty <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> with allocator <code class="lang-d"><a href="../basic_string/BasicString.this.html#a"><span class="pln">a</span></a></code>.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="pln">this</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">scope return </span><a href="../basic_string/BasicString.Allocator.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Allocator</span></a> <span class="pln">a</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope pure nothrow @nogc scope @safe</span><span class="pun">;</span>
+					</div>
+				</code>
+			</div>
+			
+			<h2 id="1">Function BasicString.this</h2><p>@disable init if <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> has allocator with state.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="kwd">@disable </span><span class="pln">this</span><span class="pun">(</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">scope pure nothrow @nogc scope @trusted</span><span class="pun">;</span>
+					</div>
+				</code>
+			</div>
+			
+			<h2 id="2">Function BasicString.this</h2><p>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object, initializing its value to <code class="lang-d"><a href="../basic_string/BasicString.this.html#val"><span class="pln">val</span></a></code>.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="pln">this</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">scope return </span><span class="typ">AllocatorWithState</span><span class="pun">[</span><span class="lit">0</span><span class="pun">..</span><span class="pln">__dollar</span><span class="pun">]</span> <span class="pln">allocator</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">null</span><span class="pun">)</span> <span class="pln">val</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope pure nothrow @nogc scope @safe</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="pln">this</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">scope return </span><span class="typ">AllocatorWithState</span><span class="pun">[</span><span class="lit">0</span><span class="pun">..</span><span class="pln">__dollar</span><span class="pun">]</span> <span class="pln">allocator</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">scope const </span><a href="../basic_string/BasicString.Char.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Char</span></a><span class="pun">[]</span> <span class="pln">val</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="pln">this</span>(Val)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">scope return </span><span class="typ">AllocatorWithState</span><span class="pun">[</span><span class="lit">0</span><span class="pun">..</span><span class="pln">__dollar</span><span class="pun">]</span> <span class="pln">allocator</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">auto scope const ref </span><span class="typ">Val</span> <span class="pln">val</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isBasicString</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isSomeChar</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isOtherString</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isCharArray</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isIntegral</span><span class="pun">!</span><span class="typ">Val</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section></section>
+
+			<section><h3>Parameters</h3>
+<p><code class="lang-d"><a href="../basic_string/BasicString.this.html#allocator"><span class="pln">allocator</span></a></code> exists only if template parameter <code class="lang-d"><span class="pln">_Allocator</span></code> has state.
+</p>
+
+<p>                <code class="lang-d"><a href="../basic_string/BasicString.this.html#val"><span class="pln">val</span></a></code> can by type of <code class="lang-d"><span class="kwd">null</span></code>, <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a><span class="pun">!(</span><span class="pln">T</span><span class="pun">...)</span></code>, char|wchar|dchar array/slice/character or integer (integers are transformed to string)
+</p>
+</section>
+<section><h3>Examples</h3>
+<pre class="code"><code class="lang-d"><span class="pun">{
+    <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="kwd">null</span><span class="pun">;
+    </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
+}
+
+{
+    <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">'X'</span><span class="pun">;
+    </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"X"</span><span class="pun">);
+}
+
+{
+ <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123"w</span><span class="pun">;
+ </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"123"</span><span class="pun">);
+}
+
+{
+ <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="lit">123uL</span><span class="pun">;
+ </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"123"</span><span class="pun">);
+}</span></code></pre>
+</section>
+<h2 id="3">Function BasicString.this</h2><p>Copy constructor if <code class="lang-d"><a href="../basic_string/BasicString.Allocator.html"><span class="typ">Allocator</span></a></code> is statless.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="pln">this</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">scope const ref </span><span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">)</span> <span class="pln">rhs</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span><span class="pun">;</span>
+					</div>
+				</code>
+			</div>
+			<section><p>Parameter <code class="lang-d"><a href="../basic_string/BasicString.this.html#rhs"><span class="pln">rhs</span></a></code> is const.
+</p>
+</section>
+
+			<h2 id="4">Function BasicString.this</h2><p>Copy constructor if <code class="lang-d"><a href="../basic_string/BasicString.Allocator.html"><span class="typ">Allocator</span></a></code> has state.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="pln">this</span>
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">scope ref </span><span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">)</span> <span class="pln">rhs</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span><span class="pun">;</span>
+					</div>
+				</code>
+			</div>
+			<section><p>Parameter <code class="lang-d"><a href="../basic_string/BasicString.this.html#rhs"><span class="pln">rhs</span></a></code> is mutable.
+</p>
+</section>
+
+			
+			<footer>
+				<table class="license-info">
+					<tr>
+						<th>Authors</th>
+						<td>
+							<p>github.com/submada/basic_string, Adam Búš
+</p>
+
+						</td>
+					</tr>
+					<tr>
+						<th>Copyright</th>
+						<td>
+							
+						</td>
+					</tr>
+					<tr>
+						<th>License</th>
+						<td>
+							<p>www.boost.org/LICENSE_1_0.txt, Boost License 1.0.
+</p>
+
+						</td>
+					</tr>
+				</table>
+				<p class="faint">Generated using the DDOX documentation generator</p>
+			</footer>
+		</div>
+	</body>
+</html>
