@@ -382,7 +382,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
                 import core.stdc.string : memmove;
 
-                auto chars = this._chars;
+                const chars = this._chars;
                 const size_t len = chars.length - (ptr - chars.ptr);
 
                 memmove(ptr - n, ptr, len * Char.sizeof);
@@ -644,7 +644,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 return this.backCodeUnit();
             }
             else{
-                ubyte len = strideBack(chars);
+                const ubyte len = strideBack(chars);
                 if(len == 0)
                     return dchar.init;
 
@@ -734,7 +734,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             if(this.empty)
                 return 0;
 
-            ubyte n = strideBack(this._chars);
+            const ubyte n = strideBack(this._chars);
 
             if(this._sso)
                 this._short.length -= n;
@@ -1497,6 +1497,15 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                     return this.build(this._allocator, lhs, this._chars);
             }
             else static assert(0, "invalid type '" ~ Val.stringof ~ "', valid types are char|wchar|dchar slices/arrays/chars");
+        }
+
+
+
+        /**
+            Calculates the hash value of string.
+        */
+        public size_t toHash()const pure nothrow @safe @nogc{
+            return hashOf(this._chars);
         }
 
 
@@ -2458,7 +2467,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			if(from == 0)
 				return 1;
 
-			return cast(size_t)((cast(int)(log10(abs(from))+1) + (from < 0 ? 1 : 0)));
+			return cast(size_t)(cast(int)(log10(abs(from))+1) + (from < 0 ? 1 : 0));
 
 		}
 
