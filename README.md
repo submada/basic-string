@@ -1,4 +1,4 @@
-# BasicString - string struct
+# BasicString
 ## C++-style string for D using `std.experimental.allocator`.
 
 The `BasicString` is the generalization of struct string for character type `char`, `wchar` and `dchar`.
