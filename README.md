@@ -14,7 +14,7 @@ Compatible with -betterC and -dip1000.
 
 Does not rely on runtime type information (`TypeInfo`).
 
-Sample code:
+## Sample code:
 
 ```d
 pure nothrow @safe @nogc unittest {
