@@ -2468,7 +2468,8 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 static if(hasStatelessAllocator == false)
                     target._allocator = source._allocator;
 
-                target._raw[] = source._raw[];
+
+                _memcpy(target._raw.ptr, source._raw.ptr, _raw.length); //target._raw[] = source._raw[];
                 source._short.setShort();
                 source._short.length = 0;
             }();
@@ -2536,7 +2537,12 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             static if(_Char.sizeof == From.sizeof){
 
                 const size_t len = from.length;
-                to[0 .. len] = from[];
+                ()@trusted{
+                    assert(to.length <= len);
+                    assert(from.length <= len);
+                    _memcpy(to.ptr, from.ptr, len); //to[0 .. len] = from[];
+                }();
+
             }
             else{
 
@@ -2549,7 +2555,11 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             debug assert(predictedEncodedLength == len);
 
             for(size_t i = 1; i < count; ++i){
-                to[len .. len * 2] = to[0 .. len];
+                //to[len .. len * 2] = to[0 .. len];
+                ()@trusted{
+                    assert(to.length <= (len * 2));
+                    _memcpy(to.ptr + len, to.ptr, len); //to[0 .. len] = from[];
+                }();
                 to = to[len .. $];
             }
 
@@ -2578,7 +2588,11 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 const size_t len = dchar(from).encode(to[]);
 
                 for(size_t i = 1; i < count; ++i){
-                    to[len .. len * 2] = to[0 .. len];
+                    //to[len .. len * 2] = to[0 .. len];
+                    ()@trusted{
+                        assert(to.length <= (len * 2));
+                        _memcpy(to.ptr + len, to.ptr, len); //to[0 .. len] = from[];
+                    }();
                     to = to[len .. $];
                 }
 
