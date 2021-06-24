@@ -321,7 +321,11 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 }
 
                 Char[] new_cdata = this._allocate(new_capacity);
-                new_cdata[0 .. length] = cdata[0 .. length];
+                import core.stdc.string : memcpy;
+                //new_cdata[0 .. length] = cdata[0 .. length];
+                ()@trusted{
+                    memcpy(new_cdata.ptr, cdata.ptr, length);
+                }();
 
                 static if(safeAllocate)
                     ()@trusted{
@@ -910,7 +914,10 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             Char[] cdata = this._allocate(new_capacity);
 
             ()@trusted{
-                cdata[0 .. length] = this._short_chars();
+                import core.stdc.string : memcpy;
+                memcpy(cdata.ptr, this._short_ptr, length);
+                //cdata[0 .. length] = this._short_chars();
+
                 assert(this._chars == cdata[0 .. length]); //assert(this._chars == cdata[0 .. length]);
 
 
@@ -2588,7 +2595,7 @@ private{
 		import std.range : isInputRange, ElementEncodingType;
         import std.traits : isArray;
 
-		enum bool isInputCharRange = true
+        enum bool isInputCharRange = true
             && isSomeChar!(ElementEncodingType!T)
             && (isInputRange!T || isArray!T);
 	}
