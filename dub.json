@@ -1,15 +1,21 @@
 {
-	"name" : "basic_string",
-	"authors" : [
-		"Adam Búš"
-	],
-	"buildTypes": {
-		"unittestBasicString": {
-			"buildOptions": ["debugMode", "debugInfo", "unittests"],
-			"versions": ["basic_string_unittest"]
-		},
-	},
-	"copyright" : "Copyright © 2021, Adam Búš",
-	"description" : "Mutable @nogc string struct using `std.experimental.allocator` for allocations.",
-	"license" : "Boost Software License - Version 1.0",
+  "name" : "basic_string",
+  "authors" : [
+    "Adam Búš"
+  ],
+  "buildTypes" : {
+    "unittestBasicString" : {
+      "buildOptions" : [
+        "debugMode",
+        "debugInfo",
+        "unittests"
+      ],
+      "versions" : [
+        "basic_string_unittest"
+      ]
+    }
+  },
+  "copyright" : "Copyright © 2021, Adam Búš",
+  "description" : "Mutable @nogc string struct using `std.experimental.allocator` for allocations.",
+  "license" : "Boost Software License - Version 1.0"
 }

@@ -6,7 +6,7 @@
 */
 module basic_string;
 
-import std.traits : Unqual, isSomeChar, isSomeString;
+import std.traits : Unqual, Unconst, isSomeChar, isSomeString;
 import std.meta : AliasSeq;
 
 debug import std.stdio : writeln;
@@ -18,6 +18,7 @@ template isBasicString(T...)
 if(T.length == 1){
     enum bool isBasicString = is(Unqual!(T[0]) == BasicString!Args, Args...);
 }
+
 
 
 /**
@@ -44,7 +45,7 @@ template BasicString(
 if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
     private import std.experimental.allocator.common :  stateSize;
     private import std.range : isInputRange, ElementEncodingType, isRandomAccessRange;
-    private import std.traits : Unqual, isIntegral, hasMember, isArray;
+    private import std.traits : Unqual, isIntegral, hasMember, isArray, isSafe;
 
     private import basic_string.encoding : decode, encode, strideBack, codeLength;
 
@@ -121,7 +122,8 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
     private struct _Impl{}
 
-	
+
+
     struct BasicString{
         /**
             True if allocator doesn't have state.
@@ -161,6 +163,12 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
             static assert(typeof(_raw).sizeof == Long.sizeof);
         }
+
+        private enum safeAllocate = isSafe!((ref Unconst!(typeof(allocator)) allocator){
+            size_t capacity = size_t.max;
+
+            auto data = allocator.allocate(capacity);
+        });
 
 
         //_long:
@@ -279,18 +287,31 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 return (()@trusted => (cast(Char*)data.ptr)[0 .. capacity])();
             }
 
-            bool _deallocate(scope Char[] cdata)@trusted{
-                void[] data = (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
-                return this._allocator.deallocate(data);
+            bool _deallocate(scope Char[] cdata){
+                void[] data = ()@trusted{
+                    return (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
+
+                }();
+
+                static if(safeAllocate)
+                    return ()@trusted{
+                        return this._allocator.deallocate(data);
+                    }();
+                else
+                    return this._allocator.deallocate(data);
             }
 
             Char[] _reallocate(scope return Char[] cdata, const size_t length, const size_t new_capacity){
                 void[] data = (()@trusted => (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof] )();
 
-                static if(hasMember!(typeof(_allocator), "reallocate"))
-                    const bool reallocated = ()@trusted{
-                        return this._allocator.reallocate(data, new_capacity * Char.sizeof);
-                    }();
+                static if(hasMember!(typeof(_allocator), "reallocate")){
+                    static if(safeAllocate)
+                        const bool reallocated = ()@trusted{
+                            return this._allocator.reallocate(data, new_capacity * Char.sizeof);
+                        }();
+                    else
+                        const bool reallocated = this._allocator.reallocate(data, new_capacity * Char.sizeof);
+                }
                 else
                     enum bool reallocated = false;
 
@@ -300,12 +321,15 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 }
 
                 Char[] new_cdata = this._allocate(new_capacity);
-                ()@trusted{
-                    new_cdata[0 .. length] = cdata[0 .. length];
+                new_cdata[0 .. length] = cdata[0 .. length];
 
+                static if(safeAllocate)
+                    ()@trusted{
+                        this._allocator.deallocate(data);
+                    }();
+                else
                     this._allocator.deallocate(data);
 
-                }();
                 return new_cdata;
             }
 
@@ -313,7 +337,15 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 void[] data = (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
 
                 static if(hasMember!(typeof(_allocator), "reallocate")){
-                    if(this._allocator.reallocate(data, new_capacity * Char.sizeof)){
+                    static if(safeAllocate)
+                        const bool re = ()@trusted{
+                            return this._allocator.reallocate(data, new_capacity * Char.sizeof);
+                        }();
+
+                    else
+                        const bool re = this._allocator.reallocate(data, new_capacity * Char.sizeof);
+
+                    if(re){
                         assert(data.length / Char.sizeof == new_capacity);
                         return (cast(Char*)data.ptr)[0 .. new_capacity];
                     }
@@ -324,81 +356,34 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
         }
 
-        //checkRange:
-        private{
-            /+bool checkRange(const size_t pos)const scope pure nothrow @trusted @nogc{
-                const chars = this._chars;
-
-                if(pos > this._chars.length)
-                    return false;
-
-                return true;
-            }
-
-            bool checkRange(const size_t pos, const size_t len)const scope pure nothrow @trusted @nogc{
-                const chars = this._chars;
-
-                if(pos > this._chars.length)
-                    return false;
-
-                if(len > this._chars.length)
-                    return false;
-
-                return true;
-            }
-
-            bool checkRange(scope const Char* ptr)const scope pure nothrow @trusted @nogc{
-                const chars = this._chars;
-                if(ptr < chars.ptr)
-                    return false;
-
-                if((chars.ptr + chars.length) < ptr)
-                    return false;
-
-                return true;
-            }
-
-            bool checkRange(scope const Char[] slice)const scope pure nothrow @trusted @nogc{
-                const chars = this._chars;
-
-                if(slice.ptr < chars.ptr)
-                    return false;
-
-                const size_t pos = (slice.ptr - chars.ptr);
-                if(pos + length > chars.length)
-                    return false;
-
-                return true;
-            }+/
-
-        }
-
         //reduce/expand:
         private{
-            void _reduce_move(Char* ptr, const size_t n)scope pure nothrow @system @nogc{
-                assert(this.ptr <= ptr && ptr  <= (this.ptr + this.length));
-                assert(this.ptr <= (ptr - n));
+            void _reduce_move(const size_t pos, const size_t n)scope pure nothrow @system @nogc{
+                assert(pos  <= this.length);
+                assert(pos >= n);
                 assert(n > 0);
+
+                auto chars = this._chars;
+                const size_t len = (chars.length - pos);
 
                 import core.stdc.string : memmove;
+                memmove(
+                    chars.ptr + (pos - n),
+                    (chars.ptr + pos),
+                    (len * Char.sizeof)
+                );
 
-                const chars = this._chars;
-                const size_t len = chars.length - (ptr - chars.ptr);
-
-                memmove(ptr - n, ptr, len * Char.sizeof);
-                this._length = chars.length - n;
+                this._length = (chars.length - n);
             }
 
-            Char[] _expand_move(Char* ptr, const size_t n)scope return {
-                ()@trusted{
-                    assert(this.ptr <= ptr && ptr  <= (this.ptr + this.length));
-                }();
+            Char[] _expand_move(const size_t pos, const size_t n)scope return {
                 assert(n > 0);
 
-                const size_t pos = ()@trusted{
-                    return (ptr - this.ptr);
-                }();
-                const size_t new_length = this.length + n;
+                auto chars = this._chars;
+                if(pos >= chars.length)
+                    return this._expand(n);
+
+                const size_t new_length = (chars.length + n);
                 this.reserve(new_length);
 
 
@@ -406,9 +391,14 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                     auto chars = this._chars;
                     this._length = new_length;
 
+                    const size_t len = (chars.length - pos);
+
                     import core.stdc.string : memmove;
-                    const size_t len = chars.length - pos;
-                    memmove(chars.ptr + pos + n, chars.ptr + pos, len * Char.sizeof);
+                    memmove(
+                        (chars.ptr + pos + n),
+                        (chars.ptr + pos),
+                        (len * Char.sizeof)
+                    );
 
                     return (chars.ptr + pos)[0 .. n];
                 }();
@@ -670,7 +660,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         }
 
         /// ditto
-        public @property dchar backCodePoint(const dchar val)scope pure nothrow @trusted @nogc{
+        public @property dchar backCodePoint()(const dchar val)scope{
             auto chars = this._chars;
 
             static if(is(Char == dchar)){
@@ -2057,9 +2047,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
             auto chars = this._chars;
 
-            Char[] new_chars = (pos >= chars.length)
-                ? this._expand(new_count)
-                : this._expand_move((()@trusted => chars.ptr + pos)(), new_count);
+            Char[] new_chars = this._expand_move(pos, new_count);
 
             return val.encodeTo(new_chars, count);
         }
@@ -2123,7 +2111,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             if(top >= chars.length)
                 this._length = pos;
             else if(n != 0)
-                this._reduce_move(chars.ptr + top, n);
+                this._reduce_move(top, n);
         }
 
         /// ditto
@@ -2155,7 +2143,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 if(top >= chars.length)
                     this._length = pos;
                 else
-                    this._reduce_move(chars.ptr + top, len);
+                    this._reduce_move(top, len);
             }
             else{
                 const size_t offset = (slice.ptr - chars.ptr);
@@ -2171,7 +2159,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 if(top >= chars.length)
                     this._length = pos;
                 else if(len != 0)
-                    this._reduce_move(chars.ptr + top, len);
+                    this._reduce_move(top, len);
 
             }
         }
@@ -2315,10 +2303,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
             if(begin == end){
                 ///insert:
-                Char[] new_chars = (begin >= old_length)
-                    ? this._expand(new_count)
-                    : this._expand_move((()@trusted => this.ptr + begin)(), new_count);
-
+                Char[] new_chars = this._expand_move(begin, new_count);
                 const x = val.encodeTo(new_chars, count);
                 assert(x == new_count);
 
@@ -2334,7 +2319,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 assert(x == new_count);
 
                 ()@trusted{
-                    this._reduce_move((chars.ptr + end), (new_len - new_count));
+                    this._reduce_move(end, (new_len - new_count));
                 }();
             }
             else{
@@ -2343,9 +2328,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
                 const size_t expand_len = (new_count - new_len);
 
-                Char[] new_chars = (end >= old_length)
-                    ? this._expand(expand_len)
-                    : this._expand_move((()@trusted => chars.ptr + end)(), expand_len);
+                Char[] new_chars = this._expand_move(end, expand_len);
 
                 const x = val.encodeTo((()@trusted => (new_chars.ptr - new_len)[0 .. new_count])(), count);
                 assert(x == new_count);
@@ -2629,7 +2612,7 @@ private{
 
 	//mallocator:
 	version(D_BetterC){
-		private struct Mallocator{
+		package struct Mallocator{
 			import std.experimental.allocator.common : platformAlignment;
 
 			enum uint alignment = platformAlignment;
@@ -2667,7 +2650,7 @@ private{
 		}
 	}
 	else{
-		import std.experimental.allocator.mallocator : Mallocator;
+		package import std.experimental.allocator.mallocator : Mallocator;
 	}
 
 	
