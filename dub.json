@@ -17,6 +17,5 @@
   },
   "copyright" : "Copyright © 2021, Adam Búš",
   "description" : "Mutable @nogc string struct using `std.experimental.allocator` for allocations.",
-  "license" : "Boost Software License - Version 1.0",
-  "dflags" : ["-betterC"],
+  "license" : "Boost Software License - Version 1.0"
 }

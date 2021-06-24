@@ -123,6 +123,35 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
     private struct _Impl{}
 
 
+    private static void _memmove(T)(scope T* target, scope const(T)* source, size_t length)@trusted{
+        import core.stdc.string : memmove;
+
+        memmove(target, source, length * T.sizeof);
+        /+version(D_BetterC){
+            import core.stdc.string : memmove;
+
+            memmove(target, source, length * T.sizeof);
+        }
+        else{
+            target[0 .. length] = source[0 .. length];
+        }+/
+
+    }
+    private static void _memcpy(T)(scope T* target, scope const(T)* source, size_t length)@trusted{
+        import core.stdc.string : memcpy;
+
+        memcpy(target, source, length * T.sizeof);
+        /+
+        version(D_BetterC){
+            import core.stdc.string : memcpy;
+
+            memcpy(target, source, length * T.sizeof);
+        }
+        else{
+            target[0 .. length] = source[0 .. length];
+        }+/
+
+    }
 
     struct BasicString{
         /**
@@ -321,10 +350,8 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 }
 
                 Char[] new_cdata = this._allocate(new_capacity);
-                import core.stdc.string : memcpy;
-                //new_cdata[0 .. length] = cdata[0 .. length];
                 ()@trusted{
-                    memcpy(new_cdata.ptr, cdata.ptr, length);
+                    _memcpy(new_cdata.ptr, cdata.ptr, length);  //new_cdata[0 .. length] = cdata[0 .. length];
                 }();
 
                 static if(safeAllocate)
@@ -370,11 +397,10 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 auto chars = this._chars;
                 const size_t len = (chars.length - pos);
 
-                import core.stdc.string : memmove;
-                memmove(
+                _memmove(
                     chars.ptr + (pos - n),
                     (chars.ptr + pos),
-                    (len * Char.sizeof)
+                    len
                 );
 
                 this._length = (chars.length - n);
@@ -397,11 +423,10 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
                     const size_t len = (chars.length - pos);
 
-                    import core.stdc.string : memmove;
-                    memmove(
+                    _memmove(
                         (chars.ptr + pos + n),
                         (chars.ptr + pos),
-                        (len * Char.sizeof)
+                        len
                     );
 
                     return (chars.ptr + pos)[0 .. n];
@@ -914,12 +939,8 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             Char[] cdata = this._allocate(new_capacity);
 
             ()@trusted{
-                import core.stdc.string : memcpy;
-                memcpy(cdata.ptr, this._short_ptr, length);
-                //cdata[0 .. length] = this._short_chars();
-
+                _memcpy(cdata.ptr, this._short_ptr, length);    //cdata[0 .. length] = this._short_chars();
                 assert(this._chars == cdata[0 .. length]); //assert(this._chars == cdata[0 .. length]);
-
 
                 this._long.capacity = new_capacity;
                 assert(!this._sso);
@@ -1032,7 +1053,10 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
                 this._short.setShort();
                 this._short.length = cast(ShortLength)length;
-                this._short.data[0 .. length] = cdata[0 .. length];
+
+                ()@trusted{
+                    _memcpy(this._short_ptr, cdata.ptr, length);    //this._short.data[0 .. length] = cdata[0 .. length];
+                }();
 
                 this._deallocate(cdata);
 
