@@ -2586,10 +2586,11 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 private{
 	private template isInputCharRange(T){
 		import std.range : isInputRange, ElementEncodingType;
+        import std.traits : isArray;
 
 		enum bool isInputCharRange = true
-			&& isInputRange!T
-			&& isSomeChar!(ElementEncodingType!T);
+            && isSomeChar!(ElementEncodingType!T)
+            && (isInputRange!T || isArray!T);
 	}
 
 	//min/max:
