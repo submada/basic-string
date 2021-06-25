@@ -120,7 +120,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
     else static assert(0, "no impl");
 
 
-    private struct _Impl{}
+    private struct Impl{}
 
 
     private static void _memmove(T)(scope T* target, scope const(T)* source, size_t length)@trusted{
@@ -196,7 +196,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         private enum safeAllocate = isSafe!((ref Unconst!(typeof(allocator)) allocator){
             size_t capacity = size_t.max;
 
-            auto data = allocator.allocate(capacity);
+            cast(void)allocator.allocate(capacity);
         });
 
 
@@ -1160,32 +1160,32 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
         /// ditto
         public this(scope return AllocatorWithState[0 .. $] allocator, scope const Char[] val)scope{
-            this(allocator, val, _Impl.init);
+            this(allocator, val, Impl.init);
         }
 
         /// ditto
         public this(Val)(scope return AllocatorWithState[0 .. $] allocator, auto ref scope const Val val)scope
         if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isCharArray!Val || isIntegral!Val){
             static if(isSmallCharArray!Val)
-                this(allocator, val, _Impl.init);
+                this(allocator, val, Impl.init);
             else static if(isBasicString!Val)
-                this(allocator, val._chars, _Impl.init);
+                this(allocator, val._chars, Impl.init);
             else static if(isSomeString!Val || isCharArray!Val)
-                this(allocator, val[], _Impl.init);
+                this(allocator, val[], Impl.init);
             else static if(isSomeChar!Val || isIntegral!Val)
-                this(allocator, val, _Impl.init);
-            else static assert(0, "invalid type '" ~ Val.stringof ~ "', valid types are char|wchar|dchar slices/arrays/chars or 'BasicString's ");
+                this(allocator, val, Impl.init);
+            else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
 		private{
-			private this(C)(scope return AllocatorWithState[0 .. $] allocator, _Impl)scope pure nothrow @trusted @nogc
+			this(C)(scope return AllocatorWithState[0 .. $] allocator, Impl)scope pure nothrow @trusted @nogc
 			if(isSomeChar!C){
 				assert(this._sso);
 				static if(!hasStatelessAllocator)
 					this._allocator = allocator[0];
 			}
 
-			private this(C)(scope return AllocatorWithState[0 .. $] allocator, const C c, _Impl)scope pure nothrow @trusted @nogc
+			this(C)(scope return AllocatorWithState[0 .. $] allocator, const C c, Impl)scope pure nothrow @trusted @nogc
 			if(isSomeChar!C){
 				assert(this._sso);
 				static if(!hasStatelessAllocator)
@@ -1193,7 +1193,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				this._short.length = cast(ShortLength)c.encodeTo(this._short_all_chars);    //this._short.data[0] = c;;
 			}
 
-			private this(C)(scope return AllocatorWithState[0 .. $] allocator, scope const C[] str, _Impl)scope
+			this(C)(scope return AllocatorWithState[0 .. $] allocator, scope const C[] str, Impl)scope
 			if(isSomeChar!C){
 				assert(this._sso);
 
@@ -1234,7 +1234,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				}
 			}
 
-			private this(I)(scope return AllocatorWithState[0 .. $] allocator, I val, _Impl)scope
+			this(I)(scope return AllocatorWithState[0 .. $] allocator, I val, Impl)scope
 			if(isIntegral!I){
 				static if(!hasStatelessAllocator)
 					this._allocator = allocator[0];
@@ -1245,7 +1245,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				this._length = val.encodeTo(this._all_chars);
 			}
 
-			private this(C, size_t N)(scope return AllocatorWithState[0 .. $] allocator, scope ref const C[N] str, _Impl)scope pure nothrow @trusted @nogc
+			this(C, size_t N)(scope return AllocatorWithState[0 .. $] allocator, scope ref const C[N] str, Impl)scope pure nothrow @trusted @nogc
 			if(isSmallCharArray!(typeof(str))){
 				assert(this._sso);
 
@@ -1274,7 +1274,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         */
         static if(hasStatelessAllocator)
         public this(ref scope const typeof(this) rhs)scope{
-            this(rhs._chars, _Impl.init);
+            this(rhs._chars, Impl.init);
         }
 
         /**
@@ -1284,7 +1284,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         */
         static if(!hasStatelessAllocator)
         public this(ref scope typeof(this) rhs)scope{
-            this(rhs._allocator, rhs._chars, _Impl.init);
+            this(rhs._allocator, rhs._chars, Impl.init);
         }
 
 
@@ -1338,11 +1338,11 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 return this._op_assign(rhs[]);
             else static if(isSomeChar!Val || isIntegral!Val)
                 return this._op_assign(rhs);
-            else static assert(0, "invalid type '" ~ Val.stringof ~ "', valid types are char|wchar|dchar slices/arrays/chars or 'BasicString's ");
+            else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
         private{
-			private ref typeof(this) _op_assign(C)(const C c)return scope pure nothrow @trusted @nogc
+			ref typeof(this) _op_assign(C)(const C c)return scope pure nothrow @trusted @nogc
 			if(isSomeChar!C){
 				this.clear();
 
@@ -1354,7 +1354,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				return this;
 			}
 
-			private ref typeof(this) _op_assign(C)(scope const C[] str)return scope
+			ref typeof(this) _op_assign(C)(scope const C[] str)return scope
 			if(isSomeChar!C){
 				this.clear();
 
@@ -1373,7 +1373,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				return this;
 			}
 
-			private ref typeof(this) _op_assign(I)(const I val)return scope
+			ref typeof(this) _op_assign(I)(const I val)return scope
 			if(isIntegral!I){
 
 				this.clear();
@@ -1387,7 +1387,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				return this;
 			}
 
-			private ref typeof(this) _op_assign(C, size_t N)(ref scope const C[N] str)return scope pure nothrow @trusted @nogc
+			ref typeof(this) _op_assign(C, size_t N)(ref scope const C[N] str)return scope pure nothrow @trusted @nogc
 			if(isSmallCharArray!(typeof(str))){
 				this.clear();
 
@@ -1403,15 +1403,15 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				return this;
 			}
 
-			private ref typeof(this) _op_assign(Args...)(auto ref scope const BasicString!Args str)return scope{
+			ref typeof(this) _op_assign(Args...)(auto ref scope const BasicString!Args str)return scope{
 				return this._op_assign(str._chars);
 			}
 
-			private ref typeof(this) _op_assign(ref return scope typeof(this) str)return scope {
+			ref typeof(this) _op_assign(ref return scope typeof(this) str)return scope {
 				return this._op_assign(str._chars);
 			}
 
-			private ref typeof(this) _op_assign(return scope typeof(this) str)return scope{
+			ref typeof(this) _op_assign(return scope typeof(this) str)return scope{
 				this.destroy();
 				moveEmplaceImpl(str, this);
 				return this;
@@ -1506,7 +1506,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                     return this.build(this._allocator, this._chars, rhs);
 
             }
-            else static assert(0, "invalid type '" ~ Val.stringof ~ "', valid types are char|wchar|dchar slices/arrays/chars or 'BasicString's ");
+            else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
 
@@ -1553,7 +1553,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 else
                     return this.build(this._allocator, lhs, this._chars);
             }
-            else static assert(0, "invalid type '" ~ Val.stringof ~ "', valid types are char|wchar|dchar slices/arrays/chars");
+            else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
 
@@ -1617,7 +1617,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			}
 			else static if(isInputRange!Val)         
 				return this._op_equals(rhs);
-            else static assert(0, "invalid type '" ~ Val.stringof ~ "', valid types are char|wchar|dchar slices/arrays/chars or 'BasicString's ");
+            else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
 
 
@@ -1713,7 +1713,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			}
 			else static if(isInputRange!Val)
 				return this._op_cmp(val);
-            else static assert(0, "invalid type '" ~ Val.stringof ~ "', valid types are char|wchar|dchar slices/arrays/chars or 'BasicString's ");
+            else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
 
 
@@ -1929,7 +1929,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 --------------------
         */
         public size_t append(const Char[] val, const size_t count = 1)scope{
-            return this._append_impl(val, count);
+            return this._appendImpl(val, count);
         }
 
         /// ditto
@@ -1937,16 +1937,16 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isCharArray!Val || isIntegral!Val){
 
             static if(isBasicString!Val)
-                return this._append_impl(val._chars, count);
+                return this._appendImpl(val._chars, count);
             else static if(isSomeString!Val || isCharArray!Val)
-                return this._append_impl(val[], count);
+                return this._appendImpl(val[], count);
             else static if(isSomeChar!Val || isIntegral!Val)
-                return this._append_impl(val, count);
-            else static assert(0, "invalid type '" ~ Val.stringof ~ "', valid types are char|wchar|dchar slices/arrays/chars or 'BasicString's ");
+                return this._appendImpl(val, count);
+            else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
 
-        private size_t _append_impl(Val)(const Val val, const size_t count)scope
+        private size_t _appendImpl(Val)(const Val val, const size_t count)scope
 		if(isSomeChar!Val || isSomeString!Val || isIntegral!Val){
 			if(count == 0)
 				return 0;
@@ -2028,24 +2028,24 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
         */
         public size_t insert(const size_t pos, const scope Char[] val, const size_t count = 1)scope{
-            return this._insert_impl(pos, val, count);
+            return this._insertImpl(pos, val, count);
         }
 
         /// ditto
         public size_t insert(Val)(const size_t pos, auto ref const scope Val val, const size_t count = 1)scope
         if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isIntegral!Val){
             static if(isBasicString!Val || isSomeString!Val)
-                return this._insert_impl(pos, val[], count);
+                return this._insertImpl(pos, val[], count);
             else static if(isSomeChar!Val || isIntegral!Val)
-                return this._insert_impl(pos, val, count);
-            else static assert(0, "invalid type '" ~ Val.stringof ~ "', valid types are char|wchar|dchar slices/arrays/chars or 'BasicString's ");
+                return this._insertImpl(pos, val, count);
+            else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
         /// ditto
         public size_t insert(const Char* ptr, const scope Char[] val, const size_t count = 1)scope{
             const size_t pos = this._insert_ptr_to_pos(ptr);
 
-            return this._insert_impl(pos, val, count);
+            return this._insertImpl(pos, val, count);
         }
 
         /// ditto
@@ -2054,10 +2054,10 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             const size_t pos = this._insert_ptr_to_pos(ptr);
 
             static if(isBasicString!Val || isSomeString!Val)
-                return this._insert_impl(pos, val[], count);
+                return this._insertImpl(pos, val[], count);
             else static if(isSomeChar!Val || isIntegral!Val)
-                return this._insert_impl(pos, val, count);
-            else static assert(0, "invalid type '" ~ Val.stringof ~ "', valid types are char|wchar|dchar slices/arrays/chars or 'BasicString's ");
+                return this._insertImpl(pos, val, count);
+            else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
 
@@ -2069,14 +2069,14 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 : 0;
         }
 
-        private size_t _insert_impl(Val)(const size_t pos, const Val val, const size_t count)scope
+        private size_t _insertImpl(Val)(const size_t pos, const Val val, const size_t count)scope
 		if(isSomeChar!Val || isSomeString!Val || isIntegral!I){
 
             const size_t new_count = count * encodedLength(val);
             if(new_count == 0)
                 return 0;
 
-            auto chars = this._chars;
+            //auto chars = this._chars;
 
             Char[] new_chars = this._expand_move(pos, new_count);
 
@@ -2132,7 +2132,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
         /// ditto
         public void erase(const size_t pos, const size_t n)scope pure nothrow @trusted @nogc{
-            auto chars = this._chars;
+            const chars = this._chars;
 
             if(pos >= chars.length)
                 return;
@@ -2157,7 +2157,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
         /// ditto
         public void erase(scope const Char[] slice)scope pure nothrow @trusted @nogc{
-            auto chars = this._chars;
+            const chars = this._chars;
 
             if(slice.ptr <= chars.ptr){
                 const size_t offset = (chars.ptr - slice.ptr);
@@ -2258,7 +2258,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 --------------------
         */
         public ref typeof(this) replace(const size_t pos, const size_t len, scope const Char[] val, const size_t count = 1)return scope{
-            return this._replace_impl(pos, len, val, count);
+            return this._replaceImpl(pos, len, val, count);
         }
 
         /// ditto
@@ -2266,15 +2266,15 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isIntegral!Val || isCharArray!Val){
 
             static if(isBasicString!Val || isSomeString!Val || isCharArray!Val)
-                return this._replace_impl(pos, len, val[], count);
+                return this._replaceImpl(pos, len, val[], count);
             else static if(isSomeChar!Val || isIntegral!Val)
-                return this._replace_impl(pos, len, val, count);
-            else static assert(0, "invalid type '" ~ Val.stringof ~ "', valid types are char|wchar|dchar slices/arrays/chars or 'BasicString's ");
+                return this._replaceImpl(pos, len, val, count);
+            else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
         /// ditto
         public ref typeof(this) replace(scope const Char[] slice, scope const Char[] val, const size_t count = 1)return scope{
-            return this._replace_impl(slice, val, count);
+            return this._replaceImpl(slice, val, count);
         }
 
         /// ditto
@@ -2282,14 +2282,14 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isIntegral!Val || isCharArray!Val){
 
             static if(isBasicString!Val || isSomeString!Val || isCharArray!Val)
-                return this._replace_impl(slice, val[], count);
+                return this._replaceImpl(slice, val[], count);
             else static if(isSomeChar!Val || isIntegral!Val)
-                return this._replace_impl(slice, val, count);
-            else static assert(0, "invalid type '" ~ Val.stringof ~ "', valid types are char|wchar|dchar slices/arrays/chars or 'BasicString's ");
+                return this._replaceImpl(slice, val, count);
+            else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
 
-        private ref typeof(this) _replace_impl(Val)(scope const Char[] slice, scope const Val val, const size_t count)return scope
+        private ref typeof(this) _replaceImpl(Val)(scope const Char[] slice, scope const Val val, const size_t count)return scope
 		if(isSomeChar!Val || isSomeString!Val || isIntegral!Val){
             const chars = this._chars;
 
@@ -2300,18 +2300,18 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                     ? (slice.length - offset)
                     : 0;
 
-                return this._replace_impl(pos, len, val, count);
+                return this._replaceImpl(pos, len, val, count);
             }
             else{
                 const size_t offset = (()@trusted => slice.ptr - chars.ptr)();
                 const size_t pos = offset;
                 const size_t len = slice.length;
 
-                return this._replace_impl(pos, len, val, count);
+                return this._replaceImpl(pos, len, val, count);
             }
         }
 
-        private ref typeof(this) _replace_impl(Val)(const size_t pos, const size_t len, scope const Val val, const size_t count)return scope
+        private ref typeof(this) _replaceImpl(Val)(const size_t pos, const size_t len, scope const Val val, const size_t count)return scope
 		if(isSomeChar!Val || isSomeString!Val || isIntegral!Val){
 
             const size_t new_count = count * encodedLength(val);
@@ -2406,14 +2406,14 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             else
                 auto result = (()@trusted => BasicString(allocator[0]))();
 
-            result._build_impl(forwardBasicString!args);
+            result._buildImpl(forwardBasicString!args);
 
             return ()@trusted{
                 return result;
             }();
         }
 
-        private void _build_impl(Args...)(auto ref scope const Args args)scope{
+        private void _buildImpl(Args...)(auto ref scope const Args args)scope{
             import std.traits : isArray;
 
             assert(this.empty);
@@ -2629,7 +2629,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 }
 
 private{
-	private template isInputCharRange(T){
+	template isInputCharRange(T){
 		import std.range : isInputRange, ElementEncodingType;
         import std.traits : isArray;
 
@@ -2700,7 +2700,7 @@ private{
 	}
 
 	
-	private auto frontCodeUnit(Range)(auto ref Range r){
+	auto frontCodeUnit(Range)(auto ref Range r){
 		import std.traits : isAutodecodableString;
 
 
@@ -2714,7 +2714,7 @@ private{
 		}
 	}
 
-	private void popFrontCodeUnit(Range)(ref Range r){
+	void popFrontCodeUnit(Range)(ref Range r){
 		import std.traits : isAutodecodableString;
 
 		static if(isAutodecodableString!Range){
@@ -2728,14 +2728,14 @@ private{
 	}
 
 
-	private T moveBasicString(T)(scope return ref T source)@trusted nothrow
+	T moveBasicString(T)(scope return ref T source)@trusted nothrow
 	if(isBasicString!T){
 		T result = void;
 		T.moveEmplaceImpl(source, result);
 		return (()@system => result)();
 	}
 
-	private template forwardBasicString(args...){
+	template forwardBasicString(args...){
 		import core.internal.traits : AliasSeq;
 
 		static if (args.length)
@@ -2771,4 +2771,3 @@ private{
 			alias forwardBasicString = AliasSeq!();
 	}
 }
-
