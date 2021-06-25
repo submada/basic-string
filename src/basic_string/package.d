@@ -1929,7 +1929,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 --------------------
         */
         public size_t append(const Char[] val, const size_t count = 1)scope{
-            return this._appendImpl(val, count);
+            return this._append_impl(val, count);
         }
 
         /// ditto
@@ -1937,16 +1937,16 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isCharArray!Val || isIntegral!Val){
 
             static if(isBasicString!Val)
-                return this._appendImpl(val._chars, count);
+                return this._append_impl(val._chars, count);
             else static if(isSomeString!Val || isCharArray!Val)
-                return this._appendImpl(val[], count);
+                return this._append_impl(val[], count);
             else static if(isSomeChar!Val || isIntegral!Val)
-                return this._appendImpl(val, count);
+                return this._append_impl(val, count);
             else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
 
-        private size_t _appendImpl(Val)(const Val val, const size_t count)scope
+        private size_t _append_impl(Val)(const Val val, const size_t count)scope
 		if(isSomeChar!Val || isSomeString!Val || isIntegral!Val){
 			if(count == 0)
 				return 0;
@@ -2028,16 +2028,16 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
         */
         public size_t insert(const size_t pos, const scope Char[] val, const size_t count = 1)scope{
-            return this._insertImpl(pos, val, count);
+            return this._insert_impl(pos, val, count);
         }
 
         /// ditto
         public size_t insert(Val)(const size_t pos, auto ref const scope Val val, const size_t count = 1)scope
         if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isIntegral!Val){
             static if(isBasicString!Val || isSomeString!Val)
-                return this._insertImpl(pos, val[], count);
+                return this._insert_impl(pos, val[], count);
             else static if(isSomeChar!Val || isIntegral!Val)
-                return this._insertImpl(pos, val, count);
+                return this._insert_impl(pos, val, count);
             else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
@@ -2045,7 +2045,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         public size_t insert(const Char* ptr, const scope Char[] val, const size_t count = 1)scope{
             const size_t pos = this._insert_ptr_to_pos(ptr);
 
-            return this._insertImpl(pos, val, count);
+            return this._insert_impl(pos, val, count);
         }
 
         /// ditto
@@ -2054,9 +2054,9 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             const size_t pos = this._insert_ptr_to_pos(ptr);
 
             static if(isBasicString!Val || isSomeString!Val)
-                return this._insertImpl(pos, val[], count);
+                return this._insert_impl(pos, val[], count);
             else static if(isSomeChar!Val || isIntegral!Val)
-                return this._insertImpl(pos, val, count);
+                return this._insert_impl(pos, val, count);
             else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
@@ -2069,7 +2069,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 : 0;
         }
 
-        private size_t _insertImpl(Val)(const size_t pos, const Val val, const size_t count)scope
+        private size_t _insert_impl(Val)(const size_t pos, const Val val, const size_t count)scope
 		if(isSomeChar!Val || isSomeString!Val || isIntegral!I){
 
             const size_t new_count = count * encodedLength(val);
@@ -2258,7 +2258,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 --------------------
         */
         public ref typeof(this) replace(const size_t pos, const size_t len, scope const Char[] val, const size_t count = 1)return scope{
-            return this._replaceImpl(pos, len, val, count);
+            return this._replace_impl(pos, len, val, count);
         }
 
         /// ditto
@@ -2266,15 +2266,15 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isIntegral!Val || isCharArray!Val){
 
             static if(isBasicString!Val || isSomeString!Val || isCharArray!Val)
-                return this._replaceImpl(pos, len, val[], count);
+                return this._replace_impl(pos, len, val[], count);
             else static if(isSomeChar!Val || isIntegral!Val)
-                return this._replaceImpl(pos, len, val, count);
+                return this._replace_impl(pos, len, val, count);
             else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
         /// ditto
         public ref typeof(this) replace(scope const Char[] slice, scope const Char[] val, const size_t count = 1)return scope{
-            return this._replaceImpl(slice, val, count);
+            return this._replace_impl(slice, val, count);
         }
 
         /// ditto
@@ -2282,14 +2282,14 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
         if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isIntegral!Val || isCharArray!Val){
 
             static if(isBasicString!Val || isSomeString!Val || isCharArray!Val)
-                return this._replaceImpl(slice, val[], count);
+                return this._replace_impl(slice, val[], count);
             else static if(isSomeChar!Val || isIntegral!Val)
-                return this._replaceImpl(slice, val, count);
+                return this._replace_impl(slice, val, count);
             else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
         }
 
 
-        private ref typeof(this) _replaceImpl(Val)(scope const Char[] slice, scope const Val val, const size_t count)return scope
+        private ref typeof(this) _replace_impl(Val)(scope const Char[] slice, scope const Val val, const size_t count)return scope
 		if(isSomeChar!Val || isSomeString!Val || isIntegral!Val){
             const chars = this._chars;
 
@@ -2300,18 +2300,18 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                     ? (slice.length - offset)
                     : 0;
 
-                return this._replaceImpl(pos, len, val, count);
+                return this._replace_impl(pos, len, val, count);
             }
             else{
                 const size_t offset = (()@trusted => slice.ptr - chars.ptr)();
                 const size_t pos = offset;
                 const size_t len = slice.length;
 
-                return this._replaceImpl(pos, len, val, count);
+                return this._replace_impl(pos, len, val, count);
             }
         }
 
-        private ref typeof(this) _replaceImpl(Val)(const size_t pos, const size_t len, scope const Val val, const size_t count)return scope
+        private ref typeof(this) _replace_impl(Val)(const size_t pos, const size_t len, scope const Val val, const size_t count)return scope
 		if(isSomeChar!Val || isSomeString!Val || isIntegral!Val){
 
             const size_t new_count = count * encodedLength(val);
@@ -2406,14 +2406,14 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             else
                 auto result = (()@trusted => BasicString(allocator[0]))();
 
-            result._buildImpl(forwardBasicString!args);
+            result._build_impl(forwardBasicString!args);
 
             return ()@trusted{
                 return result;
             }();
         }
 
-        private void _buildImpl(Args...)(auto ref scope const Args args)scope{
+        private void _build_impl(Args...)(auto ref scope const Args args)scope{
             import std.traits : isArray;
 
             assert(this.empty);
