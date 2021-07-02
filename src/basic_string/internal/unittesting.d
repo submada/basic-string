@@ -1,4 +1,4 @@
-module basic_string.unittesting;
+module basic_string.internal.unittesting;
 
 import std.meta : AliasSeq;
 

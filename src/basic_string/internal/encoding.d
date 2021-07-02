@@ -1,4 +1,4 @@
-module basic_string.encoding;
+module basic_string.internal.encoding;
 
 import std.traits : isSomeChar;
 
@@ -7,7 +7,7 @@ import std.traits : isSomeChar;
 /*
     Same as std.utf.isValidDchar.
 */
-private bool isValidDchar(dchar c) pure nothrow @safe @nogc{
+public bool isValidDchar(dchar c) pure nothrow @safe @nogc{
     return (c < 0xD800) || (0xDFFF < c && c <= 0x10FFFF);
 }
 
@@ -16,7 +16,7 @@ private bool isValidDchar(dchar c) pure nothrow @safe @nogc{
 /*
     Same as std.utf.codeLength.
 */
-package ubyte codeLength(C)(dchar c) @safe pure nothrow @nogc
+public ubyte codeLength(C)(dchar c) @safe pure nothrow @nogc
 if (isSomeChar!C){
     static if (C.sizeof == 1)
     {
@@ -44,7 +44,7 @@ private enum dchar replacementDchar = '\uFFFD';
 /*
     Modification of std.utf.encode where output buffer is not fixed array but slice.
 */
-package template encode(To){
+public template encode(To){
     //import std.utf : isValidDchar;
 
     size_t encode(dchar from, To[] to)pure nothrow @safe @nogc{
@@ -135,7 +135,7 @@ package template encode(To){
 /*
     Same as std.utf.decodeFront.
 */
-package template decode(S){
+public template decode(S){
     dchar decode(ref S str)pure nothrow @trusted @nogc{
         import std.typecons : Yes;
 
@@ -411,7 +411,7 @@ package template decode(S){
 
 
 
-package bool validate(S)(auto ref S str)pure nothrow @trusted @nogc{
+public bool validate(S)(auto ref S str)pure nothrow @trusted @nogc{
     import std.range : empty;
 
 
@@ -429,7 +429,7 @@ package bool validate(S)(auto ref S str)pure nothrow @trusted @nogc{
 /*
     Return number of valid code units at end of string str, 0 if last code point is invalid
 */
-package ubyte strideBack(scope const(char)[] str)pure nothrow @safe @nogc{
+public ubyte strideBack(scope const(char)[] str)pure nothrow @safe @nogc{
     import std.range : empty;
 
     /* The following encodings are valid, except for the 5 and 6 byte
@@ -493,7 +493,7 @@ package ubyte strideBack(scope const(char)[] str)pure nothrow @safe @nogc{
 }
 
 // ditto
-package ubyte strideBack(scope const(wchar)[] str)pure nothrow @safe @nogc{
+public ubyte strideBack(scope const(wchar)[] str)pure nothrow @safe @nogc{
     import std.range : empty;
 
     assert(!str.empty);
@@ -531,7 +531,7 @@ package ubyte strideBack(scope const(wchar)[] str)pure nothrow @safe @nogc{
 }
 
 // ditto
-package ubyte strideBack(scope const(dchar)[] str)pure nothrow @safe @nogc{
+public ubyte strideBack(scope const(dchar)[] str)pure nothrow @safe @nogc{
     import std.range : empty;
     //import std.utf : isValidDchar;
     assert(!str.empty);
