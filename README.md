@@ -86,7 +86,7 @@ pure nothrow @safe @nogc unittest {
     assert(str == "1xyz456789");
   }
 
-  //replace:
+  //slice to string:
   ()@trusted{
     String str = "123456789";
 
