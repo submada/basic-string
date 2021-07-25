@@ -85,5 +85,14 @@ pure nothrow @safe @nogc unittest {
 
     assert(str == "1xyz456789");
   }
+
+  //replace:
+  ()@trusted{
+    String str = "123456789";
+
+    string dstr = str[];
+
+    assert(str == dstr);
+  }();
 }
 ```
