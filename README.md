@@ -16,7 +16,7 @@ Compatible with `-betterC` and `-dip1000`.
 Does not rely on runtime type information (`TypeInfo`).
 
 ## Documentation
-https://submada.github.io/basic_string
+https://submada.github.io/basic-string
 
 ## Example
 
