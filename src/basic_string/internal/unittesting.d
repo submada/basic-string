@@ -3,9 +3,9 @@ module basic_string.internal.unittesting;
 import std.meta : AliasSeq;
 
 import basic_string;
+import basic_string.internal.mallocator;
 
 
-version(unittest)
 version(basic_string_unittest)
 struct TestStatelessAllocator(bool Realloc){
     import std.experimental.allocator.common : stateSize;
@@ -103,7 +103,6 @@ struct TestStatelessAllocator(bool Realloc){
     static typeof(this) instance;
 }
 
-version(unittest)
 version(basic_string_unittest)
 class TestStateAllocator(bool Realloc){
     import std.experimental.allocator.common : stateSize;
@@ -202,7 +201,6 @@ class TestStateAllocator(bool Realloc){
 
 
 
-version(unittest)
 version(basic_string_unittest){
     private auto trustedSlice(S)(auto ref scope S str)@trusted{
         return str[];
@@ -866,7 +864,7 @@ version(basic_string_unittest){
 
 }
 
-version(unittest)
+
 version(basic_string_unittest)
 void unittest_impl(Char, Allocator)(Allocator allocator){
     unittest_allocator_impl!Char(allocator);
@@ -892,7 +890,7 @@ void unittest_impl(Char, Allocator)(Allocator allocator){
 }
 
 
-version(unittest)
+
 version(basic_string_unittest)
 void unittest_impl(Allocator)(Allocator allocator = Allocator.init){
     import std.stdio : writeln;

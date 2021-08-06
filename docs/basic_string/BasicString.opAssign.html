@@ -63,22 +63,22 @@ $('#symbolSearchPane').show();</script>
 			<section><p>Parameter <code class="lang-d"><a href="../basic_string/BasicString.opAssign.html#rhs"><span class="pln">rhs</span></a></code> can by type of <code class="lang-d"><span class="kwd">null</span></code>, <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a><span class="pun">!(...)</span></code>, <code class="lang-d"><span class="typ">char</span><span class="pun">|</span><span class="typ">wchar</span><span class="pun">|</span><span class="typ">dchar</span></code> array/slice/character or integer (integer is transformed to string).
 </p>
 
-<p>            Return referece to <code class="lang-d"><span class="kwd">this</span></code>.
+<p>			Return referece to <code class="lang-d"><span class="kwd">this</span></code>.
 </p>
 </section>
 
 			<section><h2>Examples</h2>
-<pre class="code"><code class="lang-d"><span class="pln">            <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123"</span><span class="pun">;
-            </span><span class="kwd">assert</span><span class="pun">(!</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
+<pre class="code"><code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123"</span><span class="pun">;
+</span><span class="kwd">assert</span><span class="pun">(!</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
 
-            </span><span class="pln">str </span><span class="pun">= </span><span class="kwd">null</span><span class="pun">;
-            </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
+</span><span class="pln">str </span><span class="pun">= </span><span class="kwd">null</span><span class="pun">;
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
 
-            </span><span class="pln">str </span><span class="pun">= </span><span class="str">'X'</span><span class="pun">;
-            </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"X"</span><span class="pun">);
+</span><span class="pln">str </span><span class="pun">= </span><span class="str">'X'</span><span class="pun">;
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"X"</span><span class="pun">);
 
-            </span><span class="pln">str </span><span class="pun">= </span><span class="str">"abc"w</span><span class="pun">;
-            </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"abc"</span><span class="pun">);
+</span><span class="pln">str </span><span class="pun">= </span><span class="str">"abc"w</span><span class="pun">;
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"abc"</span><span class="pun">);
 
 </span><span class="pln">str </span><span class="pun">= -</span><span class="lit">123</span><span class="pun">;
 </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"-123"</span><span class="pun">);</span></code></pre>

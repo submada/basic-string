@@ -9,6 +9,9 @@ module basic_string;
 import std.traits : Unqual, Unconst, isSomeChar, isSomeString;
 import std.meta : AliasSeq;
 
+import basic_string.internal.mallocator;
+
+
 debug import std.stdio : writeln;
 
 /**
@@ -1231,6 +1234,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 					assert(this.capacity == Short.capacity);
 					assert(this._short.length == 0);
 				}
+
 			}
 
 			this(I)(scope return AllocatorWithState[0 .. $] allocator, I val, Impl)scope
@@ -2537,7 +2541,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 				const size_t len = from.length;
 				()@trusted{
-					assert(to.length <= len);
+					assert(to.length >= len);
 					assert(from.length <= len);
 					_memcpy(to.ptr, from.ptr, len); //to[0 .. len] = from[];
 				}();
@@ -2556,7 +2560,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			for(size_t i = 1; i < count; ++i){
 				//to[len .. len * 2] = to[0 .. len];
 				()@trusted{
-					assert(to.length <= (len * 2));
+					assert(to.length >= (len * 2));
 					_memcpy(to.ptr + len, to.ptr, len); //to[0 .. len] = from[];
 				}();
 				to = to[len .. $];
@@ -2589,7 +2593,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				for(size_t i = 1; i < count; ++i){
 					//to[len .. len * 2] = to[0 .. len];
 					()@trusted{
-						assert(to.length <= (len * 2));
+						assert(to.length >= (len * 2));
 						_memcpy(to.ptr + len, to.ptr, len); //to[0 .. len] = from[];
 					}();
 					to = to[len .. $];
@@ -2653,49 +2657,6 @@ private{
 	}
 	else{
 		import std.algorithm.comparison :  min, max;
-	}
-
-	//mallocator:
-	version(D_BetterC){
-		package struct Mallocator{
-			import std.experimental.allocator.common : platformAlignment;
-
-			enum uint alignment = platformAlignment;
-
-			static void[] allocate(size_t bytes)@trusted @nogc nothrow pure{
-				import core.memory : pureMalloc;
-				if (!bytes) return null;
-				auto p = pureMalloc(bytes);
-				return p ? p[0 .. bytes] : null;
-			}
-
-			static bool deallocate(void[] b)@system @nogc nothrow pure{
-				import core.memory : pureFree;
-				pureFree(b.ptr);
-				return true;
-			}
-
-			static bool reallocate(ref void[] b, size_t s)@system @nogc nothrow pure{
-				import core.memory : pureRealloc;
-				if (!s){
-					// fuzzy area in the C standard, see http://goo.gl/ZpWeSE
-					// so just deallocate and nullify the pointer
-					deallocate(b);
-					b = null;
-					return true;
-				}
-
-				auto p = cast(ubyte*) pureRealloc(b.ptr, s);
-				if (!p) return false;
-				b = p[0 .. s];
-				return true;
-			}
-
-			static Mallocator instance;
-		}
-	}
-	else{
-		package import std.experimental.allocator.mallocator : Mallocator;
 	}
 
 	
