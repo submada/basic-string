@@ -19,7 +19,7 @@ debug import std.stdio : writeln;
 */
 template isBasicString(T...)
 if(T.length == 1){
-	enum bool isBasicString = is(Unqual!(T[0]) == BasicString!Args, Args...);
+	enum isBasicString = is(Unqual!(T[0]) == BasicString!Args, Args...);
 }
 
 
@@ -59,8 +59,8 @@ private:
 
 	enum isSmallCharArray(T) = is(T : C[N], C, size_t N)
 		&& isSomeChar!C
-		&& (N <= Short.capacity)
-		&& (C.sizeof <= _Char.sizeof);
+		&& N <= Short.capacity
+		&& C.sizeof <= _Char.sizeof;
 
 	enum isCharArray(T) = is(T : C[N], C, size_t N)
 		&& isSomeChar!C;
@@ -77,19 +77,19 @@ private:
 			ubyte[_Padding] padding;
 
 			@property isLong()scope const pure nothrow @safe @nogc{
-				return (this.capacity & cast(size_t)0x1) == 0;
+				return (capacity & 0x1) == 0;
 			}
 
-			enum size_t maxCapacity = ((size_t.max / _Char.sizeof) & ~cast(size_t)0x1);
+			enum size_t maxCapacity = (size_t.max / _Char.sizeof) & ~cast(size_t)0x1;
 		}
 
-		static if((Long.sizeof / _Char.sizeof) <= ubyte.max)
+		static if(Long.sizeof / _Char.sizeof <= ubyte.max)
 			alias ShortLength = ubyte;
-		else static if((Long.sizeof / _Char.sizeof) <= ushort.max)
+		else static if(Long.sizeof / _Char.sizeof <= ushort.max)
 			alias ShortLength = ushort;
-		else static if((Long.sizeof / _Char.sizeof) <= uint.max)
+		else static if(Long.sizeof / _Char.sizeof <= uint.max)
 			alias ShortLength = uint;
-		else static if((Long.sizeof / _Char.sizeof) <= ulong.max)
+		else static if(Long.sizeof / _Char.sizeof <= ulong.max)
 			alias ShortLength = ulong;
 		else static assert(0, "no impl");
 
@@ -111,11 +111,11 @@ private:
 
 
 			@property isShort()scope const pure nothrow @safe @nogc{
-				return (this.flag & 0x1) == 1;
+				return (flag & 0x1) == 1;
 			}
 
 			void setShort()scope pure nothrow @safe @nogc{
-				this.flag = 0x1;
+				flag = 0x1;
 			}
 		}
 
@@ -154,7 +154,6 @@ private:
 		else{
 			target[0 .. length] = source[0 .. length];
 		}+/
-
 	}
 
 public:
@@ -163,35 +162,35 @@ public:
 		/**
 			True if allocator doesn't have state.
 		*/
-		enum bool hasStatelessAllocator = stateSize!_Allocator == 0;
+		enum hasStatelessAllocator = stateSize!_Allocator == 0;
 
 
 
 		/**
 			Character type. (`char`, `wchar` or `dchar`).
 		*/
-		public alias Char = _Char;
+		alias Char = _Char;
 
 
 
 		/**
 			Type of the allocator object used to define the storage allocation model. By default Mallocator is used.
 		*/
-		public alias Allocator = _Allocator;
+		alias Allocator = _Allocator;
 
-
+private:
 
 		static if(hasStatelessAllocator){
-			private alias _allocator = Allocator.instance;
-			private alias AllocatorWithState = AliasSeq!();
+			alias _allocator = Allocator.instance;
+			alias AllocatorWithState = AliasSeq!();
 		}
 		else{
-			private Allocator _allocator;
-			private alias AllocatorWithState = AliasSeq!Allocator;
+			Allocator _allocator;
+			alias AllocatorWithState = AliasSeq!Allocator;
 		}
 
 
-		private union{
+		union{
 			Short _short;
 			Long _long;
 			size_t[Long.sizeof / size_t.sizeof] _raw;
@@ -199,268 +198,255 @@ public:
 			static assert(typeof(_raw).sizeof == Long.sizeof);
 		}
 
-		private enum safeAllocate = isSafe!((ref Unconst!(typeof(allocator)) allocator){
+		enum safeAllocate = isSafe!((ref Unconst!(typeof(allocator)) allocator){
 			size_t capacity = size_t.max;
 
-			cast(void)allocator.allocate(capacity);
+			allocator.allocate(capacity);
 		});
 
+		pure nothrow @nogc @trusted{
+			//_long:
+			@property inout(Char)* _long_ptr()inout scope return{
+				assert(_long.isLong);
 
-		//_long:
-		private{
-			@property inout(Char)* _long_ptr()inout scope return pure nothrow @nogc @trusted{
-				assert(this._long.isLong);
-
-				return this._long.ptr;
+				return _long.ptr;
 			}
 
-			@property inout(void)[] _long_data()inout scope return pure nothrow @nogc @trusted{
-				assert(this._long.isLong);
+			@property inout(void)[] _long_data()inout scope return{
+				assert(_long.isLong);
 
-				return (cast(void*)this._long.ptr)[0 .. this._long.capacity * Char.sizeof];
+				return (cast(void*)_long.ptr)[0 .. _long.capacity * Char.sizeof];
 			}
 
-			@property size_t _long_capacity()const scope pure nothrow @nogc @trusted{
-				assert(this._long.isLong);
+			@property size_t _long_capacity()const scope{
+				assert(_long.isLong);
 
-				return this._long.capacity;
+				return _long.capacity;
 			}
 
-			@property size_t _long_length()const scope pure nothrow @nogc @trusted{
-				assert(this._long.isLong);
+			@property size_t _long_length()const scope{
+				assert(_long.isLong);
 
-				return this._long.length;
+				return _long.length;
 			}
 
-			@property inout(Char)[] _long_chars()inout scope return pure nothrow @nogc @trusted{
-				assert(this._long.isLong);
+			@property inout(Char)[] _long_chars()inout scope return{
+				assert(_long.isLong);
 
-				return this._long.ptr[0 .. this._long.length];
+				return _long.ptr[0 .. _long.length];
 			}
 
-			@property inout(Char)[] _long_all_chars()inout scope return pure nothrow @nogc @trusted{
-				assert(this._long.isLong);
+			@property inout(Char)[] _long_all_chars()inout scope return{
+				assert(_long.isLong);
 
-				return this._long.ptr[0 .. this._long.capacity];
+				return _long.ptr[0 .. _long.capacity];
+			}
+
+			//_short:
+			@property inout(Char)* _short_ptr()inout return{
+				assert(_short.isShort);
+
+				return _short.data.ptr;
+			}
+
+			@property inout(void)[] _short_data()inout return{
+				assert(_short.isShort);
+
+				return (cast(void*)_short.data.ptr)[0 .. _short.capacity * Char.sizeof];
+			}
+		}
+		pure nothrow @nogc @safe{
+
+			@property size_t _short_capacity()const scope{
+				assert(_short.isShort);
+
+				return _short.capacity;
+			}
+
+			@property auto _short_length()const scope{
+				assert(_short.isShort);
+
+				return _short.length;
+			}
+
+			@property inout(Char)[] _short_chars()inout return{
+				assert(_short.isShort);
+
+				return _short.data[0 .. _short.length];
+			}
+
+			@property inout(Char)[] _short_all_chars()inout return{
+				assert(_short.isShort);
+
+				return _short.data[];
 			}
 		}
 
-		//_short:
-		private{
-			@property inout(Char)* _short_ptr()inout scope return pure nothrow @nogc @trusted{
-				assert(this._short.isShort);
+		pure nothrow @nogc{
 
-				return this._short.data.ptr;
+			@property bool _sso()const scope @trusted{
+				assert(_long.isLong != _short.isShort);
+				return _short.isShort;
 			}
 
-			@property inout(void)[] _short_data()inout scope return pure nothrow @nogc @trusted{
-				assert(this._short.isShort);
+			@property void _length(in size_t len)scope @system{
+				assert(len <= capacity);
 
-				return (cast(void*)this._short.data.ptr)[0 .. this._short.capacity * Char.sizeof];
-			}
-
-			@property size_t _short_capacity()const scope pure nothrow @nogc @safe{
-				assert(this._short.isShort);
-
-				return this._short.capacity;
-			}
-
-			@property auto _short_length()const scope pure nothrow @nogc @safe{
-				assert(this._short.isShort);
-
-				return this._short.length;
-			}
-
-			@property inout(Char)[] _short_chars()inout scope return pure nothrow @nogc @safe{
-				assert(this._short.isShort);
-
-				return this._short.data[0 .. this._short.length];
-			}
-
-			@property inout(Char)[] _short_all_chars()inout scope return pure nothrow @nogc @safe{
-				assert(this._short.isShort);
-
-				return this._short.data[];
-			}
-		}
-
-
-		private{
-			@property bool _sso()const scope pure nothrow @trusted @nogc{
-				assert(this._long.isLong != this._short.isShort);
-				return this._short.isShort;
-			}
-
-			@property void _length(const size_t len)scope pure nothrow @system @nogc{
-				assert(len <= this.capacity);
-
-				if(this._sso)
-					this._short.length = cast(ShortLength)len;
+				if(_sso)
+					_short.length = cast(ShortLength)len;
 				else
-					this._long.length = len;
+					_long.length = len;
 			}
 
-			@property inout(Char)[] _chars()inout scope return pure nothrow @trusted @nogc{
-				return this._sso
-					? this._short_chars()
-					: this._long_chars();
+			@property inout(Char)[] _chars()inout scope return @trusted{
+				return _sso
+					? _short_chars()
+					: _long_chars();
 			}
 
-			@property inout(Char)[] _all_chars()inout scope return pure nothrow @trusted @nogc{
-				return this._sso
-					? this._short_all_chars()
-					: this._long_all_chars();
+			@property inout(Char)[] _all_chars()inout scope return @trusted{
+				return _sso
+					? _short_all_chars()
+					: _long_all_chars();
 			}
-
 		}
+
 
 		//allocation:
-		private{
-			Char[] _allocate(const size_t capacity){
-				void[] data = this._allocator.allocate(capacity * Char.sizeof);
+		Char[] _allocate(in size_t capacity){
+			void[] data = _allocator.allocate(capacity * Char.sizeof);
 
-				return (()@trusted => (cast(Char*)data.ptr)[0 .. capacity])();
-			}
-
-			bool _deallocate(scope Char[] cdata){
-				void[] data = ()@trusted{
-					return (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
-
-				}();
-
-				static if(safeAllocate)
-					return ()@trusted{
-						return this._allocator.deallocate(data);
-					}();
-				else
-					return this._allocator.deallocate(data);
-			}
-
-			Char[] _reallocate(scope return Char[] cdata, const size_t length, const size_t new_capacity){
-				void[] data = (()@trusted => (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof] )();
-
-				static if(hasMember!(typeof(_allocator), "reallocate")){
-					static if(safeAllocate)
-						const bool reallocated = ()@trusted{
-							return this._allocator.reallocate(data, new_capacity * Char.sizeof);
-						}();
-					else
-						const bool reallocated = this._allocator.reallocate(data, new_capacity * Char.sizeof);
-				}
-				else
-					enum bool reallocated = false;
-
-				if(reallocated){
-					assert(data.length / Char.sizeof == new_capacity);
-					return (()@trusted => (cast(Char*)data.ptr)[0 .. new_capacity])();
-				}
-
-				Char[] new_cdata = this._allocate(new_capacity);
-				()@trusted{
-					_memcpy(new_cdata.ptr, cdata.ptr, length);  //new_cdata[0 .. length] = cdata[0 .. length];
-				}();
-
-				static if(safeAllocate)
-					()@trusted{
-						this._allocator.deallocate(data);
-					}();
-				else
-					this._allocator.deallocate(data);
-
-				return new_cdata;
-			}
-
-			Char[] _reallocate_optional(scope return Char[] cdata, const size_t new_capacity)@trusted{
-				void[] data = (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
-
-				static if(hasMember!(typeof(_allocator), "reallocate")){
-					static if(safeAllocate)
-						const bool re = ()@trusted{
-							return this._allocator.reallocate(data, new_capacity * Char.sizeof);
-						}();
-
-					else
-						const bool re = this._allocator.reallocate(data, new_capacity * Char.sizeof);
-
-					if(re){
-						assert(data.length / Char.sizeof == new_capacity);
-						return (cast(Char*)data.ptr)[0 .. new_capacity];
-					}
-				}
-
-				return cdata;
-			}
-
+			return (()@trusted => (cast(Char*)data.ptr)[0 .. capacity])();
 		}
 
-		//reduce/expand:
-		private{
-			void _reduce_move(const size_t pos, const size_t n)scope pure nothrow @system @nogc{
-				assert(pos <= this.length);
-				assert(pos >= n);
-				assert(n > 0);
+		bool _deallocate(scope Char[] cdata){
+			void[] data = (()@trusted => (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof])();
 
-				auto chars = this._chars;
-				const size_t len = (chars.length - pos);
+			static if(safeAllocate)
+				return (()@trusted => _allocator.deallocate(data))();
+			else
+				return _allocator.deallocate(data);
+		}
+
+		Char[] _reallocate(scope return Char[] cdata, in size_t length, in size_t new_capacity){
+			void[] data = (()@trusted => (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof])();
+
+			static if(hasMember!(typeof(_allocator), "reallocate")){
+				static if(safeAllocate)
+					const bool reallocated =
+						(()@trusted => _allocator.reallocate(data, new_capacity * Char.sizeof))();
+				else
+					const bool reallocated = _allocator.reallocate(data, new_capacity * Char.sizeof);
+			}
+			else
+				enum bool reallocated = false;
+
+			if(reallocated){
+				assert(data.length / Char.sizeof == new_capacity);
+				return (()@trusted => (cast(Char*)data.ptr)[0 .. new_capacity])();
+			}
+
+			Char[] new_cdata = _allocate(new_capacity);
+			()@trusted{
+				_memcpy(new_cdata.ptr, cdata.ptr, length);  //new_cdata[0 .. length] = cdata[0 .. length];
+			}();
+
+			static if(safeAllocate)
+				()@trusted{
+					_allocator.deallocate(data);
+				}();
+			else
+				_allocator.deallocate(data);
+
+			return new_cdata;
+		}
+
+		Char[] _reallocate_optional(scope return Char[] cdata, in size_t new_capacity)@trusted{
+			void[] data = (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
+
+			static if(hasMember!(typeof(_allocator), "reallocate")){
+				static if(safeAllocate)
+					bool re =
+						(()@trusted => _allocator.reallocate(data, new_capacity * Char.sizeof))();
+
+				else
+					bool re = _allocator.reallocate(data, new_capacity * Char.sizeof);
+
+				if(re){
+					assert(data.length / Char.sizeof == new_capacity);
+					return (cast(Char*)data.ptr)[0 .. new_capacity];
+				}
+			}
+
+			return cdata;
+		}
+
+	//reduce/expand:
+		void _reduce_move(in size_t pos, in size_t n)scope pure nothrow @system @nogc{
+			assert(pos <= length);
+			assert(pos >= n);
+			assert(n > 0);
+
+			auto chars = _chars;
+			const len = chars.length - pos;
+
+			_memmove(
+				chars.ptr + (pos - n),
+				chars.ptr + pos,
+				len
+			);
+
+			_length = chars.length - n;
+		}
+
+		Char[] _expand_move(in size_t pos, in size_t n)scope return {
+			assert(n > 0);
+
+			auto chars = _chars;
+			if(pos >= chars.length)
+				return _expand(n);
+
+			const new_length = chars.length + n;
+			reserve(new_length);
+
+
+			return ()@trusted{
+				auto chars = _chars;
+				_length = new_length;
+
+				const len = chars.length - pos;
 
 				_memmove(
-					chars.ptr + (pos - n),
-					(chars.ptr + pos),
+					chars.ptr + pos + n,
+					chars.ptr + pos,
 					len
 				);
 
-				this._length = (chars.length - n);
-			}
-
-			Char[] _expand_move(const size_t pos, const size_t n)scope return {
-				assert(n > 0);
-
-				auto chars = this._chars;
-				if(pos >= chars.length)
-					return this._expand(n);
-
-				const size_t new_length = (chars.length + n);
-				this.reserve(new_length);
-
-
-				return ()@trusted{
-					auto chars = this._chars;
-					this._length = new_length;
-
-					const size_t len = (chars.length - pos);
-
-					_memmove(
-						(chars.ptr + pos + n),
-						(chars.ptr + pos),
-						len
-					);
-
-					return (chars.ptr + pos)[0 .. n];
-				}();
-			}
-
-			Char[] _expand(const size_t n)scope return{
-				const size_t old_length = this.length;
-				const size_t new_length = (old_length + n);
-
-				this.reserve(new_length);
-
-				return ()@trusted{
-					auto chars = this._chars;
-					//assert(this.capacity >= new_length);
-					this._length = new_length;
-
-					return chars.ptr[old_length .. new_length];
-				}();
-			}
+				return (chars.ptr + pos)[0 .. n];
+			}();
 		}
 
+		Char[] _expand(in size_t n)scope return{
+			const old_length = length;
+			const new_length = old_length + n;
 
+			reserve(new_length);
+
+			return ()@trusted{
+				auto chars = _chars;
+				//assert(capacity >= new_length);
+				_length = new_length;
+
+				return chars.ptr[old_length .. new_length];
+			}();
+		}
+
+public:
 
 		/**
 			Maximal capacity of string, in terms of number of characters (utf code units).
 		*/
-		public alias MaximalCapacity = Long.maxCapacity;
+		alias MaximalCapacity = Long.maxCapacity;
 
 
 
@@ -475,15 +461,15 @@ public:
 				assert(str.capacity > 0);
 				--------------------
 		*/
-		public alias MinimalCapacity = Short.capacity;
+		alias MinimalCapacity = Short.capacity;
 
 
 
 		/**
 			Returns copy of allocator.
 		*/
-		public @property auto allocator()inout{
-			return this._allocator;
+		@property auto allocator()inout{
+			return _allocator;
 		}
 
 
@@ -500,8 +486,8 @@ public:
 				assert(!str.empty);
 				--------------------
 		*/
-		public @property bool empty()const scope pure nothrow @safe @nogc{
-			return this.length == 0;
+		@property bool empty()const scope pure nothrow @safe @nogc{
+			return length == 0;
 		}
 
 
@@ -524,10 +510,10 @@ public:
 
 				--------------------
 		*/
-		public @property size_t length()const scope pure nothrow @trusted @nogc{
-			return this._sso
-				? this._short_length
-				: this._long_length;
+		@property size_t length()const scope pure nothrow @trusted @nogc{
+			return _sso
+				? _short_length
+				: _long_length;
 		}
 
 
@@ -552,10 +538,10 @@ public:
 				assert(str.capacity > BasicString!char.MinimalCapacity);
 				--------------------
 		*/
-		public @property size_t capacity()const scope pure nothrow @trusted @nogc{
-			return this._sso
-				? this._short_capacity
-				: this._long_capacity;
+		@property size_t capacity()const scope pure nothrow @trusted @nogc{
+			return _sso
+				? _short_capacity
+				: _long_capacity;
 		}
 
 
@@ -573,10 +559,10 @@ public:
 				--------------------
 
 		*/
-		public @property inout(Char)* ptr()inout scope return pure nothrow @system @nogc{
-			return this._sso
-				? this._short_ptr
-				: this._long_ptr;
+		@property inout(Char)* ptr()inout scope return pure nothrow @system @nogc{
+			return _sso
+				? _short_ptr
+				: _long_ptr;
 		}
 
 
@@ -584,8 +570,8 @@ public:
 		/**
 			Return `true` if string is small (Small String Optimization)
 		*/
-		public @property bool small()const scope pure nothrow @safe @nogc{
-			return this._sso;
+		@property bool small()const scope pure nothrow @safe @nogc{
+			return _sso;
 		}
 
 
@@ -593,8 +579,8 @@ public:
 		/**
 			Return `true` if string is valid utf string.
 		*/
-		public @property bool valid()const scope pure nothrow @safe @nogc{
-			return validate(this._chars[]);
+		@property bool valid()const scope pure nothrow @safe @nogc{
+			return validate(_chars[]);
 		}
 
 
@@ -611,8 +597,8 @@ public:
 				assert(str.frontCodePoint == 'á');
 				--------------------
 		*/
-		public @property dchar frontCodePoint()const scope pure nothrow @trusted @nogc{
-			auto chars = this._all_chars;
+		@property dchar frontCodePoint()const scope pure nothrow @trusted @nogc{
+			auto chars = _all_chars;
 			return decode(chars);
 		}
 
@@ -645,13 +631,13 @@ public:
 				assert(str == "x23");
 				--------------------
 		*/
-		public @property Char frontCodeUnit()const scope pure nothrow @trusted @nogc{
-			return this._all_chars[0];
+		@property Char frontCodeUnit()const scope pure nothrow @trusted @nogc{
+			return _all_chars[0];
 		}
 
 		/// ditto
-		public @property Char frontCodeUnit(const Char val)scope pure nothrow @trusted @nogc{
-			return this._all_chars[0] = val;
+		@property Char frontCodeUnit(const Char val)scope pure nothrow @trusted @nogc{
+			return _all_chars[0] = val;
 		}
 
 
@@ -674,14 +660,14 @@ public:
 				assert(str == "1234");
 				--------------------
 		*/
-		public @property dchar backCodePoint()const scope pure nothrow @trusted @nogc{
-			auto chars = this._chars;
+		@property dchar backCodePoint()const scope pure nothrow @trusted @nogc{
+			auto chars = _chars;
 
 			if(chars.length == 0)
 				return dchar.init;
 
 			static if(is(Char == dchar)){
-				return this.backCodeUnit();
+				return backCodeUnit();
 			}
 			else{
 				const ubyte len = strideBack(chars);
@@ -694,11 +680,11 @@ public:
 		}
 
 		/// ditto
-		public @property dchar backCodePoint()(const dchar val)scope{
-			auto chars = this._chars;
+		@property dchar backCodePoint()(const dchar val)scope{
+			auto chars = _chars;
 
 			static if(is(Char == dchar)){
-				return this.backCodeUnit(val);
+				return backCodeUnit(val);
 			}
 			else{
 				if(chars.length == 0)
@@ -708,8 +694,8 @@ public:
 				if(len == 0)
 					return dchar.init;
 
-				this._length = (chars.length - len);
-				this.append(val);
+				_length = chars.length - len;
+				append(val);
 				return val;
 			}
 		}
@@ -741,8 +727,8 @@ public:
 				assert(str == "12x");
 				--------------------
 		*/
-		public @property Char backCodeUnit()const scope pure nothrow @trusted @nogc{
-			auto chars = this._chars;
+		@property Char backCodeUnit()const scope pure nothrow @trusted @nogc{
+			auto chars = _chars;
 
 			return chars.length == 0
 				? Char.init
@@ -750,8 +736,8 @@ public:
 		}
 
 		/// ditto
-		public @property Char backCodeUnit(const Char val)scope pure nothrow @trusted @nogc{
-			auto chars = this._chars;
+		@property Char backCodeUnit(const Char val)scope pure nothrow @trusted @nogc{
+			auto chars = _chars;
 
 			return chars.length == 0
 				? Char.init
@@ -790,16 +776,16 @@ public:
 				assert(str.length == 2);
 				--------------------
 		*/
-		public ubyte popBackCodePoint()scope pure nothrow @trusted @nogc{
-			if(this.empty)
+		ubyte popBackCodePoint()scope pure nothrow @trusted @nogc{
+			if(empty)
 				return 0;
 
-			const ubyte n = strideBack(this._chars);
+			const ubyte n = strideBack(_chars);
 
-			if(this._sso)
-				this._short.length -= n;
+			if(_sso)
+				_short.length -= n;
 			else
-				this._long.length -= n;
+				_long.length -= n;
 
 			return n;
 		}
@@ -829,14 +815,14 @@ public:
 				assert(str.empty);
 				--------------------
 		*/
-		public bool popBackCodeUnit()scope pure nothrow @trusted @nogc{
-			if(this.empty)
+		bool popBackCodeUnit()scope pure nothrow @trusted @nogc{
+			if(empty)
 				return false;
 
-			if(this._sso)
-				this._short.length -= 1;
+			if(_sso)
+				_short.length -= 1;
 			else
-				this._long.length -= 1;
+				_long.length -= 1;
 
 			return true;
 		}
@@ -855,13 +841,13 @@ public:
 				str.reserve(str.capacity * 2);
 				assert(str.length == 3);
 
-				const size_t cap = str.capacity;
+				in size_t cap = str.capacity;
 				str.clear();
 				assert(str.capacity == cap);
 				--------------------
 		*/
-		public void clear()scope pure nothrow @trusted @nogc{
-			this._length = 0;
+		void clear()scope pure nothrow @trusted @nogc{
+			_length = 0;
 		}
 
 
@@ -876,7 +862,7 @@ public:
 				str.reserve(str.capacity * 2);
 				assert(str.length == 3);
 
-				const size_t cap = str.capacity;
+				in size_t cap = str.capacity;
 				str.clear();
 				assert(str.capacity == cap);
 
@@ -885,15 +871,15 @@ public:
 				assert(str.capacity == BasicString!char.MinimalCapacity);
 				--------------------
 		*/
-		public void destroy()scope{
-			if(this._sso){
-				this._short.length = 0;
+		void destroy()scope{
+			if(_sso){
+				_short.length = 0;
 			}
 			else{
-				this._deallocate(this._long_all_chars);
+				_deallocate(_long_all_chars);
 
-				this._short.setShort();
-				this._short.length = 0;
+				_short.setShort();
+				_short.length = 0;
 			}
 		}
 
@@ -913,69 +899,69 @@ public:
 				BasicString!char str = "123";
 				assert(str.capacity == BasicString!char.MinimalCapacity);
 
-				const size_t cap = (str.capacity * 2);
+				in size_t cap = (str.capacity * 2);
 				str.reserve(cap);
 				assert(str.capacity > BasicString!char.MinimalCapacity);
 				assert(str.capacity >= cap);
 				--------------------
 		*/
-		public size_t reserve(const size_t n)scope{
-			return this._sso
-				? this._reserve_short(n)
-				: this._reserve_long(n);
+		size_t reserve(in size_t n)scope{
+			return _sso
+				? _reserve_short(n)
+				: _reserve_long(n);
 		}
 
 
-		private size_t _reserve_short(const size_t n)scope{
-			assert(this._sso);
+		private size_t _reserve_short(in size_t n)scope{
+			assert(_sso);
 
-			enum size_t old_capacity = this._short.capacity;
+			enum size_t old_capacity = _short.capacity;
 
 			if(n <= old_capacity)
 				return old_capacity;
 
-			const size_t length = this._short_length;
-			const size_t new_capacity = max(old_capacity * 2, (n + 1)) & ~0x1;
+			const length = _short_length;
+			const new_capacity = max(old_capacity * 2, n + 1) & ~0x1;
 
 			//assert(new_capacity >= max(old_capacity * 2, n));
 			assert(new_capacity % 2 == 0);
 
 
-			Char[] cdata = this._allocate(new_capacity);
+			Char[] cdata = _allocate(new_capacity);
 
 			()@trusted{
-				_memcpy(cdata.ptr, this._short_ptr, length);    //cdata[0 .. length] = this._short_chars();
-				assert(this._chars == cdata[0 .. length]); //assert(this._chars == cdata[0 .. length]);
+				_memcpy(cdata.ptr, _short_ptr, length);    //cdata[0 .. length] = _short_chars();
+				assert(_chars == cdata[0 .. length]); //assert(_chars == cdata[0 .. length]);
 
-				this._long.capacity = new_capacity;
-				assert(!this._sso);
-				this._long.ptr = cdata.ptr;
-				this._long.length = length;
+				_long.capacity = new_capacity;
+				assert(!_sso);
+				_long.ptr = cdata.ptr;
+				_long.length = length;
 			}();
 
 			return new_capacity;
 		}
 
-		private size_t _reserve_long(const size_t n)scope{
-			assert(!this._sso);
+		private size_t _reserve_long(in size_t n)scope{
+			assert(!_sso);
 
-			const size_t old_capacity = this._long_capacity;
+			const old_capacity = _long_capacity;
 
 			if(n <= old_capacity)
 				return old_capacity;
 
-			const size_t length = this._long_length;
-			const size_t new_capacity = max(old_capacity * 2, (n + 1)) & ~0x1;
+			const length = _long_length;
+			const new_capacity = max(old_capacity * 2, n + 1) & ~0x1;
 
 			//assert(new_capacity >= max(old_capacity * 2, n));
 			assert(new_capacity % 2 == 0);
 
-			Char[] cdata = this._reallocate(this._long_all_chars(), length, new_capacity);
+			Char[] cdata = _reallocate(_long_all_chars(), length, new_capacity);
 
 			()@trusted{
-				this._long.capacity = new_capacity;
-				this._long.ptr = cdata.ptr;
-				assert(!this._sso);
+				_long.capacity = new_capacity;
+				_long.ptr = cdata.ptr;
+				assert(!_sso);
 			}();
 
 			return new_capacity;
@@ -1004,16 +990,16 @@ public:
 				assert(str == "12");
 				--------------------
 		*/
-		public void resize(const size_t n, const Char ch = '_')scope{
-			const size_t old_length = this.length;
+		void resize(in size_t n, const Char ch = '_')scope{
+			const old_length = length;
 
 			if(old_length > n){
 				()@trusted{
-					this._length = n;
+					_length = n;
 				}();
 			}
 			else if(old_length < n){
-				this.append(ch, n - old_length);
+				append(ch, n - old_length);
 			}
 		}
 
@@ -1040,36 +1026,36 @@ public:
 				assert(str.capacity == BasicString!char.MinimalCapacity);
 				--------------------
 		*/
-		public size_t shrinkToFit()scope{
-			if(this._sso)
+		size_t shrinkToFit()scope{
+			if(_sso)
 				return MinimalCapacity;
 
-			const size_t old_capacity = this._long_capacity;
-			const size_t length = this._long_length;
+			const old_capacity = _long_capacity;
+			const length = _long_length;
 
 
 			if(length == old_capacity)
 				return length;
 
-			Char[] cdata = this._long_all_chars();
+			Char[] cdata = _long_all_chars();
 
 			if(length <= MinimalCapacity){
 				//alias new_capacity = length;
 
-				this._short.setShort();
-				this._short.length = cast(ShortLength)length;
+				_short.setShort();
+				_short.length = cast(ShortLength)length;
 
 				()@trusted{
-					_memcpy(this._short_ptr, cdata.ptr, length);    //this._short.data[0 .. length] = cdata[0 .. length];
+					_memcpy(_short_ptr, cdata.ptr, length);    //_short.data[0 .. length] = cdata[0 .. length];
 				}();
 
-				this._deallocate(cdata);
+				_deallocate(cdata);
 
-				assert(this._sso);
+				assert(_sso);
 				return MinimalCapacity;
 			}
 
-			const size_t new_capacity = (length + 1) & ~0x1;
+			const new_capacity = (length + 1) & ~0x1;
 
 			if(new_capacity >= old_capacity)
 				return old_capacity;
@@ -1077,12 +1063,12 @@ public:
 			assert(new_capacity >= length);
 			assert(new_capacity % 2 == 0);
 
-			cdata = this._reallocate_optional(cdata, new_capacity);
+			cdata = _reallocate_optional(cdata, new_capacity);
 
 			()@trusted{
-				this._long.ptr = cdata.ptr;
-				this._long.capacity = new_capacity;
-				assert(!this._sso);
+				_long.ptr = cdata.ptr;
+				_long.capacity = new_capacity;
+				assert(!_sso);
 			}();
 
 			return new_capacity;
@@ -1095,11 +1081,11 @@ public:
 
 			This deallocates all the storage capacity allocated by the `BasicString` using its allocator.
 		*/
-		public ~this()scope{
-			if(!this._sso){
-				this._deallocate(this._long_all_chars());
-				debug this._short.setShort();
-				debug this._short.length = 0;
+		~this()scope{
+			if(!_sso){
+				_deallocate(_long_all_chars());
+				debug _short.setShort();
+				debug _short.length = 0;
 			}
 		}
 
@@ -1109,8 +1095,8 @@ public:
 			Constructs a empty `BasicString` with allocator `a`.
 		*/
 		static if(!hasStatelessAllocator)
-		public this(scope return Allocator a)scope pure nothrow @safe @nogc{
-			this._allocator = a;
+		this(scope return Allocator a)scope pure nothrow @safe @nogc{
+			_allocator = a;
 		}
 
 
@@ -1119,7 +1105,7 @@ public:
 			@disable init if `BasicString` has allocator with state.
 		*/
 		static if(!hasStatelessAllocator)
-		public @disable this()scope pure nothrow @trusted @nogc;
+		@disable this()scope pure nothrow @trusted @nogc;
 
 
 
@@ -1154,22 +1140,22 @@ public:
 				}
 				--------------------
 		*/
-		public this(scope return AllocatorWithState[0 .. $] allocator, typeof(null) val)scope pure nothrow @safe @nogc{
-			assert(this._sso);
-			assert(this.capacity == Short.capacity);
-			assert(this._short_length == 0);
+		this(scope return AllocatorWithState[0 .. $] allocator, typeof(null) val)scope pure nothrow @safe @nogc{
+			assert(_sso);
+			assert(capacity == Short.capacity);
+			assert(_short_length == 0);
 
 			static if(!hasStatelessAllocator)
-				this._allocator = allocator[0];
+				_allocator = allocator[0];
 		}
 
 		/// ditto
-		public this(scope return AllocatorWithState[0 .. $] allocator, scope const Char[] val)scope{
+		this(scope return AllocatorWithState[0 .. $] allocator, scope const Char[] val)scope{
 			this(allocator, val, Impl.init);
 		}
 
 		/// ditto
-		public this(Val)(scope return AllocatorWithState[0 .. $] allocator, auto ref scope const Val val)scope
+		this(Val)(scope return AllocatorWithState[0 .. $] allocator, auto ref scope const Val val)scope
 		if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isCharArray!Val || isIntegral!Val){
 			static if(isSmallCharArray!Val)
 				this(allocator, val, Impl.init);
@@ -1185,57 +1171,57 @@ public:
 		private{
 			this(C)(scope return AllocatorWithState[0 .. $] allocator, Impl)scope pure nothrow @trusted @nogc
 			if(isSomeChar!C){
-				assert(this._sso);
+				assert(_sso);
 				static if(!hasStatelessAllocator)
-					this._allocator = allocator[0];
+					_allocator = allocator[0];
 			}
 
 			this(C)(scope return AllocatorWithState[0 .. $] allocator, const C c, Impl)scope pure nothrow @trusted @nogc
 			if(isSomeChar!C){
-				assert(this._sso);
+				assert(_sso);
 				static if(!hasStatelessAllocator)
-					this._allocator = allocator[0];
-				this._short.length = cast(ShortLength)c.encodeTo(this._short_all_chars);    //this._short.data[0] = c;;
+					_allocator = allocator[0];
+				_short.length = cast(ShortLength)c.encodeTo(_short_all_chars);    //_short.data[0] = c;;
 			}
 
 			this(C)(scope return AllocatorWithState[0 .. $] allocator, scope const C[] str, Impl)scope
 			if(isSomeChar!C){
-				assert(this._sso);
+				assert(_sso);
 
 				static if(!hasStatelessAllocator)
-					this._allocator = allocator[0];
+					_allocator = allocator[0];
 
-				const size_t str_length = encodedLength(str);
+				const str_length = encodedLength(str);
 
-				if(str_length > this._short.capacity){
+				if(str_length > _short.capacity){
 
 
-					const size_t new_capacity = ((str_length + 1) & ~0x1);
+					const new_capacity = ((str_length + 1) & ~0x1);
 
 					assert(new_capacity >= str_length);
 					assert(new_capacity % 2 == 0);
 
 
-					Char[] cdata = this._allocate(new_capacity);
+					Char[] cdata = _allocate(new_capacity);
 
 					()@trusted{
-						this._long.ptr = cdata.ptr;
-						this._long.length = str[].encodeTo(cdata[]);   //cdata[] = str[];
-						this._long.capacity = new_capacity;
+						_long.ptr = cdata.ptr;
+						_long.length = str[].encodeTo(cdata[]);   //cdata[] = str[];
+						_long.capacity = new_capacity;
 					}();
-					assert(!this._sso);
+					assert(!_sso);
 
 				}
 				else if(str.length != 0){
-					assert(this._sso);
+					assert(_sso);
 
-					this._short.length = cast(ShortLength)str[].encodeTo(this._short_all_chars);   //this._short.data[0 .. str_length] = str[];   ///str_length;
-					assert(this.capacity == Short.capacity);
+					_short.length = cast(ShortLength)str[].encodeTo(_short_all_chars);   //_short.data[0 .. str_length] = str[];   ///str_length;
+					assert(capacity == Short.capacity);
 				}
 				else{
-					assert(this._sso);
-					assert(this.capacity == Short.capacity);
-					assert(this._short.length == 0);
+					assert(_sso);
+					assert(capacity == Short.capacity);
+					assert(_short.length == 0);
 				}
 
 			}
@@ -1243,31 +1229,31 @@ public:
 			this(I)(scope return AllocatorWithState[0 .. $] allocator, I val, Impl)scope
 			if(isIntegral!I){
 				static if(!hasStatelessAllocator)
-					this._allocator = allocator[0];
+					_allocator = allocator[0];
 
-				const size_t len = encodedLength(val);
+				const len = encodedLength(val);
 
-				this.reserve(len);
-				this._length = val.encodeTo(this._all_chars);
+				reserve(len);
+				_length = val.encodeTo(_all_chars);
 			}
 
 			this(C, size_t N)(scope return AllocatorWithState[0 .. $] allocator, scope ref const C[N] str, Impl)scope pure nothrow @trusted @nogc
 			if(isSmallCharArray!(typeof(str))){
-				assert(this._sso);
+				assert(_sso);
 
 				static if(!hasStatelessAllocator)
-					this._allocator = allocator[0];
+					_allocator = allocator[0];
 
 				if(str.length != 0){
-					assert(this._sso);
+					assert(_sso);
 
-					this._short.length = cast(ShortLength)str[].encodeTo(this._short_all_chars);   //this._short.data[0 .. str_length] = str[];   ///str_length;
-					assert(this.capacity == Short.capacity);
+					_short.length = cast(ShortLength)str[].encodeTo(_short_all_chars);   //_short.data[0 .. str_length] = str[];   ///str_length;
+					assert(capacity == Short.capacity);
 				}
 				else{
-					assert(this._sso);
-					assert(this.capacity == Short.capacity);
-					assert(this._short_length == 0);
+					assert(_sso);
+					assert(capacity == Short.capacity);
+					assert(_short_length == 0);
 				}
 			}
 
@@ -1279,7 +1265,7 @@ public:
 			Parameter `rhs` is const.
 		*/
 		static if(hasStatelessAllocator)
-		public this(ref scope const typeof(this) rhs)scope{
+		this(ref scope const typeof(this) rhs)scope{
 			this(rhs._chars, Impl.init);
 		}
 
@@ -1289,7 +1275,7 @@ public:
 			Parameter `rhs` is mutable.
 		*/
 		static if(!hasStatelessAllocator)
-		public this(ref scope typeof(this) rhs)scope{
+		this(ref scope typeof(this) rhs)scope{
 			this(rhs._allocator, rhs._chars, Impl.init);
 		}
 
@@ -1322,57 +1308,57 @@ public:
 				assert(str == "-123");
 				--------------------
 		*/
-		public ref typeof(this) opAssign(typeof(null) rhs)return scope pure nothrow @safe @nogc{
-			this.clear();
+		ref typeof(this) opAssign(typeof(null) rhs)return scope pure nothrow @safe @nogc{
+			clear();
 			return this;
 		}
 
 		/// ditto
-		public ref typeof(this) opAssign(scope const Char[] rhs)return scope{
-			return this._op_assign(rhs);
+		ref typeof(this) opAssign(scope const Char[] rhs)return scope{
+			return _op_assign(rhs);
 		}
 
 		/// ditto
-		public ref typeof(this) opAssign(Val)(auto ref scope Val rhs)return scope
+		ref typeof(this) opAssign(Val)(auto ref scope Val rhs)return scope
 		if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isCharArray!Val || isIntegral!Val){
 
 			static if(isSmallCharArray!Val)
-				return this._op_assign(rhs);
+				return _op_assign(rhs);
 			else static if(isBasicString!Val)
-				return this._op_assign(forwardBasicString!rhs);
+				return _op_assign(forwardBasicString!rhs);
 			else static if(isSomeString!Val || isCharArray!Val)
-				return this._op_assign(rhs[]);
+				return _op_assign(rhs[]);
 			else static if(isSomeChar!Val || isIntegral!Val)
-				return this._op_assign(rhs);
+				return _op_assign(rhs);
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
 
 		private{
 			ref typeof(this) _op_assign(C)(const C c)return scope pure nothrow @trusted @nogc
 			if(isSomeChar!C){
-				this.clear();
+				clear();
 
-				if(this._sso)
-					this._short.length = cast(ShortLength)c.encodeTo(this._short_all_chars); //this._short.data[0] = c;
+				if(_sso)
+					_short.length = cast(ShortLength)c.encodeTo(_short_all_chars); //_short.data[0] = c;
 				else
-					this._long.length = c.encodeTo(this._long_all_chars[0 .. dchar.sizeof / Char.sizeof]); //*this._long.data = c;
+					_long.length = c.encodeTo(_long_all_chars[0 .. dchar.sizeof / Char.sizeof]); //*_long.data = c;
 
 				return this;
 			}
 
 			ref typeof(this) _op_assign(C)(scope const C[] str)return scope
 			if(isSomeChar!C){
-				this.clear();
+				clear();
 
-				const size_t str_length = encodedLength(str);
+				const str_length = encodedLength(str);
 
 				if(str_length > 0){
 
-					this.reserve(str_length);
+					reserve(str_length);
 
 					()@trusted{
-						this._length = str.encodeTo(this._all_chars);   //this._all_chars[0 .. str_length] = str[];
-						assert(str_length == this.length);
+						_length = str.encodeTo(_all_chars);   //_all_chars[0 .. str_length] = str[];
+						assert(str_length == length);
 					}();
 				}
 
@@ -1382,27 +1368,27 @@ public:
 			ref typeof(this) _op_assign(I)(const I val)return scope
 			if(isIntegral!I){
 
-				this.clear();
+				clear();
 				import std.conv : toChars;
 
-				const size_t len = encodedLength(val);
-				this.reserve(len);
+				const len = encodedLength(val);
+				reserve(len);
 
-				this._length = val.encodeTo(this._all_chars);
+				_length = val.encodeTo(_all_chars);
 
 				return this;
 			}
 
 			ref typeof(this) _op_assign(C, size_t N)(ref scope const C[N] str)return scope pure nothrow @trusted @nogc
 			if(isSmallCharArray!(typeof(str))){
-				this.clear();
+				clear();
 
-				const size_t str_length = str.length;	//encodedLength!Char(str);
+				const str_length = str.length;	//encodedLength!Char(str);
 
 				if(str_length > 0){
 					()@trusted{
-						this._length = str[].encodeTo(this._all_chars);   //this._all_chars[0 .. str_length] = str[];
-						assert(str_length == this.length);
+						_length = str[].encodeTo(_all_chars);   //_all_chars[0 .. str_length] = str[];
+						assert(str_length == length);
 					}();
 				}
 
@@ -1410,15 +1396,15 @@ public:
 			}
 
 			ref typeof(this) _op_assign(Args...)(auto ref scope const BasicString!Args str)return scope{
-				return this._op_assign(str._chars);
+				return _op_assign(str._chars);
 			}
 
 			ref typeof(this) _op_assign(ref return scope typeof(this) str)return scope {
-				return this._op_assign(str._chars);
+				return _op_assign(str._chars);
 			}
 
 			ref typeof(this) _op_assign(return scope typeof(this) str)return scope{
-				this.destroy();
+				destroy();
 				moveEmplaceImpl(str, this);
 				return this;
 			}
@@ -1449,15 +1435,15 @@ public:
 				assert(str == "12345678");
 				--------------------
 		*/
-		public ref typeof(this) opOpAssign(string op : "+")(scope const Char[] rhs)return scope{
-			this.append(rhs[]);
+		ref typeof(this) opOpAssign(string op : "+")(scope const Char[] rhs)return scope{
+			append(rhs[]);
 			return this;
 		}
 
 		/// ditto
-		public ref typeof(this) opOpAssign(string op : "+", Val)(auto ref scope Val rhs)return scope
+		ref typeof(this) opOpAssign(string op : "+", Val)(auto ref scope Val rhs)return scope
 		if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isCharArray!Val || isIntegral!Val){
-			this.append(rhs);
+			append(rhs);
 			return this;
 		}
 
@@ -1483,33 +1469,33 @@ public:
 				assert(str == "123456");
 				--------------------
 		*/
-		public typeof(this) opBinary(string op : "+")(scope const Char[] rhs)scope{
+		typeof(this) opBinary(string op : "+")(scope const Char[] rhs)scope{
 			static if(hasStatelessAllocator)
-				return this.build(this._chars, rhs);
+				return build(_chars, rhs);
 			else
-				return this.build(this._allocator, this._chars, rhs);
+				return build(_allocator, _chars, rhs);
 		}
 
 		/// ditto
-		public typeof(this) opBinary(string op : "+", Val)(auto ref scope const Val rhs)scope
+		typeof(this) opBinary(string op : "+", Val)(auto ref scope const Val rhs)scope
 		if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isCharArray!Val || isIntegral!Val){
 			static if(isBasicString!Val){
 				static if(hasStatelessAllocator)
-					return this.build(this._chars, rhs._chars);
+					return build(_chars, rhs._chars);
 				else
-					return this.build(this._allocator, this._chars, rhs._chars);
+					return build(_allocator, _chars, rhs._chars);
 			}
 			else static if( isSomeString!Val || isCharArray!Val){
 				static if(hasStatelessAllocator)
-					return this.build(this._chars, rhs[]);
+					return build(_chars, rhs[]);
 				else
-					return this.build(this._allocator, this._chars, rhs[]);
+					return build(_allocator, _chars, rhs[]);
 			}
 			else static if(isSomeChar!Val || isIntegral!Val){
 				static if(hasStatelessAllocator)
-					return this.build(this._chars, rhs);
+					return build(_chars, rhs);
 				else
-					return this.build(this._allocator, this._chars, rhs);
+					return build(_allocator, _chars, rhs);
 
 			}
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
@@ -1537,27 +1523,27 @@ public:
 				assert(str == "654321");
 				--------------------
 		*/
-		public typeof(this) opBinaryRight(string op : "+")(scope const Char[] lhs)scope{
+		typeof(this) opBinaryRight(string op : "+")(scope const Char[] lhs)scope{
 			static if(hasStatelessAllocator)
-				return this.build(lhs, this._chars);
+				return build(lhs, _chars);
 			else
-				return this.build(this._allocator, lhs, this._chars);
+				return build(_allocator, lhs, _chars);
 		}
 
 		/// ditto
-		public typeof(this) opBinaryRight(string op : "+", Val)(auto ref scope const Val lhs)scope
+		typeof(this) opBinaryRight(string op : "+", Val)(auto ref scope const Val lhs)scope
 		if(isSomeChar!Val || isOtherString!Val || isCharArray!Val || isIntegral!Val){
 			static if(isSomeString!Val || isCharArray!Val){
 				static if(hasStatelessAllocator)
-					return this.build(lhs[], this._chars);
+					return build(lhs[], _chars);
 				else
-					return this.build(this._allocator, lhs[], this._chars);
+					return build(_allocator, lhs[], _chars);
 			}
 			else static if(isSomeChar!Val || isIntegral!Val){
 				static if(hasStatelessAllocator)
-					return this.build(lhs, this._chars);
+					return build(lhs, _chars);
 				else
-					return this.build(this._allocator, lhs, this._chars);
+					return build(_allocator, lhs, _chars);
 			}
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
@@ -1567,8 +1553,8 @@ public:
 		/**
 			Calculates the hash value of string.
 		*/
-		public size_t toHash()const pure nothrow @safe @nogc{
-			return hashOf(this._chars);
+		size_t toHash()const pure nothrow @safe @nogc{
+			return hashOf(_chars);
 		}
 
 
@@ -1602,27 +1588,27 @@ public:
 				assert(only('1', '2', '3') == str);
 				--------------------
 		*/
-		public bool opEquals(scope const Char[] rhs)const scope pure nothrow @safe @nogc{
-			return this._op_equals(rhs[]);
+		bool opEquals(scope const Char[] rhs)const scope pure nothrow @safe @nogc{
+			return _op_equals(rhs[]);
 		}
 
 		/// ditto
-		public bool opEquals(Val)(auto ref scope Val rhs)const scope
+		bool opEquals(Val)(auto ref scope Val rhs)const scope
 		if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isCharArray!Val || isIntegral!Val || isInputCharRange!Val){
 			static if(isBasicString!Val)
-				return this._op_equals(rhs._chars);
+				return _op_equals(rhs._chars);
 			else static if(isSomeString!Val || isCharArray!Val)
-				return this._op_equals(rhs[]);
+				return _op_equals(rhs[]);
 			else static if(isSomeChar!Val){
 				import std.range : only;
-				return this._op_equals(only(rhs));
+				return _op_equals(only(rhs));
 			}
 			else static if(isIntegral!Val){
 				import std.conv : toChars;
-				return this._op_equals(toChars(rhs + 0));
+				return _op_equals(toChars(rhs + 0));
 			}
 			else static if(isInputRange!Val)
-				return this._op_equals(rhs);
+				return _op_equals(rhs);
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
 
@@ -1632,7 +1618,7 @@ public:
 			import std.range : empty, hasLength;
 
 			alias RhsChar = Unqual!(ElementEncodingType!Range);
-			auto lhs = this._chars;
+			auto lhs = _chars;
 
 			enum lengthComperable = hasLength!Range && is(Unqual!Char == RhsChar);
 
@@ -1694,31 +1680,31 @@ public:
 		/**
 			Compares the contents of a string with another string, range, char/wchar/dchar or integer.
 		*/
-		public int opCmp(scope const Char[] rhs)const scope pure nothrow @safe @nogc{
+		int opCmp(scope const Char[] rhs)const scope pure nothrow @safe @nogc{
 			import std.algorithm.comparison : cmp;
 
 			//return cmp(this[], rhs[]);
-			return this._op_cmp(rhs[]);
+			return _op_cmp(rhs[]);
 		}
 
 		/// ditto
-		public int opCmp(Val)(auto ref scope Val rhs)const scope
+		int opCmp(Val)(auto ref scope Val rhs)const scope
 		if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isCharArray!Val || isIntegral!Val || isInputCharRange!Val){
 
 			static if(isBasicString!Val)
-				return this._op_cmp(rhs._chars);
+				return _op_cmp(rhs._chars);
 			else static if(isSomeString!Val || isCharArray!Val)
-				return this._op_cmp(rhs[]);
+				return _op_cmp(rhs[]);
 			else static if(isSomeChar!Val){
 				import std.range : only;
-				return this._op_cmp(only(rhs));
+				return _op_cmp(only(rhs));
 			}
 			else static if(isIntegral!Val){
 				import std.conv : toChars;
-				return this._op_cmp(toChars(rhs + 0));
+				return _op_cmp(toChars(rhs + 0));
 			}
 			else static if(isInputRange!Val)
-				return this._op_cmp(val);
+				return _op_cmp(val);
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
 
@@ -1727,7 +1713,7 @@ public:
 		if(isInputCharRange!Range){
 			import std.range : empty;
 
-			auto lhs = this._chars;
+			auto lhs = _chars;
 			alias RhsChar = Unqual!(ElementEncodingType!Range);
 
 			while(true){
@@ -1780,8 +1766,8 @@ public:
 				assert(slice.ptr !is str.ptr);  // slice contains dangling pointer.
 				--------------------
 		*/
-		public inout(Char)[] opSlice()inout scope return pure nothrow @system @nogc{
-			return this._chars;
+		inout(Char)[] opSlice()inout scope return pure nothrow @system @nogc{
+			return _chars;
 		}
 
 		/**
@@ -1796,13 +1782,11 @@ public:
 				assert(str[1 .. $-1] == "2345");
 				--------------------
 		*/
-		public inout(Char)[] opSlice(size_t begin, size_t end)inout scope return pure nothrow @system @nogc{
-			begin = min(this.length, begin);
-			end = min(this.length, end);
+		inout(Char)[] opSlice(size_t begin, size_t end)inout return pure nothrow @system @nogc{
+			begin = min(length, begin);
+			end = min(length, end);
 
-			return this._sso
-				? this._short.data[begin .. end]
-				: this._long.ptr[begin .. end];
+			return _sso ? _short.data[begin .. end] : _long.ptr[begin .. end];
 		}
 
 
@@ -1816,12 +1800,12 @@ public:
 				assert(str[1] == 'b');
 				--------------------
 		*/
-		public Char opIndex(const size_t pos)const scope pure nothrow @trusted @nogc{
-			assert(0 <= pos && pos < this.length, "error");
+		Char opIndex(in size_t pos)const scope pure nothrow @trusted @nogc{
+			assert(0 <= pos && pos < length, "error");
 
-			return this._sso
-				? this._short.data[pos]
-				: *(this._long.ptr + pos);
+			return _sso
+				? _short.data[pos]
+				: *(_long.ptr + pos);
 		}
 
 
@@ -1840,13 +1824,13 @@ public:
 				assert(str == "axcd");
 				--------------------
 		*/
-		public Char opIndexAssign(const Char val, const size_t pos)scope pure nothrow @trusted @nogc{
-			assert(0 <= pos && pos < this.length, "error");
+		Char opIndexAssign(const Char val, in size_t pos)scope pure nothrow @trusted @nogc{
+			assert(0 <= pos && pos < length, "error");
 
-			if(this._sso)
-				this._short.data[pos] = val;
+			if(_sso)
+				_short.data[pos] = val;
 			else
-				*(this._long.ptr + pos) = val;
+				*(_long.ptr + pos) = val;
 
 			return val;
 		}
@@ -1858,8 +1842,8 @@ public:
 
 			Same as `length()`.
 		*/
-		public size_t opDollar()const scope pure nothrow @safe @nogc{
-			return this.length;
+		size_t opDollar()const scope pure nothrow @safe @nogc{
+			return length;
 		}
 
 
@@ -1883,13 +1867,12 @@ public:
 				assert(b == "2");
 				--------------------
 		*/
-		public void proxySwap(ref scope typeof(this) rhs)scope pure nothrow @trusted @nogc{
+		void proxySwap(ref scope typeof(this) rhs)scope pure nothrow @trusted @nogc{
 			import std.algorithm.mutation : swap;
-			swap(this._raw, rhs._raw);
+			swap(_raw, rhs._raw);
 
 			static if(!hasStatelessAllocator)
-				swap(this._allocator, rhs._allocator);
-
+				swap(_allocator, rhs._allocator);
 		}
 
 
@@ -1934,34 +1917,34 @@ public:
 				assert(str == "1234");
 				--------------------
 		*/
-		public size_t append(const Char[] val, const size_t count = 1)scope{
-			return this._append_impl(val, count);
+		size_t append(const Char[] val, in size_t count = 1)scope{
+			return _append_impl(val, count);
 		}
 
 		/// ditto
-		public size_t append(Val)(auto ref scope const Val val, const size_t count = 1)scope
+		size_t append(Val)(auto ref scope const Val val, in size_t count = 1)scope
 		if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isCharArray!Val || isIntegral!Val){
 
 			static if(isBasicString!Val)
-				return this._append_impl(val._chars, count);
+				return _append_impl(val._chars, count);
 			else static if(isSomeString!Val || isCharArray!Val)
-				return this._append_impl(val[], count);
+				return _append_impl(val[], count);
 			else static if(isSomeChar!Val || isIntegral!Val)
-				return this._append_impl(val, count);
+				return _append_impl(val, count);
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
 
 
-		private size_t _append_impl(Val)(const Val val, const size_t count)scope
+		private size_t _append_impl(Val)(const Val val, in size_t count)scope
 		if(isSomeChar!Val || isSomeString!Val || isIntegral!Val){
 			if(count == 0)
 				return 0;
 
-			const size_t old_length = this.length;
-			const size_t new_count = count * encodedLength(val);
+			const old_length = length;
+			const new_count = count * encodedLength(val);
 
-			Char[] new_chars = this._expand(new_count);
-			const size_t tmp = val.encodeTo(new_chars, count);
+			Char[] new_chars = _expand(new_count);
+			const tmp = val.encodeTo(new_chars, count);
 			assert(tmp == new_count);
 			return tmp;
 		}
@@ -1975,7 +1958,7 @@ public:
 
 			If parameters are out of range then there is no inserted value and in debug mode assert throw error.
 
-			Parameters are out of range if `pos` is larger then `.length` or `ptr` is smaller then `this.ptr` or `ptr` point to address larger then `this.ptr + this.length`
+			Parameters are out of range if `pos` is larger then `.length` or `ptr` is smaller then `ptr` or `ptr` point to address larger then `ptr + length`
 
 			Parameters:
 				`pos` Insertion point, the new contents are inserted before the character at position `pos`.
@@ -2033,58 +2016,58 @@ public:
 				--------------------
 
 		*/
-		public size_t insert(const size_t pos, const scope Char[] val, const size_t count = 1)scope{
-			return this._insert_impl(pos, val, count);
+		size_t insert(in size_t pos, const scope Char[] val, in size_t count = 1)scope{
+			return _insert_impl(pos, val, count);
 		}
 
 		/// ditto
-		public size_t insert(Val)(const size_t pos, auto ref const scope Val val, const size_t count = 1)scope
+		size_t insert(Val)(in size_t pos, auto ref const scope Val val, in size_t count = 1)scope
 		if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isIntegral!Val){
 			static if(isBasicString!Val || isSomeString!Val)
-				return this._insert_impl(pos, val[], count);
+				return _insert_impl(pos, val[], count);
 			else static if(isSomeChar!Val || isIntegral!Val)
-				return this._insert_impl(pos, val, count);
+				return _insert_impl(pos, val, count);
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
 
 		/// ditto
-		public size_t insert(const Char* ptr, const scope Char[] val, const size_t count = 1)scope{
-			const size_t pos = this._insert_ptr_to_pos(ptr);
+		size_t insert(const Char* ptr, const scope Char[] val, in size_t count = 1)scope{
+			const pos = _insert_ptr_to_pos(ptr);
 
-			return this._insert_impl(pos, val, count);
+			return _insert_impl(pos, val, count);
 		}
 
 		/// ditto
-		public size_t insert(Val)(const Char* ptr, auto ref const scope Val val, const size_t count = 1)scope
+		size_t insert(Val)(const Char* ptr, auto ref const scope Val val, in size_t count = 1)scope
 		if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isIntegral!Val){
-			const size_t pos = this._insert_ptr_to_pos(ptr);
+			const pos = _insert_ptr_to_pos(ptr);
 
 			static if(isBasicString!Val || isSomeString!Val)
-				return this._insert_impl(pos, val[], count);
+				return _insert_impl(pos, val[], count);
 			else static if(isSomeChar!Val || isIntegral!Val)
-				return this._insert_impl(pos, val, count);
+				return _insert_impl(pos, val, count);
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
 
 
 		private size_t _insert_ptr_to_pos(const Char* ptr)scope const pure nothrow @trusted @nogc{
-			const chars = this._chars;
+			const chars = _chars;
 
 			return ptr > chars.ptr
 				? ptr - chars.ptr
 				: 0;
 		}
 
-		private size_t _insert_impl(Val)(const size_t pos, const Val val, const size_t count)scope
+		private size_t _insert_impl(Val)(in size_t pos, const Val val, in size_t count)scope
 		if(isSomeChar!Val || isSomeString!Val || isIntegral!I){
 
-			const size_t new_count = count * encodedLength(val);
+			const new_count = count * encodedLength(val);
 			if(new_count == 0)
 				return 0;
 
-			//auto chars = this._chars;
+			//auto chars = _chars;
 
-			Char[] new_chars = this._expand_move(pos, new_count);
+			Char[] new_chars = _expand_move(pos, new_count);
 
 			return val.encodeTo(new_chars, count);
 		}
@@ -2132,41 +2115,41 @@ public:
 				assert(str == "2345");
 				--------------------
 		*/
-		public void erase(const size_t pos)scope pure nothrow @trusted @nogc{
-			this._length = min(this.length, pos);
+		void erase(in size_t pos)scope pure nothrow @trusted @nogc{
+			_length = min(length, pos);
 		}
 
 		/// ditto
-		public void erase(const size_t pos, const size_t n)scope pure nothrow @trusted @nogc{
-			const chars = this._chars;
+		void erase(in size_t pos, in size_t n)scope pure nothrow @trusted @nogc{
+			const chars = _chars;
 
 			if(pos >= chars.length)
 				return;
 
-			const size_t top = (pos + n);
+			const top = pos + n;
 
 			if(top >= chars.length)
-				this._length = pos;
+				_length = pos;
 			else if(n != 0)
-				this._reduce_move(top, n);
+				_reduce_move(top, n);
 		}
 
 		/// ditto
-		public void erase(scope const Char* ptr)scope pure nothrow @trusted @nogc{
-			const chars = this._chars;
+		void erase(scope const Char* ptr)scope pure nothrow @trusted @nogc{
+			const chars = _chars;
 
 			if(ptr <= chars.ptr)
-				this._length = 0;
+				_length = 0;
 			else
-				this._length = min(chars.length, ptr - chars.ptr);
+				_length = min(chars.length, ptr - chars.ptr);
 		}
 
 		/// ditto
-		public void erase(scope const Char[] slice)scope pure nothrow @trusted @nogc{
-			const chars = this._chars;
+		void erase(scope const Char[] slice)scope pure nothrow @trusted @nogc{
+			const chars = _chars;
 
 			if(slice.ptr <= chars.ptr){
-				const size_t offset = (chars.ptr - slice.ptr);
+				const offset = chars.ptr - slice.ptr;
 
 				if(slice.length <= offset)
 					return;
@@ -2174,13 +2157,13 @@ public:
 				enum size_t pos = 0;
 
 
-				const size_t len = (slice.length - offset);
-				const size_t top = pos + len;   //alias top = len;
+				const len = slice.length - offset;
+				const top = pos + len;   //alias top = len;
 
 				if(top >= chars.length)
-					this._length = pos;
+					_length = pos;
 				else
-					this._reduce_move(top, len);
+					_reduce_move(top, len);
 			}
 			else{
 				const offset = (slice.ptr - chars.ptr);
@@ -2194,9 +2177,9 @@ public:
 				const top = pos + len;
 
 				if(top >= chars.length)
-					this._length = pos;
+					_length = pos;
 				else if(len != 0)
-					this._reduce_move(top, len);
+					_reduce_move(top, len);
 
 			}
 		}
@@ -2263,76 +2246,76 @@ public:
 				assert(str == "12xy56");
 				--------------------
 		*/
-		public ref typeof(this) replace(const size_t pos, const size_t len, scope const Char[] val, const size_t count = 1)return scope{
-			return this._replace_impl(pos, len, val, count);
+		ref typeof(this) replace(in size_t pos, in size_t len, scope const Char[] val, in size_t count = 1)return scope{
+			return _replace_impl(pos, len, val, count);
 		}
 
 		/// ditto
-		public ref typeof(this) replace(Val)(const size_t pos, const size_t len, auto ref scope const Val val, const size_t count = 1)return scope
+		ref typeof(this) replace(Val)(in size_t pos, in size_t len, auto ref scope const Val val, in size_t count = 1)return scope
 		if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isIntegral!Val || isCharArray!Val){
 
 			static if(isBasicString!Val || isSomeString!Val || isCharArray!Val)
-				return this._replace_impl(pos, len, val[], count);
+				return _replace_impl(pos, len, val[], count);
 			else static if(isSomeChar!Val || isIntegral!Val)
-				return this._replace_impl(pos, len, val, count);
+				return _replace_impl(pos, len, val, count);
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
 
 		/// ditto
-		public ref typeof(this) replace(scope const Char[] slice, scope const Char[] val, const size_t count = 1)return scope{
-			return this._replace_impl(slice, val, count);
+		ref typeof(this) replace(scope const Char[] slice, scope const Char[] val, in size_t count = 1)return scope{
+			return _replace_impl(slice, val, count);
 		}
 
 		/// ditto
-		public ref typeof(this) replace(Val)(scope const Char[] slice, auto ref scope const Val val, const size_t count = 1)return scope
+		ref typeof(this) replace(Val)(scope const Char[] slice, auto ref scope const Val val, in size_t count = 1)return scope
 		if(isBasicString!Val || isSomeChar!Val || isOtherString!Val || isIntegral!Val || isCharArray!Val){
 
 			static if(isBasicString!Val || isSomeString!Val || isCharArray!Val)
-				return this._replace_impl(slice, val[], count);
+				return _replace_impl(slice, val[], count);
 			else static if(isSomeChar!Val || isIntegral!Val)
-				return this._replace_impl(slice, val, count);
+				return _replace_impl(slice, val, count);
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
 
 
-		private ref typeof(this) _replace_impl(Val)(scope const Char[] slice, scope const Val val, const size_t count)return scope
+		private ref typeof(this) _replace_impl(Val)(scope const Char[] slice, scope const Val val, in size_t count)return scope
 		if(isSomeChar!Val || isSomeString!Val || isIntegral!Val){
-			const chars = this._chars;
+			const chars = _chars;
 
 			if(slice.ptr < chars.ptr){
 				const offset = (()@trusted => chars.ptr - slice.ptr)();
 				const pos = 0;
-				const len = (slice.length > offset)
-					? (slice.length - offset)
+				const len = slice.length > offset
+					? slice.length - offset
 					: 0;
 
-				return this._replace_impl(pos, len, val, count);
+				return _replace_impl(pos, len, val, count);
 			}
 			else{
 				const offset = (()@trusted => slice.ptr - chars.ptr)();
 				const pos = offset;
 				const len = slice.length;
 
-				return this._replace_impl(pos, len, val, count);
+				return _replace_impl(pos, len, val, count);
 			}
 		}
 
-		private ref typeof(this) _replace_impl(Val)(const size_t pos, const size_t len, scope const Val val, const size_t count)return scope
+		private ref typeof(this) _replace_impl(Val)(in size_t pos, in size_t len, scope const Val val, in size_t count)return scope
 		if(isSomeChar!Val || isSomeString!Val || isIntegral!Val){
 
-			const size_t new_count = count * encodedLength(val);
+			const new_count = count * encodedLength(val);
 			if(new_count == 0){
-				this.erase(pos, len);
+				erase(pos, len);
 				return this;
 			}
 
 			assert(new_count != 0);
 
-			auto chars = this._chars;
+			auto chars = _chars;
 			const old_length = chars.length;
 			const begin = min(pos, chars.length);    //alias begin = pos;
 
-			const end = min(chars.length, (pos + len));
+			const end = min(chars.length, pos + len);
 			const new_len = min(end - begin, new_count);
 			//const new_len = min(len, new_count);
 			//const end = (begin + new_len);
@@ -2340,7 +2323,7 @@ public:
 
 			if(begin == end){
 				///insert:
-				Char[] new_chars = this._expand_move(begin, new_count);
+				Char[] new_chars = _expand_move(begin, new_count);
 				const x = val.encodeTo(new_chars, count);
 				assert(x == new_count);
 
@@ -2356,16 +2339,16 @@ public:
 				assert(x == new_count);
 
 				()@trusted{
-					this._reduce_move(end, (new_len - new_count));
+					_reduce_move(end, new_len - new_count);
 				}();
 			}
 			else{
 				///asing + expand(insert):
 				assert(new_count > new_len);
 
-				const size_t expand_len = (new_count - new_len);
+				const expand_len = new_count - new_len;
 
-				Char[] new_chars = this._expand_move(end, expand_len);
+				Char[] new_chars = _expand_move(end, expand_len);
 
 				const x = val.encodeTo((()@trusted => (new_chars.ptr - new_len)[0 .. new_count])(), count);
 				assert(x == new_count);
@@ -2404,7 +2387,7 @@ public:
 				assert(str == "12345678");
 				--------------------
 		*/
-		public static typeof(this) build(Args...)(scope return AllocatorWithState[0 .. $] allocator, auto ref scope const Args args){
+		static typeof(this) build(Args...)(scope return AllocatorWithState[0 .. $] allocator, auto ref scope const Args args){
 			import core.lifetime : forward;
 
 			static if(hasStatelessAllocator)
@@ -2414,19 +2397,17 @@ public:
 
 			result._build_impl(forwardBasicString!args);
 
-			return ()@trusted{
-				return result;
-			}();
+			return (()@trusted => result)();
 		}
 
 		private void _build_impl(Args...)(auto ref scope const Args args)scope{
 			import std.traits : isArray;
 
-			assert(this.empty);
-			//this.clear();
+			assert(empty);
+			//clear();
 			size_t new_length = 0;
 
-			static foreach(enum I, alias Arg; Args){
+			static foreach(I, alias Arg; Args){
 				static if(isBasicString!Arg)
 					new_length += encodedLength(args[I]._chars);
 				else static if(isArray!Arg && isSomeChar!(ElementEncodingType!Arg))
@@ -2448,7 +2429,7 @@ public:
 
 			Char[] data = result._all_chars;
 
-			static foreach(enum I, alias Arg; Args){
+			static foreach(I, alias Arg; Args){
 				static if(isBasicString!Arg)
 					data = data[args[I]._chars.encodeTo(data) .. $];
 				else static if(isArray!Arg)
@@ -2524,13 +2505,12 @@ public:
 			if(from == 0)
 				return 1;
 
-			return cast(size_t)(cast(int)(log10(abs(from))+1) + (from < 0 ? 1 : 0));
-
+			return cast(int)(log10(abs(from)) + 1) + (from < 0 ? 1 : 0);
 		}
 
 
 
-		size_t encodeTo(From)(scope const(From)[] from, scope _Char[] to, const size_t count = 1)pure nothrow @nogc
+		size_t encodeTo(From)(scope const(From)[] from, scope _Char[] to, in size_t count = 1)pure nothrow @nogc
 		if(isSomeChar!From){
 
 			if(count == 0)
@@ -2542,7 +2522,7 @@ public:
 
 			static if(_Char.sizeof == From.sizeof){
 
-				const size_t len = from.length;
+				const len = from.length;
 				()@trusted{
 					assert(to.length >= len);
 					assert(from.length <= len);
@@ -2572,7 +2552,7 @@ public:
 			return len * count;
 		}
 
-		size_t encodeTo(From)(const From from, scope _Char[] to, const size_t count = 1)pure nothrow @nogc
+		size_t encodeTo(From)(const From from, scope _Char[] to, in size_t count = 1)pure nothrow @nogc
 		if(isSomeChar!From){
 
 			if(count == 0)
@@ -2591,12 +2571,12 @@ public:
 				}
 			}
 			else{
-				const size_t len = dchar(from).encode(to[]);
+				const len = dchar(from).encode(to[]);
 
 				for(size_t i = 1; i < count; ++i){
 					//to[len .. len * 2] = to[0 .. len];
 					()@trusted{
-						assert(to.length >= (len * 2));
+						assert(to.length >= len * 2);
 						_memcpy(to.ptr + len, to.ptr, len); //to[0 .. len] = from[];
 					}();
 					to = to[len .. $];
@@ -2610,7 +2590,7 @@ public:
 			return len * count;
 		}
 
-		size_t encodeTo(From)(const From from, scope _Char[] to, const size_t count = 1)pure nothrow @nogc
+		size_t encodeTo(From)(const From from, scope _Char[] to, in size_t count = 1)pure nothrow @nogc
 		if(isIntegral!From){
 			import std.conv : toChars;
 
@@ -2627,8 +2607,6 @@ public:
 			}
 
 			return ichars.length * count;
-
-
 		}
 
 	}

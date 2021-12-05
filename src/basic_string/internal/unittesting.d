@@ -60,7 +60,7 @@ struct TestStatelessAllocator(bool Realloc){
         if(data.length == 0)
             return null;
 
-        this.add(data);
+        add(data);
 
         return data;
     }
@@ -69,7 +69,7 @@ struct TestStatelessAllocator(bool Realloc){
         const result = Mallocator.instance.deallocate(b);
         assert(result);
 
-        this.del(b);
+        del(b);
 
         return result;
 
@@ -81,8 +81,8 @@ struct TestStatelessAllocator(bool Realloc){
 
             const result = Mallocator.instance.reallocate(b, s);
 
-            this.del(old);
-            this.add(b);
+            del(old);
+            add(b);
 
             return result;
 
@@ -157,7 +157,7 @@ class TestStateAllocator(bool Realloc){
         if(data.length == 0)
             return null;
 
-        this.add(data);
+        add(data);
 
         return data;
     }
@@ -166,7 +166,7 @@ class TestStateAllocator(bool Realloc){
         const result = Mallocator.instance.deallocate(b);
         assert(result);
 
-        this.del(b);
+        del(b);
 
         return result;
 
@@ -178,8 +178,8 @@ class TestStateAllocator(bool Realloc){
 
             const result = Mallocator.instance.reallocate(b, s);
 
-            this.del(old);
-            this.add(b);
+            del(old);
+            add(b);
 
             return result;
 
@@ -279,11 +279,11 @@ version(basic_string_unittest){
         else
             alias allocatorWithState = AliasSeq!(allocator);
 
-        static foreach(enum val; AliasSeq!(
+        static foreach(val; AliasSeq!(
             "0123",
             "0123456789_0123456789_0123456789_0123456789",
         ))
-        static foreach(enum I; AliasSeq!(1, 2, 3, 4)){{
+        static foreach(I; AliasSeq!(1, 2, 3, 4)){{
             static if(I == 1){
                 char[val.length] s = val;
                 wchar[val.length] w = val;
@@ -336,12 +336,12 @@ version(basic_string_unittest){
         else
             alias allocatorWithState = AliasSeq!(allocator);
 
-        static foreach(enum val; AliasSeq!(
+        static foreach(val; AliasSeq!(
             cast(char)'1',
             cast(wchar)'2',
             cast(dchar)'3',
         ))
-        static foreach(enum I; AliasSeq!(1, 2, 3)){{
+        static foreach(I; AliasSeq!(1, 2, 3)){{
             static if(I == 1){
                 char c = val;
                 wchar w = val;
@@ -418,7 +418,7 @@ version(basic_string_unittest){
         else
             alias allocatorWithState = AliasSeq!(allocator);
 
-        static foreach(enum I; AliasSeq!(1, 2, 3, 4)){{
+        static foreach(I; AliasSeq!(1, 2, 3, 4)){{
             static if(I == 1){
                 auto s = BasicString!(char, Allocator)(allocatorWithState, "45");
                 auto w = BasicString!(wchar, Allocator)(allocatorWithState, "67");
@@ -478,7 +478,7 @@ version(basic_string_unittest){
         else
             alias allocatorWithState = AliasSeq!(allocator);
 
-        static foreach(enum I; AliasSeq!(1, 2)){{
+        static foreach(I; AliasSeq!(1, 2)){{
             static if(I == 1){
                 char c = 'a';
                 wchar w = 'b';
@@ -526,18 +526,18 @@ version(basic_string_unittest){
         else
             alias allocatorWithState = AliasSeq!(allocator);
 
-        static foreach(enum val; AliasSeq!(
+        static foreach(val; AliasSeq!(
             "0123",
             "0123456789_0123456789_0123456789_0123456789",
         ))
-        static foreach(enum rep; AliasSeq!(
+        static foreach(rep; AliasSeq!(
             'x',
             "",
             "a",
             "ab",
             "abcdefgh_abcdefgh_abcdefgh_abcdefgh",
         ))
-        static foreach(enum size_t count; AliasSeq!(0, 1, 2, 3))
+        static foreach(count; AliasSeq!(0, 1, 2, 3))
         static foreach(alias T; AliasSeq!(char, wchar, dchar)){{
             import std.traits : isArray;
 
@@ -572,18 +572,18 @@ version(basic_string_unittest){
         else
             alias allocatorWithState = AliasSeq!(allocator);
 
-        static foreach(enum val; AliasSeq!(
+        static foreach(val; AliasSeq!(
             "0123",
             "0123456789_0123456789_0123456789_0123456789",
         ))
-        static foreach(enum rep_source; AliasSeq!(
+        static foreach(rep_source; AliasSeq!(
             'x',
             "",
             "a",
             "ab",
             "abcdefgh_abcdefgh_abcdefgh_abcdefgh",
         ))
-        static foreach(enum size_t count; AliasSeq!(0, 1, 2, 3))
+        static foreach(count; AliasSeq!(0, 1, 2, 3))
         static foreach(alias T; AliasSeq!(char, wchar, dchar)){{
             import std.traits : isArray;
 
@@ -673,7 +673,7 @@ version(basic_string_unittest){
         else
             alias allocatorWithState = AliasSeq!(allocator);
 
-        static foreach(enum val; AliasSeq!(
+        static foreach(val; AliasSeq!(
             "0123",
             "0123456789_0123456789_0123456789_0123456789",
         )){
@@ -760,18 +760,18 @@ version(basic_string_unittest){
         else
             alias allocatorWithState = AliasSeq!(allocator);
 
-        static foreach(enum val; AliasSeq!(
+        static foreach(val; AliasSeq!(
             "0123",
             "0123456789_0123456789_0123456789_0123456789",
         ))
-        static foreach(enum rep_source; AliasSeq!(
+        static foreach(rep_source; AliasSeq!(
             'x',
             "",
             "a",
             "ab",
             "abcdefgh_abcdefgh_abcdefgh_abcdefgh",
         ))
-        static foreach(enum size_t count; AliasSeq!(0, 1, 2, 3))
+        static foreach(count; AliasSeq!(0, 1, 2, 3))
         static foreach(alias T; AliasSeq!(char, wchar, dchar)){{
             import std.traits : isArray;
 
