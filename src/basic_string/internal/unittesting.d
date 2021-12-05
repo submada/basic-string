@@ -911,7 +911,7 @@ version(basic_string_unittest)
 nothrow unittest{
     version(D_BetterC){}
     else{
-        static foreach(enum bool Realloc; [false, true]){
+        static foreach(Realloc; [false, true]){
             {
                 alias AX = TestStatelessAllocator!Realloc;
 
@@ -926,7 +926,6 @@ nothrow unittest{
                 alias AX = TestStateAllocator!Realloc;
 
                 auto allocator = new AX;
-
 
                 assert(allocator.empty);
 
@@ -954,9 +953,7 @@ nothrow unittest{
                 }
 
                 assert(allocator.empty);
-
             }
         }
     }
 }
-

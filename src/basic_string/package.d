@@ -46,30 +46,31 @@ template BasicString(
 	size_t _Padding = 0,
 )
 if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
-	private import std.experimental.allocator.common :  stateSize;
-	private import std.range : isInputRange, ElementEncodingType, isRandomAccessRange;
-	private import std.traits : Unqual, isIntegral, hasMember, isArray, isSafe;
+private:
+	import std.experimental.allocator.common : stateSize;
+	import std.range : isInputRange, ElementEncodingType, isRandomAccessRange;
+	import std.traits : Unqual, isIntegral, hasMember, isArray, isSafe;
 
-	private import basic_string.internal.encoding;
+	import basic_string.internal.encoding;
 
-	private enum isOtherString(T) = true
-		&& isSomeString!T
+	enum isOtherString(T) =
+		isSomeString!T
 		&& !is(Unqual!(ElementEncodingType!T) == Unqual!_Char);
 
-	private enum isSmallCharArray(T) = is(T : C[N], C, size_t N)
+	enum isSmallCharArray(T) = is(T : C[N], C, size_t N)
 		&& isSomeChar!C
 		&& (N <= Short.capacity)
 		&& (C.sizeof <= _Char.sizeof);
 
-	private enum isCharArray(T) = is(T : C[N], C, size_t N)
+	enum isCharArray(T) = is(T : C[N], C, size_t N)
 		&& isSomeChar!C;
 
 	version(BigEndian){
 		static assert(0, "big endian systems are not supported");
 	}
-	else version(LittleEndian){
+	version(LittleEndian){
 
-		private struct Long{
+		struct Long{
 			size_t capacity;
 			size_t length;
 			_Char* ptr;
@@ -83,16 +84,16 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		}
 
 		static if((Long.sizeof / _Char.sizeof) <= ubyte.max)
-			private alias ShortLength = ubyte;
+			alias ShortLength = ubyte;
 		else static if((Long.sizeof / _Char.sizeof) <= ushort.max)
-			private alias ShortLength = ushort;
+			alias ShortLength = ushort;
 		else static if((Long.sizeof / _Char.sizeof) <= uint.max)
-			private alias ShortLength = uint;
+			alias ShortLength = uint;
 		else static if((Long.sizeof / _Char.sizeof) <= ulong.max)
-			private alias ShortLength = ulong;
+			alias ShortLength = ulong;
 		else static assert(0, "no impl");
 
-		private struct Short{
+		struct Short{
 			static assert((Long.sizeof - Header.sizeof) % _Char.sizeof == 0);
 
 			union Header{
@@ -123,10 +124,10 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 	else static assert(0, "no impl");
 
 
-	private struct Impl{}
+	struct Impl{}
 
 
-	private static void _memmove(T)(scope T* target, scope const(T)* source, size_t length)@trusted{
+	static void _memmove(T)(scope T* target, scope const(T)* source, size_t length)@trusted{
 		import core.stdc.string : memmove;
 
 		memmove(target, source, length * T.sizeof);
@@ -140,7 +141,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		}+/
 
 	}
-	private static void _memcpy(T)(scope T* target, scope const(T)* source, size_t length)@trusted{
+	static void _memcpy(T)(scope T* target, scope const(T)* source, size_t length)@trusted{
 		import core.stdc.string : memcpy;
 
 		memcpy(target, source, length * T.sizeof);
@@ -156,16 +157,18 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 	}
 
+public:
+
 	struct BasicString{
 		/**
 			True if allocator doesn't have state.
 		*/
-		enum bool hasStatelessAllocator = (stateSize!_Allocator == 0);
+		enum bool hasStatelessAllocator = stateSize!_Allocator == 0;
 
 
 
 		/**
-			Character type. (`char`, `wchar` or  `dchar`).
+			Character type. (`char`, `wchar` or `dchar`).
 		*/
 		public alias Char = _Char;
 
@@ -393,7 +396,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		//reduce/expand:
 		private{
 			void _reduce_move(const size_t pos, const size_t n)scope pure nothrow @system @nogc{
-				assert(pos  <= this.length);
+				assert(pos <= this.length);
 				assert(pos >= n);
 				assert(n > 0);
 
@@ -498,7 +501,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				--------------------
 		*/
 		public @property bool empty()const scope pure nothrow @safe @nogc{
-			return (this.length == 0);
+			return this.length == 0;
 		}
 
 
@@ -741,7 +744,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		public @property Char backCodeUnit()const scope pure nothrow @trusted @nogc{
 			auto chars = this._chars;
 
-			return (chars.length == 0)
+			return chars.length == 0
 				? Char.init
 				: chars[$ - 1];
 		}
@@ -750,7 +753,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		public @property Char backCodeUnit(const Char val)scope pure nothrow @trusted @nogc{
 			auto chars = this._chars;
 
-			return (chars.length == 0)
+			return chars.length == 0
 				? Char.init
 				: (chars[$ - 1] = val);
 		}
@@ -917,7 +920,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				--------------------
 		*/
 		public size_t reserve(const size_t n)scope{
-			return (this._sso)
+			return this._sso
 				? this._reserve_short(n)
 				: this._reserve_long(n);
 		}
@@ -1616,9 +1619,9 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			}
 			else static if(isIntegral!Val){
 				import std.conv : toChars;
-				return  this._op_equals(toChars(rhs + 0));
+				return this._op_equals(toChars(rhs + 0));
 			}
-			else static if(isInputRange!Val)         
+			else static if(isInputRange!Val)
 				return this._op_equals(rhs);
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
@@ -1631,7 +1634,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			alias RhsChar = Unqual!(ElementEncodingType!Range);
 			auto lhs = this._chars;
 
-			enum bool lengthComperable = hasLength!Range && is(Unqual!Char == RhsChar);
+			enum lengthComperable = hasLength!Range && is(Unqual!Char == RhsChar);
 
 			static if(lengthComperable){
 				if(lhs.length != rhs.length)
@@ -1645,7 +1648,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				else static if(Char.sizeof > RhsChar.sizeof){
 					if(lhs.length > rhs.length * (Char.sizeof / RhsChar.sizeof))
 						return false;
-				
+
 				}
 				else static assert(0, "no impl")
 			}+/
@@ -1660,13 +1663,13 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				else{
 					if(lhs.length == 0)
 						return rhs.empty;
-					
+
 					if(rhs.empty)
 						return false;
 				}
 
 				static if(is(Unqual!Char == RhsChar)){
-					
+
 					const a = lhs.frontCodeUnit;
 					lhs.popFrontCodeUnit();
 
@@ -1679,7 +1682,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 					const a = decode(lhs);
 					const b = decode(rhs);
 				}
-				
+
 				if(a != b)
 					return false;
 
@@ -2067,8 +2070,8 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		private size_t _insert_ptr_to_pos(const Char* ptr)scope const pure nothrow @trusted @nogc{
 			const chars = this._chars;
 
-			return (ptr > chars.ptr)
-				? (ptr - chars.ptr)
+			return ptr > chars.ptr
+				? ptr - chars.ptr
 				: 0;
 		}
 
@@ -2086,7 +2089,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			return val.encodeTo(new_chars, count);
 		}
 
-	    
+
 
 		/**
 			Removes specified characters from the string.
@@ -2180,15 +2183,15 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 					this._reduce_move(top, len);
 			}
 			else{
-				const size_t offset = (slice.ptr - chars.ptr);
+				const offset = (slice.ptr - chars.ptr);
 
 				if(chars.length <= offset)
 					return;
 
 				alias pos = offset;
 
-				const size_t len = slice.length;
-				const size_t top = pos + len;
+				const len = slice.length;
+				const top = pos + len;
 
 				if(top >= chars.length)
 					this._length = pos;
@@ -2297,18 +2300,18 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			const chars = this._chars;
 
 			if(slice.ptr < chars.ptr){
-				const size_t offset = (()@trusted => chars.ptr - slice.ptr)();
-				const size_t pos = 0;
-				const size_t len = (slice.length > offset)
+				const offset = (()@trusted => chars.ptr - slice.ptr)();
+				const pos = 0;
+				const len = (slice.length > offset)
 					? (slice.length - offset)
 					: 0;
 
 				return this._replace_impl(pos, len, val, count);
 			}
 			else{
-				const size_t offset = (()@trusted => slice.ptr - chars.ptr)();
-				const size_t pos = offset;
-				const size_t len = slice.length;
+				const offset = (()@trusted => slice.ptr - chars.ptr)();
+				const pos = offset;
+				const len = slice.length;
 
 				return this._replace_impl(pos, len, val, count);
 			}
@@ -2326,13 +2329,13 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			assert(new_count != 0);
 
 			auto chars = this._chars;
-			const size_t old_length = chars.length;
-			const size_t begin = min(pos, chars.length);    //alias begin = pos;
+			const old_length = chars.length;
+			const begin = min(pos, chars.length);    //alias begin = pos;
 
-			const size_t end = min(chars.length, (pos + len));
-			const size_t new_len = min(end - begin, new_count);
-			//const size_t new_len = min(len, new_count);
-			//const size_t end = (begin + new_len);
+			const end = min(chars.length, (pos + len));
+			const new_len = min(end - begin, new_count);
+			//const new_len = min(len, new_count);
+			//const end = (begin + new_len);
 
 
 			if(begin == end){
@@ -2426,7 +2429,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			static foreach(enum I, alias Arg; Args){
 				static if(isBasicString!Arg)
 					new_length += encodedLength(args[I]._chars);
-				else static if(isArray!Arg &&  isSomeChar!(ElementEncodingType!Arg))
+				else static if(isArray!Arg && isSomeChar!(ElementEncodingType!Arg))
 					new_length += encodedLength(args[I][]);
 				else static if(isSomeChar!Arg)
 					new_length += encodedLength(args[I]);
@@ -2443,7 +2446,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 
 
-			Char[] data = result._all_chars; 
+			Char[] data = result._all_chars;
 
 			static foreach(enum I, alias Arg; Args){
 				static if(isBasicString!Arg)
@@ -2566,7 +2569,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				to = to[len .. $];
 			}
 
-			return (len * count);
+			return len * count;
 		}
 
 		size_t encodeTo(From)(const From from, scope _Char[] to, const size_t count = 1)pure nothrow @nogc
@@ -2604,9 +2607,9 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			debug assert(predictedEncodedLength == len);
 
-			return (len * count);
+			return len * count;
 		}
-		
+
 		size_t encodeTo(From)(const From from, scope _Char[] to, const size_t count = 1)pure nothrow @nogc
 		if(isIntegral!From){
 			import std.conv : toChars;
@@ -2615,7 +2618,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				return 0;
 
 			auto ichars = toChars(from + 0);
-			
+
 			assert(encodedLength(from) == ichars.length);
 
 			for(size_t c = 0; c < count; ++c){
@@ -2623,8 +2626,8 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 					to[c+i] = ichars[i];
 			}
 
-			return (ichars.length * count);
-			
+			return ichars.length * count;
+
 
 		}
 
@@ -2645,21 +2648,17 @@ private{
 	version(D_BetterC){
 
 		private auto min(A, B)(auto ref A a, auto ref B b){
-			return (a < b)
-				? a
-				: b;
+			return a < b ? a : b;
 		}
 		private auto max(A, B)(auto ref A a, auto ref B b){
-			return (a > b)
-				? a
-				: b;
+			return a > b ? a : b;
 		}
 	}
 	else{
-		import std.algorithm.comparison :  min, max;
+		import std.algorithm.comparison : min, max;
 	}
 
-	
+
 	auto frontCodeUnit(Range)(auto ref Range r){
 		import std.traits : isAutodecodableString;
 
@@ -2670,7 +2669,7 @@ private{
 		}
 		else{
 			import std.range.primitives : front;
-			return  r.front;
+			return r.front;
 		}
 	}
 
@@ -2683,7 +2682,7 @@ private{
 		}
 		else{
 			import std.range.primitives : popFront;
-			return  r.popFront;
+			return r.popFront;
 		}
 	}
 
@@ -2704,8 +2703,8 @@ private{
 
 			static if(isBasicString!(typeof(arg))){
 				// by ref || lazy || const/immutable
-				static if (__traits(isRef,  arg) ||
-						   __traits(isOut,  arg) ||
+				static if (__traits(isRef, arg) ||
+						   __traits(isOut, arg) ||
 						   __traits(isLazy, arg) ||
 						   !is(typeof(moveBasicString(arg))))
 					alias fwd = arg;
