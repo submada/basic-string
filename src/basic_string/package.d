@@ -46,30 +46,17 @@ template BasicString(
 	size_t _Padding = 0,
 )
 if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
-	private import std.experimental.allocator.common :  stateSize;
-	private import std.range : isInputRange, ElementEncodingType, isRandomAccessRange;
-	private import std.traits : Unqual, isIntegral, hasMember, isArray, isSafe;
+	import std.experimental.allocator.common :  stateSize;
+	import std.range : isInputRange, ElementEncodingType, isRandomAccessRange;
+	import std.traits : Unqual, isIntegral, hasMember, isArray, isSafe;
 
-	private import basic_string.internal.encoding;
-
-	private enum isOtherString(T) = true
-		&& isSomeString!T
-		&& !is(Unqual!(ElementEncodingType!T) == Unqual!_Char);
-
-	private enum isSmallCharArray(T) = is(T : C[N], C, size_t N)
-		&& isSomeChar!C
-		&& (N <= Short.capacity)
-		&& (C.sizeof <= _Char.sizeof);
-
-	private enum isCharArray(T) = is(T : C[N], C, size_t N)
-		&& isSomeChar!C;
 
 	version(BigEndian){
 		static assert(0, "big endian systems are not supported");
 	}
 	else version(LittleEndian){
 
-		private struct Long{
+		struct Long{
 			size_t capacity;
 			size_t length;
 			_Char* ptr;
@@ -83,16 +70,16 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		}
 
 		static if((Long.sizeof / _Char.sizeof) <= ubyte.max)
-			private alias ShortLength = ubyte;
+			alias ShortLength = ubyte;
 		else static if((Long.sizeof / _Char.sizeof) <= ushort.max)
-			private alias ShortLength = ushort;
+			alias ShortLength = ushort;
 		else static if((Long.sizeof / _Char.sizeof) <= uint.max)
-			private alias ShortLength = uint;
+			alias ShortLength = uint;
 		else static if((Long.sizeof / _Char.sizeof) <= ulong.max)
-			private alias ShortLength = ulong;
+			alias ShortLength = ulong;
 		else static assert(0, "no impl");
 
-		private struct Short{
+		struct Short{
 			static assert((Long.sizeof - Header.sizeof) % _Char.sizeof == 0);
 
 			union Header{
@@ -116,51 +103,25 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			void setShort()scope pure nothrow @safe @nogc{
 				this.flag = 0x1;
 			}
+
+            /+inout(_Char)[] getData()inout scope return pure nothrow @trusted @nogc{
+                return this.data[];
+                //assert(0, "todo");
+            }+/
 		}
 
 		static assert(Long.sizeof == Short.sizeof);
 	}
 	else static assert(0, "no impl");
 
+    struct Impl{}
 
-	private struct Impl{}
-
-
-	private static void _memmove(T)(scope T* target, scope const(T)* source, size_t length)@trusted{
-		import core.stdc.string : memmove;
-
-		memmove(target, source, length * T.sizeof);
-		/+version(D_BetterC){
-			import core.stdc.string : memmove;
-
-			memmove(target, source, length * T.sizeof);
-		}
-		else{
-			target[0 .. length] = source[0 .. length];
-		}+/
-
-	}
-	private static void _memcpy(T)(scope T* target, scope const(T)* source, size_t length)@trusted{
-		import core.stdc.string : memcpy;
-
-		memcpy(target, source, length * T.sizeof);
-		/+
-		version(D_BetterC){
-			import core.stdc.string : memcpy;
-
-			memcpy(target, source, length * T.sizeof);
-		}
-		else{
-			target[0 .. length] = source[0 .. length];
-		}+/
-
-	}
 
 	struct BasicString{
 		/**
 			True if allocator doesn't have state.
 		*/
-		enum bool hasStatelessAllocator = (stateSize!_Allocator == 0);
+		public enum bool hasStatelessAllocator = (stateSize!_Allocator == 0);
 
 
 
@@ -194,7 +155,15 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			size_t[Long.sizeof / size_t.sizeof] _raw;
 
 			static assert(typeof(_raw).sizeof == Long.sizeof);
+
+            ref inout(Short) _get_short()inout return pure nothrow @trusted @nogc{
+                return _short;
+            }
 		}
+
+        /+private inout(Short)* _get_short()inout scope return pure nothrow @trusted @nogc{
+            return &this._short;
+        }+/
 
 		private enum safeAllocate = isSafe!((ref Unconst!(typeof(allocator)) allocator){
 			size_t capacity = size_t.max;
@@ -204,252 +173,250 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 
 		//_long:
-		private{
-			@property inout(Char)* _long_ptr()inout scope return pure nothrow @nogc @trusted{
-				assert(this._long.isLong);
+		private @property inout(Char)* _long_ptr()inout scope return pure nothrow @nogc @trusted{
+			assert(this._long.isLong);
 
-				return this._long.ptr;
-			}
-
-			@property inout(void)[] _long_data()inout scope return pure nothrow @nogc @trusted{
-				assert(this._long.isLong);
-
-				return (cast(void*)this._long.ptr)[0 .. this._long.capacity * Char.sizeof];
-			}
-
-			@property size_t _long_capacity()const scope pure nothrow @nogc @trusted{
-				assert(this._long.isLong);
-
-				return this._long.capacity;
-			}
-
-			@property size_t _long_length()const scope pure nothrow @nogc @trusted{
-				assert(this._long.isLong);
-
-				return this._long.length;
-			}
-
-			@property inout(Char)[] _long_chars()inout scope return pure nothrow @nogc @trusted{
-				assert(this._long.isLong);
-
-				return this._long.ptr[0 .. this._long.length];
-			}
-
-			@property inout(Char)[] _long_all_chars()inout scope return pure nothrow @nogc @trusted{
-				assert(this._long.isLong);
-
-				return this._long.ptr[0 .. this._long.capacity];
-			}
+			return this._long.ptr;
 		}
+
+		private @property inout(void)[] _long_data()inout scope return pure nothrow @nogc @trusted{
+			assert(this._long.isLong);
+
+			return (cast(void*)this._long.ptr)[0 .. this._long.capacity * Char.sizeof];
+		}
+
+		private @property size_t _long_capacity()const scope pure nothrow @nogc @trusted{
+			assert(this._long.isLong);
+
+			return this._long.capacity;
+		}
+
+		private @property size_t _long_length()const scope pure nothrow @nogc @trusted{
+			assert(this._long.isLong);
+
+			return this._long.length;
+		}
+
+		private @property inout(Char)[] _long_chars()inout scope return pure nothrow @nogc @trusted{
+			assert(this._long.isLong);
+
+			return this._long.ptr[0 .. this._long.length];
+		}
+
+		private @property inout(Char)[] _long_all_chars()inout scope return pure nothrow @nogc @trusted{
+			assert(this._long.isLong);
+
+			return this._long.ptr[0 .. this._long.capacity];
+		}
+
 
 		//_short:
-		private{
-			@property inout(Char)* _short_ptr()inout return pure nothrow @nogc @trusted{
-				assert(this._short.isShort);
+		private @property inout(Char)* _short_ptr()inout return pure nothrow @nogc @trusted{
+			assert(this._short.isShort);
 
-				return this._short.data.ptr;
-			}
+			return this._short.data.ptr;
+		}
 
-			@property inout(void)[] _short_data()inout return pure nothrow @nogc @trusted{
-				assert(this._short.isShort);
+		private @property inout(void)[] _short_data()inout return pure nothrow @nogc @trusted{
+			assert(this._short.isShort);
 
-				return (cast(void*)this._short.data.ptr)[0 .. this._short.capacity * Char.sizeof];
-			}
+			return (cast(void*)this._short.data.ptr)[0 .. this._short.capacity * Char.sizeof];
+		}
 
-			@property size_t _short_capacity()const scope pure nothrow @nogc @safe{
-				assert(this._short.isShort);
+		private @property size_t _short_capacity()const scope pure nothrow @nogc @safe{
+			assert(this._short.isShort);
 
-				return this._short.capacity;
-			}
+			return this._short.capacity;
+		}
 
-			@property auto _short_length()const scope pure nothrow @nogc @safe{
-				assert(this._short.isShort);
+		private @property auto _short_length()const scope pure nothrow @nogc @safe{
+			assert(this._short.isShort);
 
-				return this._short.length;
-			}
+			return this._short.length;
+		}
 
-			@property inout(Char)[] _short_chars()inout return pure nothrow @nogc @safe{
-				assert(this._short.isShort);
+		private @property inout(Char)[] _short_chars()inout return pure nothrow @nogc @safe{
+			assert(this._short.isShort);
 
-				return this._short.data[0 .. this._short.length];
-			}
+            return this._short.data[0 .. this._short.length];
+		}
 
-			@property inout(Char)[] _short_all_chars()inout return pure nothrow @nogc @safe{
-				assert(this._short.isShort);
+		private @property inout(Char)[] _short_all_chars()inout return pure nothrow @nogc @trusted{
+			assert(this._short.isShort);
 
-				return this._short.data[];
-			}
+			return this._short.data[];
 		}
 
 
-		private{
-			@property bool _sso()const scope pure nothrow @trusted @nogc{
-				assert(this._long.isLong != this._short.isShort);
-				return this._short.isShort;
-			}
-
-			@property void _length(const size_t len)scope pure nothrow @system @nogc{
-				assert(len <= this.capacity);
-
-				if(this._sso)
-					this._short.length = cast(ShortLength)len;
-				else
-					this._long.length = len;
-			}
-
-			@property inout(Char)[] _chars()inout scope return pure nothrow @trusted @nogc{
-				return this._sso
-					? this._short_chars()
-					: this._long_chars();
-			}
-
-			@property inout(Char)[] _all_chars()inout scope return pure nothrow @trusted @nogc{
-				return this._sso
-					? this._short_all_chars()
-					: this._long_all_chars();
-			}
-
+        //
+		private @property bool _sso()const scope pure nothrow @trusted @nogc{
+			assert(this._long.isLong != this._short.isShort);
+			return this._short.isShort;
 		}
+
+		private @property void _length(const size_t len)scope pure nothrow @system @nogc{
+			assert(len <= this.capacity);
+
+			if(this._sso)
+				this._short.length = cast(ShortLength)len;
+			else
+				this._long.length = len;
+		}
+
+		private @property inout(Char)[] _chars()inout return pure nothrow @trusted @nogc{
+            return this._sso
+				? this._short_chars()
+				: this._long_chars();
+
+            //assert(0, "TODO");
+		}
+
+		private @property inout(Char)[] _all_chars()inout return pure nothrow @trusted @nogc{
+            return this._sso
+				? this._short_all_chars()
+				: this._long_all_chars();
+
+            //assert(0, "TODO");
+		}
+
+
 
 		//allocation:
-		private{
-			Char[] _allocate(const size_t capacity){
-				void[] data = this._allocator.allocate(capacity * Char.sizeof);
+		private Char[] _allocate(const size_t capacity){
+			void[] data = this._allocator.allocate(capacity * Char.sizeof);
 
-				return (()@trusted => (cast(Char*)data.ptr)[0 .. capacity])();
-			}
+			return (()@trusted => (cast(Char*)data.ptr)[0 .. capacity])();
+		}
 
-			bool _deallocate(scope Char[] cdata){
-				void[] data = ()@trusted{
-					return (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
+		private bool _deallocate(scope Char[] cdata){
+			void[] data = ()@trusted{
+				return (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
 
+			}();
+
+			static if(safeAllocate)
+				return ()@trusted{
+					return this._allocator.deallocate(data);
 				}();
+			else
+				return this._allocator.deallocate(data);
+		}
 
+		private Char[] _reallocate(scope return Char[] cdata, const size_t length, const size_t new_capacity){
+			void[] data = (()@trusted => (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof] )();
+
+			static if(hasMember!(typeof(_allocator), "reallocate")){
 				static if(safeAllocate)
-					return ()@trusted{
-						return this._allocator.deallocate(data);
+					const bool reallocated = ()@trusted{
+						return this._allocator.reallocate(data, new_capacity * Char.sizeof);
 					}();
 				else
-					return this._allocator.deallocate(data);
+					const bool reallocated = this._allocator.reallocate(data, new_capacity * Char.sizeof);
+			}
+			else
+				enum bool reallocated = false;
+
+			if(reallocated){
+				assert(data.length / Char.sizeof == new_capacity);
+				return (()@trusted => (cast(Char*)data.ptr)[0 .. new_capacity])();
 			}
 
-			Char[] _reallocate(scope return Char[] cdata, const size_t length, const size_t new_capacity){
-				void[] data = (()@trusted => (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof] )();
+			Char[] new_cdata = this._allocate(new_capacity);
+			()@trusted{
+				memCopy(new_cdata.ptr, cdata.ptr, length);  //new_cdata[0 .. length] = cdata[0 .. length];
+			}();
 
-				static if(hasMember!(typeof(_allocator), "reallocate")){
-					static if(safeAllocate)
-						const bool reallocated = ()@trusted{
-							return this._allocator.reallocate(data, new_capacity * Char.sizeof);
-						}();
-					else
-						const bool reallocated = this._allocator.reallocate(data, new_capacity * Char.sizeof);
-				}
+			static if(safeAllocate)
+				()@trusted{
+					this._allocator.deallocate(data);
+				}();
+			else
+				this._allocator.deallocate(data);
+
+			return new_cdata;
+		}
+
+		private Char[] _reallocate_optional(scope return Char[] cdata, const size_t new_capacity)@trusted{
+			void[] data = (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
+
+			static if(hasMember!(typeof(_allocator), "reallocate")){
+				static if(safeAllocate)
+					const bool reallocated = ()@trusted{
+						return this._allocator.reallocate(data, new_capacity * Char.sizeof);
+					}();
+
 				else
-					enum bool reallocated = false;
+					const bool reallocated = this._allocator.reallocate(data, new_capacity * Char.sizeof);
 
 				if(reallocated){
 					assert(data.length / Char.sizeof == new_capacity);
-					return (()@trusted => (cast(Char*)data.ptr)[0 .. new_capacity])();
+					return (cast(Char*)data.ptr)[0 .. new_capacity];
 				}
-
-				Char[] new_cdata = this._allocate(new_capacity);
-				()@trusted{
-					_memcpy(new_cdata.ptr, cdata.ptr, length);  //new_cdata[0 .. length] = cdata[0 .. length];
-				}();
-
-				static if(safeAllocate)
-					()@trusted{
-						this._allocator.deallocate(data);
-					}();
-				else
-					this._allocator.deallocate(data);
-
-				return new_cdata;
 			}
 
-			Char[] _reallocate_optional(scope return Char[] cdata, const size_t new_capacity)@trusted{
-				void[] data = (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
-
-				static if(hasMember!(typeof(_allocator), "reallocate")){
-					static if(safeAllocate)
-						const bool re = ()@trusted{
-							return this._allocator.reallocate(data, new_capacity * Char.sizeof);
-						}();
-
-					else
-						const bool re = this._allocator.reallocate(data, new_capacity * Char.sizeof);
-
-					if(re){
-						assert(data.length / Char.sizeof == new_capacity);
-						return (cast(Char*)data.ptr)[0 .. new_capacity];
-					}
-				}
-
-				return cdata;
-			}
-
+			return cdata;
 		}
 
-		//reduce/expand:
-		private{
-			void _reduce_move(const size_t pos, const size_t n)scope pure nothrow @system @nogc{
-				assert(pos  <= this.length);
-				assert(pos >= n);
-				assert(n > 0);
 
+
+		//reduce/expand:
+		private void _reduce_move(const size_t pos, const size_t n)scope pure nothrow @system @nogc{
+			assert(pos  <= this.length);
+			assert(pos >= n);
+			assert(n > 0);
+
+			auto chars = this._chars;
+			const size_t len = (chars.length - pos);
+
+			memMove(
+				chars.ptr + (pos - n),
+				(chars.ptr + pos),
+				len
+			);
+
+			this._length = (chars.length - n);
+		}
+
+		private Char[] _expand_move(const size_t pos, const size_t n)scope return {
+			assert(n > 0);
+
+			auto chars = this._chars;
+			if(pos >= chars.length)
+				return this._expand(n);
+
+			const size_t new_length = (chars.length + n);
+			this.reserve(new_length);
+
+
+			return ()@trusted{
 				auto chars = this._chars;
+				this._length = new_length;
+
 				const size_t len = (chars.length - pos);
 
-				_memmove(
-					chars.ptr + (pos - n),
+				memMove(
+					(chars.ptr + pos + n),
 					(chars.ptr + pos),
 					len
 				);
 
-				this._length = (chars.length - n);
-			}
+				return (chars.ptr + pos)[0 .. n];
+			}();
+		}
 
-			Char[] _expand_move(const size_t pos, const size_t n)scope return {
-				assert(n > 0);
+		private Char[] _expand(const size_t n)scope return{
+			const size_t old_length = this.length;
+			const size_t new_length = (old_length + n);
 
+			this.reserve(new_length);
+
+			return ()@trusted{
 				auto chars = this._chars;
-				if(pos >= chars.length)
-					return this._expand(n);
+				//assert(this.capacity >= new_length);
+				this._length = new_length;
 
-				const size_t new_length = (chars.length + n);
-				this.reserve(new_length);
-
-
-				return ()@trusted{
-					auto chars = this._chars;
-					this._length = new_length;
-
-					const size_t len = (chars.length - pos);
-
-					_memmove(
-						(chars.ptr + pos + n),
-						(chars.ptr + pos),
-						len
-					);
-
-					return (chars.ptr + pos)[0 .. n];
-				}();
-			}
-
-			Char[] _expand(const size_t n)scope return{
-				const size_t old_length = this.length;
-				const size_t new_length = (old_length + n);
-
-				this.reserve(new_length);
-
-				return ()@trusted{
-					auto chars = this._chars;
-					//assert(this.capacity >= new_length);
-					this._length = new_length;
-
-					return chars.ptr[old_length .. new_length];
-				}();
-			}
+				return chars.ptr[old_length .. new_length];
+			}();
 		}
 
 
@@ -570,10 +537,12 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				--------------------
 
 		*/
-		public @property inout(Char)* ptr()inout scope return pure nothrow @system @nogc{
-			return this._sso
+		public @property inout(Char)* ptr()inout return pure nothrow @system @nogc{
+            return this._sso
 				? this._short_ptr
 				: this._long_ptr;
+
+            //assert(0, "TODO");
 		}
 
 
@@ -941,7 +910,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			Char[] cdata = this._allocate(new_capacity);
 
 			()@trusted{
-				_memcpy(cdata.ptr, this._short_ptr, length);    //cdata[0 .. length] = this._short_chars();
+				memCopy(cdata.ptr, this._short_ptr, length);    //cdata[0 .. length] = this._short_chars();
 				assert(this._chars == cdata[0 .. length]); //assert(this._chars == cdata[0 .. length]);
 
 				this._long.capacity = new_capacity;
@@ -1057,7 +1026,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				this._short.length = cast(ShortLength)length;
 
 				()@trusted{
-					_memcpy(this._short_ptr, cdata.ptr, length);    //this._short.data[0 .. length] = cdata[0 .. length];
+					memCopy(this._short_ptr, cdata.ptr, length);    //this._short.data[0 .. length] = cdata[0 .. length];
 				}();
 
 				this._deallocate(cdata);
@@ -1179,96 +1148,97 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
 
-		private{
-			this(C)(scope return AllocatorWithState[0 .. $] allocator, Impl)scope pure nothrow @trusted @nogc
-			if(isSomeChar!C){
-				assert(this._sso);
-				static if(!hasStatelessAllocator)
-					this._allocator = allocator[0];
-			}
 
-			this(C)(scope return AllocatorWithState[0 .. $] allocator, const C c, Impl)scope pure nothrow @trusted @nogc
-			if(isSomeChar!C){
-				assert(this._sso);
-				static if(!hasStatelessAllocator)
-					this._allocator = allocator[0];
-				this._short.length = cast(ShortLength)c.encodeTo(this._short_all_chars);    //this._short.data[0] = c;;
-			}
+        //private ctors:
+		private this(C)(scope return AllocatorWithState[0 .. $] allocator, Impl)scope pure nothrow @trusted @nogc
+		if(isSomeChar!C){
+			assert(this._sso);
+			static if(!hasStatelessAllocator)
+				this._allocator = allocator[0];
+		}
 
-			this(C)(scope return AllocatorWithState[0 .. $] allocator, scope const C[] str, Impl)scope
-			if(isSomeChar!C){
-				assert(this._sso);
+		private this(C)(scope return AllocatorWithState[0 .. $] allocator, const C c, Impl)scope pure nothrow @trusted @nogc
+		if(isSomeChar!C){
+			assert(this._sso);
+			static if(!hasStatelessAllocator)
+				this._allocator = allocator[0];
+			this._short.length = cast(ShortLength)c.encodeTo(this._short_all_chars);    //this._short.data[0] = c;;
+		}
 
-				static if(!hasStatelessAllocator)
-					this._allocator = allocator[0];
+		private this(C)(scope return AllocatorWithState[0 .. $] allocator, scope const C[] str, Impl)scope
+		if(isSomeChar!C){
+			assert(this._sso);
 
-				const size_t str_length = encodedLength(str);
+			static if(!hasStatelessAllocator)
+				this._allocator = allocator[0];
 
-				if(str_length > this._short.capacity){
+			const size_t str_length = encodedLength(str);
 
-
-					const size_t new_capacity = ((str_length + 1) & ~0x1);
-
-					assert(new_capacity >= str_length);
-					assert(new_capacity % 2 == 0);
+			if(str_length > this._short.capacity){
 
 
-					Char[] cdata = this._allocate(new_capacity);
+				const size_t new_capacity = ((str_length + 1) & ~0x1);
 
-					()@trusted{
-						this._long.ptr = cdata.ptr;
-						this._long.length = str[].encodeTo(cdata[]);   //cdata[] = str[];
-						this._long.capacity = new_capacity;
-					}();
-					assert(!this._sso);
+				assert(new_capacity >= str_length);
+				assert(new_capacity % 2 == 0);
 
-				}
-				else if(str.length != 0){
-					assert(this._sso);
 
-					this._short.length = cast(ShortLength)str[].encodeTo(this._short_all_chars);   //this._short.data[0 .. str_length] = str[];   ///str_length;
-					assert(this.capacity == Short.capacity);
-				}
-				else{
-					assert(this._sso);
-					assert(this.capacity == Short.capacity);
-					assert(this._short.length == 0);
-				}
+				Char[] cdata = this._allocate(new_capacity);
+
+				()@trusted{
+					this._long.ptr = cdata.ptr;
+					this._long.length = str[].encodeTo(cdata[]);   //cdata[] = str[];
+					this._long.capacity = new_capacity;
+				}();
+				assert(!this._sso);
 
 			}
-
-			this(I)(scope return AllocatorWithState[0 .. $] allocator, I val, Impl)scope
-			if(isIntegral!I){
-				static if(!hasStatelessAllocator)
-					this._allocator = allocator[0];
-
-				const size_t len = encodedLength(val);
-
-				this.reserve(len);
-				this._length = val.encodeTo(this._all_chars);
-			}
-
-			this(C, size_t N)(scope return AllocatorWithState[0 .. $] allocator, scope ref const C[N] str, Impl)scope pure nothrow @trusted @nogc
-			if(isSmallCharArray!(typeof(str))){
+			else if(str.length != 0){
 				assert(this._sso);
 
-				static if(!hasStatelessAllocator)
-					this._allocator = allocator[0];
-
-				if(str.length != 0){
-					assert(this._sso);
-
-					this._short.length = cast(ShortLength)str[].encodeTo(this._short_all_chars);   //this._short.data[0 .. str_length] = str[];   ///str_length;
-					assert(this.capacity == Short.capacity);
-				}
-				else{
-					assert(this._sso);
-					assert(this.capacity == Short.capacity);
-					assert(this._short_length == 0);
-				}
+				this._short.length = cast(ShortLength)str[].encodeTo(this._short_all_chars);   //this._short.data[0 .. str_length] = str[];   ///str_length;
+				assert(this.capacity == Short.capacity);
+			}
+			else{
+				assert(this._sso);
+				assert(this.capacity == Short.capacity);
+				assert(this._short.length == 0);
 			}
 
 		}
+
+		private this(I)(scope return AllocatorWithState[0 .. $] allocator, I val, Impl)scope
+		if(isIntegral!I){
+			static if(!hasStatelessAllocator)
+				this._allocator = allocator[0];
+
+			const size_t len = encodedLength(val);
+
+			this.reserve(len);
+			this._length = val.encodeTo(this._all_chars);
+		}
+
+		private this(C, size_t N)(scope return AllocatorWithState[0 .. $] allocator, scope ref const C[N] str, Impl)scope pure nothrow @trusted @nogc
+		if(isSmallCharArray!(typeof(str))){
+			assert(this._sso);
+
+			static if(!hasStatelessAllocator)
+				this._allocator = allocator[0];
+
+			if(str.length != 0){
+				assert(this._sso);
+
+				this._short.length = cast(ShortLength)str[].encodeTo(this._short_all_chars);   //this._short.data[0 .. str_length] = str[];   ///str_length;
+				assert(this.capacity == Short.capacity);
+			}
+			else{
+				assert(this._sso);
+				assert(this.capacity == Short.capacity);
+				assert(this._short_length == 0);
+			}
+		}
+
+
 
 		/**
 			Copy constructor if `Allocator` is statless.
@@ -1344,82 +1314,82 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
 		}
 
-		private{
-			ref typeof(this) _op_assign(C)(const C c)return scope pure nothrow @trusted @nogc
-			if(isSomeChar!C){
-				this.clear();
+		//_op_assign:
+		private ref typeof(this) _op_assign(C)(const C c)return scope pure nothrow @trusted @nogc
+		if(isSomeChar!C){
+			this.clear();
 
-				if(this._sso)
-					this._short.length = cast(ShortLength)c.encodeTo(this._short_all_chars); //this._short.data[0] = c;
-				else
-					this._long.length = c.encodeTo(this._long_all_chars[0 .. dchar.sizeof / Char.sizeof]); //*this._long.data = c;
+			if(this._sso)
+				this._short.length = cast(ShortLength)c.encodeTo(this._short_all_chars); //this._short.data[0] = c;
+			else
+				this._long.length = c.encodeTo(this._long_all_chars[0 .. dchar.sizeof / Char.sizeof]); //*this._long.data = c;
 
-				return this;
-			}
-
-			ref typeof(this) _op_assign(C)(scope const C[] str)return scope
-			if(isSomeChar!C){
-				this.clear();
-
-				const size_t str_length = encodedLength(str);
-
-				if(str_length > 0){
-
-					this.reserve(str_length);
-
-					()@trusted{
-						this._length = str.encodeTo(this._all_chars);   //this._all_chars[0 .. str_length] = str[];
-						assert(str_length == this.length);
-					}();
-				}
-
-				return this;
-			}
-
-			ref typeof(this) _op_assign(I)(const I val)return scope
-			if(isIntegral!I){
-
-				this.clear();
-				import std.conv : toChars;
-
-				const size_t len = encodedLength(val);
-				this.reserve(len);
-
-				this._length = val.encodeTo(this._all_chars);
-
-				return this;
-			}
-
-			ref typeof(this) _op_assign(C, size_t N)(ref scope const C[N] str)return scope pure nothrow @trusted @nogc
-			if(isSmallCharArray!(typeof(str))){
-				this.clear();
-
-				const size_t str_length = str.length;	//encodedLength!Char(str);
-
-				if(str_length > 0){
-					()@trusted{
-						this._length = str[].encodeTo(this._all_chars);   //this._all_chars[0 .. str_length] = str[];
-						assert(str_length == this.length);
-					}();
-				}
-
-				return this;
-			}
-
-			ref typeof(this) _op_assign(Args...)(auto ref scope const BasicString!Args str)return scope{
-				return this._op_assign(str._chars);
-			}
-
-			ref typeof(this) _op_assign(ref return scope typeof(this) str)return scope {
-				return this._op_assign(str._chars);
-			}
-
-			ref typeof(this) _op_assign(return scope typeof(this) str)return scope{
-				this.destroy();
-				moveEmplaceImpl(str, this);
-				return this;
-			}
+			return this;
 		}
+
+		private ref typeof(this) _op_assign(C)(scope const C[] str)return scope
+		if(isSomeChar!C){
+			this.clear();
+
+			const size_t str_length = encodedLength(str);
+
+			if(str_length > 0){
+
+				this.reserve(str_length);
+
+				()@trusted{
+					this._length = str.encodeTo(this._all_chars);   //this._all_chars[0 .. str_length] = str[];
+					assert(str_length == this.length);
+				}();
+			}
+
+			return this;
+		}
+
+		private ref typeof(this) _op_assign(I)(const I val)return scope
+		if(isIntegral!I){
+
+			this.clear();
+			import std.conv : toChars;
+
+			const size_t len = encodedLength(val);
+			this.reserve(len);
+
+			this._length = val.encodeTo(this._all_chars);
+
+			return this;
+		}
+
+		private ref typeof(this) _op_assign(C, size_t N)(ref scope const C[N] str)return scope pure nothrow @trusted @nogc
+		if(isSmallCharArray!(typeof(str))){
+			this.clear();
+
+			const size_t str_length = str.length;	//encodedLength!Char(str);
+
+			if(str_length > 0){
+				()@trusted{
+					this._length = str[].encodeTo(this._all_chars);   //this._all_chars[0 .. str_length] = str[];
+					assert(str_length == this.length);
+				}();
+			}
+
+			return this;
+		}
+
+		private ref typeof(this) _op_assign(Args...)(auto ref scope const BasicString!Args str)return scope{
+			return this._op_assign(str._chars);
+		}
+
+		private ref typeof(this) _op_assign(ref return scope typeof(this) str)return scope {
+			return this._op_assign(str._chars);
+		}
+
+		private ref typeof(this) _op_assign(return scope typeof(this) str)return scope{
+			this.destroy();
+			moveEmplaceImpl(str, this);
+			return this;
+		}
+
 
 		/**
 			Extends the `BasicString` by appending additional characters at the end of its current value.
@@ -2374,16 +2344,16 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 
 		///Alias to append.
-		alias put = append;
+		public alias put = append;
 
 		///Alias to `popBackCodeUnit`.
-		alias popBack = popBackCodeUnit;
+		public alias popBack = popBackCodeUnit;
 
 		///Alias to `frontCodeUnit`.
-		alias front = frontCodeUnit;
+		public alias front = frontCodeUnit;
 
 		///Alias to `backCodeUnit`.
-		alias back = backCodeUnit;
+		public alias back = backCodeUnit;
 
 
 		/**
@@ -2472,163 +2442,208 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 					target._allocator = source._allocator;
 
 
-				_memcpy(target._raw.ptr, source._raw.ptr, _raw.length); //target._raw[] = source._raw[];
+				memCopy(target._raw.ptr, source._raw.ptr, _raw.length); //target._raw[] = source._raw[];
 				source._short.setShort();
 				source._short.length = 0;
 			}();
 		}
 	}
 
+    import basic_string.internal.encoding;
 
-	private{
-		size_t encodedLength(From)(const scope From from)pure nothrow @nogc @safe
-		if(isSomeChar!From){
-			return codeLength!_Char(from);
+    enum isOtherString(T) = true
+        && isSomeString!T
+        && !is(Unqual!(ElementEncodingType!T) == Unqual!_Char);
+
+    enum isSmallCharArray(T) = is(T : C[N], C, size_t N)
+        && isSomeChar!C
+        && (N <= Short.capacity)
+        && (C.sizeof <= _Char.sizeof);
+
+    enum isCharArray(T) = is(T : C[N], C, size_t N)
+        && isSomeChar!C;
+
+
+
+    static void memMove(T)(scope T* target, scope const(T)* source, size_t length)@trusted{
+        import core.stdc.string : memmove;
+
+        memmove(target, source, length * T.sizeof);
+        /+version(D_BetterC){
+            import core.stdc.string : memmove;
+
+            memmove(target, source, length * T.sizeof);
+        }
+        else{
+            target[0 .. length] = source[0 .. length];
+        }+/
+    }
+
+    static void memCopy(T)(scope T* target, scope const(T)* source, size_t length)@trusted{
+        import core.stdc.string : memcpy;
+
+        memcpy(target, source, length * T.sizeof);
+        /+
+        version(D_BetterC){
+            import core.stdc.string : memcpy;
+
+            memcpy(target, source, length * T.sizeof);
+        }
+        else{
+            target[0 .. length] = source[0 .. length];
+        }+/
+    }
+
+
+
+	static size_t encodedLength(From)(const scope From from)pure nothrow @nogc @safe
+	if(isSomeChar!From){
+		return codeLength!_Char(from);
+	}
+
+	static size_t encodedLength(From)(scope const(From)[] from)pure nothrow @nogc @safe
+	if(isSomeChar!From){
+		static if(_Char.sizeof == From.sizeof){
+			return from.length;
+		}
+		else static if(_Char.sizeof < From.sizeof){
+			size_t result = 0;
+
+			foreach(const From c; from[]){
+				result += c.encodedLength;
+			}
+
+			return result;
+		}
+		else{
+			static assert(_Char.sizeof > From.sizeof);
+
+			size_t result = 0;
+
+			while(from.length){
+				result += decode(from).encodedLength;
+			}
+
+			return result;
 		}
 
-		size_t encodedLength(From)(scope const(From)[] from)pure nothrow @nogc @safe
-		if(isSomeChar!From){
-			static if(_Char.sizeof == From.sizeof){
-				return from.length;
-			}
-			else static if(_Char.sizeof < From.sizeof){
-				size_t result = 0;
+	}
 
-				foreach(const From c; from[]){
-					result += c.encodedLength;
-				}
+	static size_t encodedLength(From)(const From from)pure nothrow @nogc @safe
+	if(isIntegral!From){
+		import std.math : log10, abs;
 
-				return result;
-			}
-			else{
-				static assert(_Char.sizeof > From.sizeof);
+		if(from == 0)
+			return 1;
 
-				size_t result = 0;
+		return cast(size_t)(cast(int)(log10(abs(from))+1) + (from < 0 ? 1 : 0));
 
-				while(from.length){
-					result += decode(from).encodedLength;
-				}
+	}
 
-				return result;
-			}
 
-		}
 
-		size_t encodedLength(From)(const From from)pure nothrow @nogc @safe
-		if(isIntegral!From){
-			import std.math : log10, abs;
+	static size_t encodeTo(From)(scope const(From)[] from, scope _Char[] to, const size_t count = 1)pure nothrow @nogc
+	if(isSomeChar!From){
 
-			if(from == 0)
-				return 1;
+		if(count == 0)
+			return 0;
 
-			return cast(size_t)(cast(int)(log10(abs(from))+1) + (from < 0 ? 1 : 0));
+		assert(from.encodedLength * count <= to.length);
+
+		debug const predictedEncodedLength = encodedLength(from);
+
+		static if(_Char.sizeof == From.sizeof){
+
+			const size_t len = from.length;
+			()@trusted{
+				assert(to.length >= len);
+				assert(from.length <= len);
+				memCopy(to.ptr, from.ptr, len); //to[0 .. len] = from[];
+			}();
 
 		}
+		else{
 
-
-
-		size_t encodeTo(From)(scope const(From)[] from, scope _Char[] to, const size_t count = 1)pure nothrow @nogc
-		if(isSomeChar!From){
-
-			if(count == 0)
-				return 0;
-
-			assert(from.encodedLength * count <= to.length);
-
-			debug const predictedEncodedLength = encodedLength(from);
-
-			static if(_Char.sizeof == From.sizeof){
-
-				const size_t len = from.length;
-				()@trusted{
-					assert(to.length >= len);
-					assert(from.length <= len);
-					_memcpy(to.ptr, from.ptr, len); //to[0 .. len] = from[];
-				}();
-
+			size_t len = 0;
+			while(from.length){
+				len += decode(from).encode(to[len .. $]);
 			}
-			else{
+		}
 
-				size_t len = 0;
-				while(from.length){
-					len += decode(from).encode(to[len .. $]);
-				}
+		debug assert(predictedEncodedLength == len);
+
+		for(size_t i = 1; i < count; ++i){
+			//to[len .. len * 2] = to[0 .. len];
+			()@trusted{
+				assert(to.length >= (len * 2));
+				memCopy(to.ptr + len, to.ptr, len); //to[0 .. len] = from[];
+			}();
+			to = to[len .. $];
+		}
+
+		return (len * count);
+	}
+
+	static size_t encodeTo(From)(const From from, scope _Char[] to, const size_t count = 1)pure nothrow @nogc
+	if(isSomeChar!From){
+
+		if(count == 0)
+			return 0;
+
+		assert(from.encodedLength * count <= to.length);
+
+		debug const predictedEncodedLength = encodedLength(from);
+
+		static if(_Char.sizeof == From.sizeof){
+			enum size_t len = 1;
+
+			assert(count <= to.length);
+			for(size_t i = 0; i < count; ++i){
+				to[i] = from;
 			}
-
-			debug assert(predictedEncodedLength == len);
+		}
+		else{
+			const size_t len = dchar(from).encode(to[]);
 
 			for(size_t i = 1; i < count; ++i){
 				//to[len .. len * 2] = to[0 .. len];
 				()@trusted{
 					assert(to.length >= (len * 2));
-					_memcpy(to.ptr + len, to.ptr, len); //to[0 .. len] = from[];
+					memCopy(to.ptr + len, to.ptr, len); //to[0 .. len] = from[];
 				}();
 				to = to[len .. $];
 			}
 
-			return (len * count);
+			assert(encodedLength(from) == len);
 		}
 
-		size_t encodeTo(From)(const From from, scope _Char[] to, const size_t count = 1)pure nothrow @nogc
-		if(isSomeChar!From){
+		debug assert(predictedEncodedLength == len);
 
-			if(count == 0)
-				return 0;
+		return (len * count);
+	}
 
-			assert(from.encodedLength * count <= to.length);
+	static size_t encodeTo(From)(const From from, scope _Char[] to, const size_t count = 1)pure nothrow @nogc
+	if(isIntegral!From){
+		import std.conv : toChars;
 
-			debug const predictedEncodedLength = encodedLength(from);
+		if(count == 0)
+			return 0;
 
-			static if(_Char.sizeof == From.sizeof){
-				enum size_t len = 1;
+		auto ichars = toChars(from + 0);
 
-				assert(count <= to.length);
-				for(size_t i = 0; i < count; ++i){
-					to[i] = from;
-				}
-			}
-			else{
-				const size_t len = dchar(from).encode(to[]);
+		assert(encodedLength(from) == ichars.length);
 
-				for(size_t i = 1; i < count; ++i){
-					//to[len .. len * 2] = to[0 .. len];
-					()@trusted{
-						assert(to.length >= (len * 2));
-						_memcpy(to.ptr + len, to.ptr, len); //to[0 .. len] = from[];
-					}();
-					to = to[len .. $];
-				}
-
-				assert(encodedLength(from) == len);
-			}
-
-			debug assert(predictedEncodedLength == len);
-
-			return (len * count);
+		for(size_t c = 0; c < count; ++c){
+			for(size_t i = 0; i < ichars.length; ++i)
+				to[c+i] = ichars[i];
 		}
-		
-		size_t encodeTo(From)(const From from, scope _Char[] to, const size_t count = 1)pure nothrow @nogc
-		if(isIntegral!From){
-			import std.conv : toChars;
 
-			if(count == 0)
-				return 0;
+		return (ichars.length * count);
 
-			auto ichars = toChars(from + 0);
-			
-			assert(encodedLength(from) == ichars.length);
-
-			for(size_t c = 0; c < count; ++c){
-				for(size_t i = 0; i < ichars.length; ++i)
-					to[c+i] = ichars[i];
-			}
-
-			return (ichars.length * count);
-			
-
-		}
 
 	}
+
+
 }
 
 private{
