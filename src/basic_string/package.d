@@ -103,11 +103,6 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			void setShort()scope pure nothrow @safe @nogc{
 				this.flag = 0x1;
 			}
-
-            /+inout(_Char)[] getData()inout scope return pure nothrow @trusted @nogc{
-                return this.data[];
-                //assert(0, "todo");
-            }+/
 		}
 
 		static assert(Long.sizeof == Short.sizeof);
@@ -160,10 +155,6 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
                 return _short;
             }
 		}
-
-        /+private inout(Short)* _get_short()inout scope return pure nothrow @trusted @nogc{
-            return &this._short;
-        }+/
 
 		private enum safeAllocate = isSafe!((ref Unconst!(typeof(allocator)) allocator){
 			size_t capacity = size_t.max;
@@ -267,16 +258,12 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             return this._sso
 				? this._short_chars()
 				: this._long_chars();
-
-            //assert(0, "TODO");
 		}
 
 		private @property inout(Char)[] _all_chars()inout return pure nothrow @trusted @nogc{
             return this._sso
 				? this._short_all_chars()
 				: this._long_all_chars();
-
-            //assert(0, "TODO");
 		}
 
 
@@ -541,8 +528,6 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
             return this._sso
 				? this._short_ptr
 				: this._long_ptr;
-
-            //assert(0, "TODO");
 		}
 
 
