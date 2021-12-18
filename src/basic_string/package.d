@@ -244,13 +244,13 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 		//_short:
 		private{
-			@property inout(Char)* _short_ptr()inout scope return pure nothrow @nogc @trusted{
+			@property inout(Char)* _short_ptr()inout return pure nothrow @nogc @trusted{
 				assert(this._short.isShort);
 
 				return this._short.data.ptr;
 			}
 
-			@property inout(void)[] _short_data()inout scope return pure nothrow @nogc @trusted{
+			@property inout(void)[] _short_data()inout return pure nothrow @nogc @trusted{
 				assert(this._short.isShort);
 
 				return (cast(void*)this._short.data.ptr)[0 .. this._short.capacity * Char.sizeof];
@@ -268,13 +268,13 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				return this._short.length;
 			}
 
-			@property inout(Char)[] _short_chars()inout scope return pure nothrow @nogc @safe{
+			@property inout(Char)[] _short_chars()inout return pure nothrow @nogc @safe{
 				assert(this._short.isShort);
 
 				return this._short.data[0 .. this._short.length];
 			}
 
-			@property inout(Char)[] _short_all_chars()inout scope return pure nothrow @nogc @safe{
+			@property inout(Char)[] _short_all_chars()inout return pure nothrow @nogc @safe{
 				assert(this._short.isShort);
 
 				return this._short.data[];
@@ -1793,7 +1793,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				assert(str[1 .. $-1] == "2345");
 				--------------------
 		*/
-		public inout(Char)[] opSlice(size_t begin, size_t end)inout scope return pure nothrow @system @nogc{
+		public inout(Char)[] opSlice(size_t begin, size_t end)inout return pure nothrow @system @nogc{
 			begin = min(this.length, begin);
 			end = min(this.length, end);
 
