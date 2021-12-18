@@ -11,7 +11,9 @@ that string can be used in `@nogc` code. Default allocator is `Mallocator`.
 
 Works with `pure`, `@safe`, `@nogc` and `nothrow`.
 
-Compatible with `-betterC` and `-dip1000`.
+Compatible with `-betterC`
+
+`-dip1000` is too unstable, for now is not supported.
 
 Does not rely on runtime type information (`TypeInfo`).
 
