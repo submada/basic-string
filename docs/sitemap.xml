@@ -16,7 +16,6 @@
 <url><loc>http://127.0.0.1/basic_string/BasicString.capacity.html</loc></url>
 <url><loc>http://127.0.0.1/basic_string/BasicString.Char.html</loc></url>
 <url><loc>http://127.0.0.1/basic_string/BasicString.clear.html</loc></url>
-<url><loc>http://127.0.0.1/basic_string/BasicString.destroy.html</loc></url>
 <url><loc>http://127.0.0.1/basic_string/BasicString.empty.html</loc></url>
 <url><loc>http://127.0.0.1/basic_string/BasicString.erase.html</loc></url>
 <url><loc>http://127.0.0.1/basic_string/BasicString.erase.html</loc></url>
@@ -58,6 +57,7 @@
 <url><loc>http://127.0.0.1/basic_string/BasicString.proxySwap.html</loc></url>
 <url><loc>http://127.0.0.1/basic_string/BasicString.ptr.html</loc></url>
 <url><loc>http://127.0.0.1/basic_string/BasicString.put.html</loc></url>
+<url><loc>http://127.0.0.1/basic_string/BasicString.release.html</loc></url>
 <url><loc>http://127.0.0.1/basic_string/BasicString.replace.html</loc></url>
 <url><loc>http://127.0.0.1/basic_string/BasicString.replace.html</loc></url>
 <url><loc>http://127.0.0.1/basic_string/BasicString.replace.html</loc></url>

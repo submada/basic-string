@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Function BasicString.destroy</title>
+		<title>Function BasicString.release</title>
 		<link rel="stylesheet" type="text/css" href="../styles/ddox.css"/>
 		<link rel="stylesheet" href="../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../scripts/jquery.js">/**/</script><script type="text/javascript" src="../scripts/ddox.js">/**/</script>
@@ -28,12 +28,12 @@ $('#symbolSearchPane').show();</script>
 			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Function BasicString.destroy</h1><p>Erases and deallocate the contents of the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code>, which becomes an empty string (with a length of 0 characters).
+			<h1>Function BasicString.release</h1><p>Erases and deallocate the contents of the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code>, which becomes an empty string (with a length of 0 characters).
 </p>
 			<div class="prototype">
 				<code class="lang-d">
 					<div class="single-prototype">
-			<span class="typ">void</span> <span class="pln">destroy</span><span class="pun">(</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">scope</span><span class="pun">;</span>
+			<span class="typ">void</span> <span class="pln">release</span><span class="pun">(</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">scope</span><span class="pun">;</span>
 					</div>
 				</code>
 			</div>
@@ -49,7 +49,7 @@ $('#symbolSearchPane').show();</script>
 </span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">clear</span><span class="pun">();
 </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">capacity </span><span class="pun">== </span><span class="pln">cap</span><span class="pun">);
 
-</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">destroy</span><span class="pun">();
+</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">release</span><span class="pun">();
 </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">capacity </span><span class="pun">&lt; </span><span class="pln">cap</span><span class="pun">);
 </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">capacity </span><span class="pun">== <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char<wbr/></span><span class="pun">.</span><span class="typ">MinimalCapacity</span><span class="pun">);</span></code></pre>
 </section>

@@ -831,12 +831,12 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				str.clear();
 				assert(str.capacity == cap);
 
-				str.destroy();
+				str.release();
 				assert(str.capacity < cap);
 				assert(str.capacity == BasicString!char.MinimalCapacity);
 				--------------------
 		*/
-		public void destroy()scope{
+		public void release()scope{
 			if(this._sso){
 				this._short.length = 0;
 			}
@@ -847,6 +847,11 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				this._short.length = 0;
 			}
 		}
+
+        deprecated("use `.release()` instead")
+        public void destroy()scope{
+            this.release();
+        }
 
 
 
@@ -1370,7 +1375,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		}
 
 		private ref typeof(this) _op_assign(return scope typeof(this) str)return scope{
-			this.destroy();
+			this.release();
 			moveEmplaceImpl(str, this);
 			return this;
 		}
@@ -2060,7 +2065,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				BasicString!char str = "123456";
 
 				str.erase(2);
-				assert(str == "12456");
+				assert(str == "12");
 				--------------------
 
 				--------------------
