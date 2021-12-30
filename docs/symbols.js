@@ -48,4 +48,5 @@ var symbols = [
 {name: 'basic_string.BasicString.toHash', kind: "functiondeclaration", path: './basic_string/BasicString.toHash.html', attributes: ["const", "pure", "nothrow", "nogc", "safe"]},
 {name: 'basic_string.BasicString.valid', kind: "functiondeclaration", path: './basic_string/BasicString.valid.html', attributes: ["const", "pure", "nothrow", "nogc", "property", "scope", "safe"]},
 {name: 'basic_string.isBasicString', kind: "enummemberdeclaration", path: './basic_string/isBasicString.html', attributes: []},
+{name: 'basic_string.String', kind: "aliasdeclaration", path: './basic_string/String.html', attributes: []},
 ];
