@@ -25,6 +25,13 @@ if(T.length == 1){
 
 
 /**
+    Standard utf-8 string type (alias to `BasicString!char`).
+*/
+alias String = BasicString!char;
+
+
+
+/**
 	The `BasicString` is the generalization of struct string for character of type `char`, `wchar` or `dchar`.
 
 	`BasicString` use utf-8, utf-16 or utf-32 encoding.
