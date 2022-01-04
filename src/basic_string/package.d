@@ -171,13 +171,13 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 
 		//_long:
-		private @property inout(Char)* _long_ptr()inout scope return pure nothrow @nogc @trusted{
+		private @property inout(Char)* _long_ptr()inout scope pure nothrow @nogc @trusted{
 			assert(this._long.isLong);
 
 			return this._long.ptr;
 		}
 
-		private @property inout(void)[] _long_data()inout scope return pure nothrow @nogc @trusted{
+		private @property inout(void)[] _long_data()inout scope pure nothrow @nogc @trusted{
 			assert(this._long.isLong);
 
 			return (cast(void*)this._long.ptr)[0 .. this._long.capacity * Char.sizeof];
@@ -195,13 +195,13 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			return this._long.length;
 		}
 
-		private @property inout(Char)[] _long_chars()inout scope return pure nothrow @nogc @trusted{
+		private @property inout(Char)[] _long_chars()inout scope pure nothrow @nogc @trusted{
 			assert(this._long.isLong);
 
 			return this._long.ptr[0 .. this._long.length];
 		}
 
-		private @property inout(Char)[] _long_all_chars()inout scope return pure nothrow @nogc @trusted{
+		private @property inout(Char)[] _long_all_chars()inout scope pure nothrow @nogc @trusted{
 			assert(this._long.isLong);
 
 			return this._long.ptr[0 .. this._long.capacity];
@@ -209,16 +209,18 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 
 		//_short:
-		private @property inout(Char)* _short_ptr()inout return pure nothrow @nogc @trusted{
+		private @property inout(Char)* _short_ptr()inout scope pure nothrow @nogc @trusted{
 			assert(this._short.isShort);
 
-			return this._short.data.ptr;
+			auto ret = this._short.data.ptr;
+            return *&ret;
 		}
 
-		private @property inout(void)[] _short_data()inout return pure nothrow @nogc @trusted{
+		private @property inout(void)[] _short_data()inout scope pure nothrow @nogc @trusted{
 			assert(this._short.isShort);
 
-			return (cast(void*)this._short.data.ptr)[0 .. this._short.capacity * Char.sizeof];
+			auto ret = (cast(void*)this._short.data.ptr)[0 .. this._short.capacity * Char.sizeof];
+            return *&ret;
 		}
 
 		private @property size_t _short_capacity()const scope pure nothrow @nogc @safe{
@@ -233,16 +235,18 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			return this._short.length;
 		}
 
-		private @property inout(Char)[] _short_chars()inout return pure nothrow @nogc @safe{
+		private @property inout(Char)[] _short_chars()inout scope pure nothrow @nogc @trusted{
 			assert(this._short.isShort);
 
-            return this._short.data[0 .. this._short.length];
+            auto ret = this._short.data[0 .. this._short.length];
+            return *&ret;
 		}
 
-		private @property inout(Char)[] _short_all_chars()inout return pure nothrow @nogc @trusted{
+		private @property inout(Char)[] _short_all_chars()inout scope pure nothrow @nogc @trusted{
 			assert(this._short.isShort);
 
-			return this._short.data[];
+			auto ret = this._short.data[];
+            return *&ret;
 		}
 
 
@@ -261,13 +265,13 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				this._long.length = len;
 		}
 
-		private @property inout(Char)[] _chars()inout return pure nothrow @trusted @nogc{
+		private @property inout(Char)[] _chars()inout scope pure nothrow @trusted @nogc{
             return this._sso
 				? this._short_chars()
 				: this._long_chars();
 		}
 
-		private @property inout(Char)[] _all_chars()inout return pure nothrow @trusted @nogc{
+		private @property inout(Char)[] _all_chars()inout scope pure nothrow @trusted @nogc{
             return this._sso
 				? this._short_all_chars()
 				: this._long_all_chars();
