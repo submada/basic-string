@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Function BasicString.opOpAssign</title>
+		<title>Alias BasicString.opOpAssign</title>
 		<link rel="stylesheet" type="text/css" href="../styles/ddox.css"/>
 		<link rel="stylesheet" href="../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../scripts/jquery.js">/**/</script><script type="text/javascript" src="../scripts/ddox.js">/**/</script>
@@ -28,31 +28,29 @@ $('#symbolSearchPane').show();</script>
 			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Function BasicString.opOpAssign</h1><p>Extends the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> by appending additional characters at the end of its current value.
+			<h1>Alias BasicString.opOpAssign</h1><p>Extends the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> by appending additional characters at the end of its current value.
 </p>
 			<div class="prototype">
 				<code class="lang-d">
 					<div class="single-prototype">
-			<span class="kwd">ref </span><span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">)</span> <span class="pln">opOpAssign</span>(<span class="typ">string</span> op<span class="pln"> </span><span class="pun">: </span><span class="str">"+"</span>)
-			<span class="pun">(</span>
+			<span class="kwd">struct</span> <a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a>
 			<br/>
-			&nbsp;&nbsp;<span class="kwd">scope const </span><a href="../basic_string/BasicString.Char.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Char</span></a><span class="pun">[]</span> <span class="pln">rhs</span>
+			<span class="pun">
+				{
+				<br/>
+			</span>
+			&nbsp;&nbsp;<span class="com">// ...</span>
 			<br/>
-			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope</span><span class="pun">;</span>
+			&nbsp;&nbsp;<span class="kwd">alias</span> <span class="pln">opOpAssign</span>(<span class="typ">string</span> op)
+			 <span class="pun">=</span> <span class="pln">append</span><span class="pun">;</span>
 			<br/>
+			&nbsp;&nbsp;<span class="com">// ...</span>
 			<br/>
-			<span class="kwd">ref </span><span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">)</span> <span class="pln">opOpAssign</span>(<span class="typ">string</span> op<span class="pln"> </span><span class="pun">: </span><span class="str">"+"</span>, Val)
-			<span class="pun">(</span>
-			<br/>
-			&nbsp;&nbsp;<span class="kwd">auto scope ref </span><span class="typ">Val</span> <span class="pln">rhs</span>
-			<br/>
-			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope</span>
-			<br/>
-			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isBasicString</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isSomeChar</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isOtherString</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isCharArray</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isIntegral</span><span class="pun">!</span><span class="typ">Val</span><span class="pun">);</span>
+			<span class="pun">}</span>
 					</div>
 				</code>
 			</div>
-			<section><p>Parameter <code class="lang-d"><a href="../basic_string/BasicString.opOpAssign.html#rhs"><span class="pln">rhs</span></a></code> can by type of <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a><span class="pun">!(...)</span></code>, <code class="lang-d"><span class="typ">char</span><span class="pun">|</span><span class="typ">wchar</span><span class="pun">|</span><span class="typ">dchar</span></code> array/slice/character or integer (integer is transformed to string).
+			<section><p>Parameter <code class="lang-d"><span class="pln">rhs</span></code> can by type of <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a><span class="pun">!(...)</span></code>, <code class="lang-d"><span class="typ">char</span><span class="pun">|</span><span class="typ">wchar</span><span class="pun">|</span><span class="typ">dchar</span></code> array/slice/character or integer (integer is transformed to string).
 </p>
 
 <p>			Return referece to <code class="lang-d"><span class="kwd">this</span></code>.

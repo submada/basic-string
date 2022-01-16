@@ -220,7 +220,7 @@ version(basic_string_unittest){
         else
             alias allocatorWithState = AliasSeq!(allocator);
 
-        Str str = Str(allocatorWithState, "1");
+        Str str = Str("1", allocatorWithState);
         auto a = str.allocator;
     }
 
@@ -233,7 +233,7 @@ version(basic_string_unittest){
             alias allocatorWithState = AliasSeq!(allocator);
 
         ///reserve:
-        Str str = Str(allocatorWithState, "1");
+        Str str = Str("1", allocatorWithState);
         assert(str.capacity == Str.MinimalCapacity);
         //----------------------------
         const size_t new_capacity = str.capacity * 2 + 1;
@@ -253,7 +253,7 @@ version(basic_string_unittest){
             alias allocatorWithState = AliasSeq!(allocator);
 
         ///resize:
-        Str str = Str(allocatorWithState, "1");
+        Str str = Str("1", allocatorWithState);
         assert(str.capacity == Str.MinimalCapacity);
         //----------------------------
         str.resize(Str.MinimalCapacity);
@@ -300,27 +300,27 @@ version(basic_string_unittest){
                 enum dstring d = val;
             }
             else static if(I == 4){
-                auto s = BasicString!(char, Allocator)(allocatorWithState, val);
-                auto w = BasicString!(wchar, Allocator)(allocatorWithState, val);
-                auto d = BasicString!(dchar, Allocator)(allocatorWithState, val);
+                auto s = BasicString!(char, Allocator)(val, allocatorWithState);
+                auto w = BasicString!(wchar, Allocator)(val, allocatorWithState);
+                auto d = BasicString!(dchar, Allocator)(val, allocatorWithState);
             }
             else static assert(0, "no impl");
 
-            auto str1 = Str(allocatorWithState, s);
+            auto str1 = Str(s, allocatorWithState);
             str1 = s;
-            auto str2 = Str(allocatorWithState, s.trustedSlice);
+            auto str2 = Str(s.trustedSlice, allocatorWithState);
             str2 = s.trustedSlice;
             assert(str1 == str2);
 
-            auto wstr1 = Str(allocatorWithState, w);
+            auto wstr1 = Str(w, allocatorWithState);
             wstr1 = w;
-            auto wstr2 = Str(allocatorWithState, w.trustedSlice);
+            auto wstr2 = Str(w.trustedSlice, allocatorWithState);
             wstr2 = w.trustedSlice;
             assert(wstr1 == wstr2);
 
-            auto dstr1 = Str(allocatorWithState, d);
+            auto dstr1 = Str(d, allocatorWithState);
             dstr1 = d;
-            auto dstr2 = Str(allocatorWithState, d.trustedSlice);
+            auto dstr2 = Str(d.trustedSlice, allocatorWithState);
             dstr2 = d.trustedSlice;
             assert(dstr1 == dstr2);
         }}
@@ -359,13 +359,13 @@ version(basic_string_unittest){
             }
             else static assert(0, "no impl");
 
-            auto str = Str(allocatorWithState, c);
+            auto str = Str(c, allocatorWithState);
             str = c;
 
-            auto wstr = Str(allocatorWithState, w);
+            auto wstr = Str(w, allocatorWithState);
             wstr = w;
 
-            auto dstr = Str(allocatorWithState, d);
+            auto dstr = Str(d, allocatorWithState);
             dstr = d;
         }}
 
@@ -380,7 +380,7 @@ version(basic_string_unittest){
         else
             alias allocatorWithState = AliasSeq!(allocator);
 
-        Str str = Str(allocatorWithState, "123");
+        Str str = Str("123", allocatorWithState);
         assert(str.capacity == Str.MinimalCapacity);
 
         //----------------------------
@@ -420,9 +420,9 @@ version(basic_string_unittest){
 
         static foreach(enum I; AliasSeq!(1, 2, 3, 4)){{
             static if(I == 1){
-                auto s = BasicString!(char, Allocator)(allocatorWithState, "45");
-                auto w = BasicString!(wchar, Allocator)(allocatorWithState, "67");
-                auto d = BasicString!(dchar, Allocator)(allocatorWithState, "89");
+                auto s = BasicString!(char, Allocator)("45", allocatorWithState);
+                auto w = BasicString!(wchar, Allocator)("67", allocatorWithState);
+                auto d = BasicString!(dchar, Allocator)("89", allocatorWithState);
             }
             else static if(I == 2){
                 immutable(char)[2] s = "45";
@@ -445,7 +445,7 @@ version(basic_string_unittest){
             else static assert(0, "no impl");
 
 
-            Str str = Str(allocatorWithState, "123");
+            Str str = Str("123", allocatorWithState);
             assert(str.capacity == Str.MinimalCapacity);
 
             ////----------------------------
@@ -492,7 +492,7 @@ version(basic_string_unittest){
             else static assert(0, "no impl");
 
 
-            Str str = Str(allocatorWithState, "123");
+            Str str = Str("123", allocatorWithState);
             assert(str.capacity == Str.MinimalCapacity);
 
             ////----------------------------
@@ -547,12 +547,12 @@ version(basic_string_unittest){
                 alias Rep = T;
 
 
-            Str str = Str(allocatorWithState, val);
+            Str str = Str(val, allocatorWithState);
 
             str.append(cast(Rep)rep, count);
 
 
-            Str rep_complet = Str(allocatorWithState, null);
+            Str rep_complet = Str(allocatorWithState);
             for(size_t i = 0; i < count; ++i)
                 rep_complet += cast(Rep)rep;
 
@@ -593,72 +593,72 @@ version(basic_string_unittest){
                 enum T rep = rep_source;
 
 
-            Str rep_complet = Str(allocatorWithState, null);
+            Str rep_complet = Str(allocatorWithState);
             for(size_t i = 0; i < count; ++i)
                 rep_complet += rep;
 
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 const x = str.insert(2, rep, count);
-                assert(Str(allocatorWithState, rep).length * count == x);
+                assert(Str(rep, allocatorWithState).length * count == x);
                 assert(str == Str.build(allocatorWithState, val.trustedSlice(0, 2), rep_complet, val.trustedSliceToEnd(2)));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 const x = str.insert(str.length, rep, count);
-                assert(Str(allocatorWithState, rep).length * count == x);
+                assert(Str(rep, allocatorWithState).length * count == x);
                 assert(str == Str.build(allocatorWithState, val, rep_complet));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 const x = str.insert(str.length + 2000, rep, count);
-                assert(Str(allocatorWithState, rep).length * count == x);
+                assert(Str(rep, allocatorWithState).length * count == x);
                 assert(str == Str.build(allocatorWithState, val, rep_complet));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 const x = str.insert(0, rep, count);
-                assert(Str(allocatorWithState, rep).length * count == x);
+                assert(Str(rep, allocatorWithState).length * count == x);
                 assert(str == Str.build(allocatorWithState, rep_complet, val));
             }
             //------------------------------------------------
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 const x = str.insert((()@trusted => str.ptr + 2)(), rep, count);
-                assert(Str(allocatorWithState, rep).length * count == x);
+                assert(Str(rep, allocatorWithState).length * count == x);
                 assert(str == Str.build(allocatorWithState, val.trustedSlice(0, 2), rep_complet, val.trustedSliceToEnd(2)));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 const x = str.insert((()@trusted => str.ptr + str.length)(), rep, count);
-                assert(Str(allocatorWithState, rep).length * count == x);
+                assert(Str(rep, allocatorWithState).length * count == x);
                 assert(str == Str.build(allocatorWithState, val, rep_complet));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 const x = str.insert((()@trusted => str.ptr + str.length + 2000)(), rep, count);
-                assert(Str(allocatorWithState, rep).length * count == x);
+                assert(Str(rep, allocatorWithState).length * count == x);
                 assert(str == Str.build(allocatorWithState, val, rep_complet));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 const x = str.insert((()@trusted => str.ptr)(), rep, count);
-                assert(Str(allocatorWithState, rep).length * count == x);
+                assert(Str(rep, allocatorWithState).length * count == x);
                 assert(str == Str.build(allocatorWithState, rep_complet, val));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 const x = str.insert((()@trusted => str.ptr - 1000)(), rep, count);
-                assert(Str(allocatorWithState, rep).length * count == x);
+                assert(Str(rep, allocatorWithState).length * count == x);
                 assert(str == Str.build(allocatorWithState, rep_complet, val));
             }
 
@@ -678,47 +678,47 @@ version(basic_string_unittest){
             "0123456789_0123456789_0123456789_0123456789",
         )){
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 str.erase(2);
                 //assert(str.equals_test(Str(val[0 .. 2])));
-                assert(str == Str(allocatorWithState, val[0 .. 2]));
+                assert(str == Str(val[0 .. 2], allocatorWithState));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 str.erase(1, 2);
                 assert(str == Str.build(allocatorWithState, val[0 .. 1], val[3 .. $]));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 str.erase(1, 1000);
                 assert(str == Str.build(allocatorWithState, val[0 .. 1]));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 str.erase(str.trustedSliceToEnd(2));
                 assert(str == Str.build(allocatorWithState, val[0 .. 2]));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 str.erase(str.trustedSlice(1, 3));
                 assert(str == Str.build(allocatorWithState, val.trustedSlice(0, 1), val.trustedSliceToEnd(3)));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 str.erase((()@trusted => str.ptr + 2)());
-                assert(str == Str(allocatorWithState, val.trustedSlice(0, 2)));
+                assert(str == Str(val.trustedSlice(0, 2), allocatorWithState));
             }
         }
 
         ///downsize (erase):
         {
-            Str str = Str(allocatorWithState, "123");
+            Str str = Str("123", allocatorWithState);
             assert(str.length == 3);
 
             //----------------------------
@@ -781,44 +781,44 @@ version(basic_string_unittest){
                 enum T rep = rep_source;
 
 
-            Str rep_complet = Str(allocatorWithState, null);
+            Str rep_complet = Str(allocatorWithState);
             for(size_t i = 0; i < count; ++i)
                 rep_complet += rep;
 
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 str.replace(1, 2, rep, count);
                 //debug writeln(val, ": ", str[], " vs ", val[0 .. 1], " | ", rep_complet[], " | ", val[3 .. $]);
                 //assert(str[] == Str.build(val[0 .. 1], rep_complet[], val[3 .. $]));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 str.replace(1, val.length - 1, rep, count);
                 //assert(str[] == Str.build(val[0 .. 1], rep_complet[]));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 str.replace(1, val.length + 2000, rep, count);
                 //assert(str[] == Str.build(val[0 .. 1], rep_complet[]));
             }
             //------------------------
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 str.replace((()@trusted => str[1 .. $ - 1])(), rep, count);
                 //assert(str[] == Str.build(val[0 .. 1], rep_complet[], val[$ - 1 .. $]));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 str.replace((()@trusted => str[1 ..  $])(), rep, count);
                 //assert(str[] == Str.build(val[0 .. 1], rep_complet[]));
             }
             {
-                Str str = Str(allocatorWithState, val);
+                Str str = Str(val, allocatorWithState);
 
                 str.replace((()@trusted => str.ptr[1 .. str.length + 2000])(), rep, count);
                 //assert(str[] == Str.build(val[0 .. 1], rep_complet[]));
@@ -856,7 +856,7 @@ version(basic_string_unittest){
                     cast(T)'c'
                 ).copy(Str(allocatorWithState));
 
-                assert(str == Str(allocatorWithState, "abc"));
+                assert(str == Str("abc", allocatorWithState));
 
             }
         }}

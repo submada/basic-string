@@ -36,7 +36,7 @@ $('#symbolSearchPane').show();</script>
 			<span class="kwd">ref </span><span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">)</span> <span class="pln">opAssign</span>
 			<span class="pun">(</span>
 			<br/>
-			&nbsp;&nbsp;<span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">null</span><span class="pun">)</span> <span class="pln">rhs</span>
+			&nbsp;&nbsp;<span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">null</span><span class="pun">)</span> <span class="pln">nil</span>
 			<br/>
 			<span class="pun">)</span><span class="pln"> </span><span class="kwd">pure nothrow @nogc scope @safe</span><span class="pun">;</span>
 			<br/>
@@ -44,19 +44,49 @@ $('#symbolSearchPane').show();</script>
 			<span class="kwd">ref </span><span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">)</span> <span class="pln">opAssign</span>
 			<span class="pun">(</span>
 			<br/>
-			&nbsp;&nbsp;<span class="kwd">scope const </span><a href="../basic_string/BasicString.Char.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Char</span></a><span class="pun">[]</span> <span class="pln">rhs</span>
+			&nbsp;&nbsp;<span class="kwd">scope const </span><a href="../basic_string/BasicString.Char.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Char</span></a><span class="pun">[]</span> <span class="pln">slice</span>
 			<br/>
 			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope</span><span class="pun">;</span>
 			<br/>
 			<br/>
-			<span class="kwd">ref </span><span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">)</span> <span class="pln">opAssign</span>(Val)
+			<span class="kwd">ref </span><span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">)</span> <span class="pln">opAssign</span>(C)
 			<span class="pun">(</span>
 			<br/>
-			&nbsp;&nbsp;<span class="kwd">auto scope ref </span><span class="typ">Val</span> <span class="pln">rhs</span>
+			&nbsp;&nbsp;<span class="kwd">scope const </span><span class="pln">C</span><span class="pun">[]</span> <span class="pln">slice</span>
 			<br/>
 			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope</span>
 			<br/>
-			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isBasicString</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isSomeChar</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isOtherString</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isCharArray</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isIntegral</span><span class="pun">!</span><span class="typ">Val</span><span class="pun">);</span>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isSomeChar</span><span class="pun">!</span><span class="pln">C</span><span class="pun">);</span>
+			<br/>
+			<br/>
+			<span class="kwd">ref </span><span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">)</span> <span class="pln">opAssign</span>(C)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">const </span><span class="pln">C</span> <span class="pln">character</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isSomeChar</span><span class="pun">!</span><span class="pln">C</span><span class="pun">);</span>
+			<br/>
+			<br/>
+			<span class="kwd">ref </span><span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">)</span> <span class="pln">opAssign</span>(I)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">const </span><span class="pln">I</span> <span class="pln">integer</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isIntegral</span><span class="pun">!</span><span class="pln">I</span><span class="pun">);</span>
+			<br/>
+			<br/>
+			<span class="kwd">ref </span><span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">)</span> <span class="pln">opAssign</span>(Rhs)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">auto scope ref </span><span class="typ">Rhs</span> <span class="pln">rhs</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isBasicString</span><span class="pun">!</span><span class="typ">Rhs</span><span class="pun">);</span>
 					</div>
 				</code>
 			</div>

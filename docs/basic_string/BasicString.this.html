@@ -56,8 +56,38 @@ $('#symbolSearchPane').show();</script>
 							Function <code>BasicString.this</code>
 						</a>
 					</li>
+					<li>
+						<a href="#5">
+							Function <code>BasicString.this</code>
+						</a>
+					</li>
+					<li>
+						<a href="#6">
+							Function <code>BasicString.this</code>
+						</a>
+					</li>
+					<li>
+						<a href="#7">
+							Function <code>BasicString.this</code>
+						</a>
+					</li>
+					<li>
+						<a href="#8">
+							Function <code>BasicString.this</code>
+						</a>
+					</li>
+					<li>
+						<a href="#9">
+							Function <code>BasicString.this</code>
+						</a>
+					</li>
+					<li>
+						<a href="#10">
+							Function <code>BasicString.this</code>
+						</a>
+					</li>
 				</ul>
-			</nav><h2 id="0">Function BasicString.this</h2><p>Constructs a empty <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> with allocator <code class="lang-d"><a href="../basic_string/BasicString.this.html#a"><span class="pln">a</span></a></code>.
+			</nav><h2 id="0">Function BasicString.this</h2><p>Constructs a empty <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object.
 </p>
 			<div class="prototype">
 				<code class="lang-d">
@@ -65,24 +95,21 @@ $('#symbolSearchPane').show();</script>
 			<span class="pln">this</span>
 			<span class="pun">(</span>
 			<br/>
-			&nbsp;&nbsp;<span class="kwd">scope return </span><a href="../basic_string/BasicString.Allocator.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Allocator</span></a> <span class="pln">a</span>
+			&nbsp;&nbsp;<span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">null</span><span class="pun">)</span> <span class="pln">nil</span>
 			<br/>
 			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope pure nothrow @nogc scope @safe</span><span class="pun">;</span>
 					</div>
 				</code>
 			</div>
-			
-			<h2 id="1">Function BasicString.this</h2><p>@disable init if <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> has allocator with state.
-</p>
-			<div class="prototype">
-				<code class="lang-d">
-					<div class="single-prototype">
-			<span class="kwd">@disable </span><span class="pln">this</span><span class="pun">(</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">scope pure nothrow @nogc scope @trusted</span><span class="pun">;</span>
-					</div>
-				</code>
-			</div>
-			
-			<h2 id="2">Function BasicString.this</h2><p>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object, initializing its value to <code class="lang-d"><a href="../basic_string/BasicString.this.html#val"><span class="pln">val</span></a></code>.
+			<section></section>
+
+			<section><h3>Examples</h3>
+<pre class="code"><code class="lang-d"><span class="pun">{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="kwd">null</span><span class="pun">;
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
+}</span></code></pre>
+</section>
+<h2 id="1">Function BasicString.this</h2><p>Constructs a empty <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object with <code class="lang-d"><a href="../basic_string/BasicString.this.html#allocator"><span class="pln">allocator</span></a></code>.
 </p>
 			<div class="prototype">
 				<code class="lang-d">
@@ -90,67 +117,338 @@ $('#symbolSearchPane').show();</script>
 			<span class="pln">this</span>
 			<span class="pun">(</span>
 			<br/>
-			&nbsp;&nbsp;<span class="kwd">scope return </span><span class="typ">AllocatorWithState</span><span class="pun">[</span><span class="lit">0</span><span class="pun">..</span><span class="pln">__dollar</span><span class="pun">]</span> <span class="pln">allocator</span><span class="pun">,</span>
-			<br/>
-			&nbsp;&nbsp;<span class="kwd">typeof</span><span class="pun">(</span><span class="kwd">null</span><span class="pun">)</span> <span class="pln">val</span>
-			<br/>
-			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope pure nothrow @nogc scope @safe</span><span class="pun">;</span>
-			<br/>
-			<br/>
-			<span class="pln">this</span>
-			<span class="pun">(</span>
-			<br/>
-			&nbsp;&nbsp;<span class="kwd">scope return </span><span class="typ">AllocatorWithState</span><span class="pun">[</span><span class="lit">0</span><span class="pun">..</span><span class="pln">__dollar</span><span class="pun">]</span> <span class="pln">allocator</span><span class="pun">,</span>
-			<br/>
-			&nbsp;&nbsp;<span class="kwd">scope const </span><a href="../basic_string/BasicString.Char.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Char</span></a><span class="pun">[]</span> <span class="pln">val</span>
+			&nbsp;&nbsp;<a href="../basic_string/BasicString.Allocator.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Allocator</span></a> <span class="pln">allocator</span>
 			<br/>
 			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span><span class="pun">;</span>
-			<br/>
-			<br/>
-			<span class="pln">this</span>(Val)
-			<span class="pun">(</span>
-			<br/>
-			&nbsp;&nbsp;<span class="kwd">scope return </span><span class="typ">AllocatorWithState</span><span class="pun">[</span><span class="lit">0</span><span class="pun">..</span><span class="pln">__dollar</span><span class="pun">]</span> <span class="pln">allocator</span><span class="pun">,</span>
-			<br/>
-			&nbsp;&nbsp;<span class="kwd">auto scope const ref </span><span class="typ">Val</span> <span class="pln">val</span>
-			<br/>
-			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span>
-			<br/>
-			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isBasicString</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isSomeChar</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isOtherString</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isCharArray</span><span class="pun">!</span><span class="typ">Val </span><span class="pun">|| </span><span class="pln">isIntegral</span><span class="pun">!</span><span class="typ">Val</span><span class="pun">);</span>
 					</div>
 				</code>
 			</div>
 			<section></section>
 
 			<section><h3>Parameters</h3>
-<p><code class="lang-d"><a href="../basic_string/BasicString.this.html#allocator"><span class="pln">allocator</span></a></code> exists only if template parameter <code class="lang-d"><span class="pln">_Allocator</span></code> has state.
-</p>
-
-<p>				<code class="lang-d"><a href="../basic_string/BasicString.this.html#val"><span class="pln">val</span></a></code> can by type of <code class="lang-d"><span class="kwd">null</span></code>, <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a><span class="pun">!(</span><span class="pln">T</span><span class="pun">...)</span></code>, char|wchar|dchar array/slice/character or integer (integers are transformed to string)
+<p><code class="lang-d"><a href="../basic_string/BasicString.this.html#allocator"><span class="pln">allocator</span></a></code> allocator parameter.
 </p>
 </section>
 <section><h3>Examples</h3>
 <pre class="code"><code class="lang-d"><span class="pun">{
-	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="kwd">null</span><span class="pun">;
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!(</span><span class="typ">char</span><span class="pun">, </span><span class="typ">Mallocator</span><span class="pun">) </span><span class="pln">str </span><span class="pun">= </span><span class="typ">Mallocator<wbr/></span><span class="pun">.</span><span class="pln">init</span><span class="pun">;
 	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
+}</span></code></pre>
+</section>
+<h2 id="2">Function BasicString.this</h2><p>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object, initializing its value to char value <code class="lang-d"><a href="../basic_string/BasicString.this.html#character"><span class="pln">character</span></a></code>.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="pln">this</span>(C)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">const </span><span class="pln">C</span> <span class="pln">character</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isSomeChar</span><span class="pun">!</span><span class="pln">C</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section></section>
+
+			<section><h3>Parameters</h3>
+<p><code class="lang-d"><a href="../basic_string/BasicString.this.html#character"><span class="pln">character</span></a></code> can by type char|wchar|dchar.
+</p>
+</section>
+<section><h3>Examples</h3>
+<pre class="code"><code class="lang-d"><span class="pun">{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">'x'</span><span class="pun">;
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"x"</span><span class="pun">);
 }
 
 {
-	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">'X'</span><span class="pun">;
-	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"X"</span><span class="pun">);
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">'読'</span><span class="pun">;
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"読"</span><span class="pun">);
+}</span></code></pre>
+</section>
+<h2 id="3">Function BasicString.this</h2><p>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object, initializing its value to char value <code class="lang-d"><a href="../basic_string/BasicString.this.html#character"><span class="pln">character</span></a></code>.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="pln">this</span>(C)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">const </span><span class="pln">C</span> <span class="pln">character</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<a href="../basic_string/BasicString.Allocator.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Allocator</span></a> <span class="pln">allocator</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isSomeChar</span><span class="pun">!</span><span class="pln">C</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section></section>
+
+			<section><h3>Parameters</h3>
+<p><code class="lang-d"><a href="../basic_string/BasicString.this.html#character"><span class="pln">character</span></a></code> can by type char|wchar|dchar.
+</p>
+
+<p>				<code class="lang-d"><a href="../basic_string/BasicString.this.html#allocator"><span class="pln">allocator</span></a></code> allocator parameter.
+</p>
+</section>
+<section><h3>Examples</h3>
+<pre class="code"><code class="lang-d"><span class="pun">{
+	</span><span class="kwd">auto </span><span class="pln">str </span><span class="pun">= <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!(</span><span class="typ">char</span><span class="pun">, </span><span class="typ">Mallocator</span><span class="pun">)(</span><span class="str">'読'</span><span class="pun">, </span><span class="typ">Mallocator<wbr/></span><span class="pun">.</span><span class="pln">init</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"読"</span><span class="pun">);
+}</span></code></pre>
+</section>
+<h2 id="4">Function BasicString.this</h2><p>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object from char slice <code class="lang-d"><a href="../basic_string/BasicString.this.html#slice"><span class="pln">slice</span></a></code>.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="pln">this</span>(This)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">scope const </span><a href="../basic_string/BasicString.Char.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Char</span></a><span class="pun">[]</span> <span class="pln">slice</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="pln">this</span>(This, C)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">scope const </span><span class="pln">C</span><span class="pun">[]</span> <span class="pln">slice</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isSomeChar</span><span class="pun">!</span><span class="pln">C </span><span class="pun">&amp;&amp; !</span><span class="kwd">is</span><span class="pun">(</span><span class="kwd">immutable</span><span class="pun">(</span><span class="pln">C</span><span class="pun">) == </span><span class="kwd">immutable</span><span class="pun">(</span><span class="typ">Char</span><span class="pun">))</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section></section>
+
+			<section><h3>Parameters</h3>
+<p><code class="lang-d"><a href="../basic_string/BasicString.this.html#slice"><span class="pln">slice</span></a></code> is slice of characters (<code class="lang-d"><span class="kwd">const </span><span class="typ">char</span><span class="pun">[]</span></code>, <code class="lang-d"><span class="kwd">const </span><span class="typ">wchar</span><span class="pun">[]</span></code>, <code class="lang-d"><span class="kwd">const </span><span class="typ">dchar</span><span class="pun">[]</span></code>).
+</p>
+</section>
+<section><h3>Examples</h3>
+<pre class="code"><code class="lang-d"><span class="pun">{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"test"</span><span class="pun">;
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"test"</span><span class="pun">);
 }
 
 {
-	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123"w</span><span class="pun">;
-	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"123"</span><span class="pun">);
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"test 読"d</span><span class="pun">;
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"test 読"</span><span class="pun">);
 }
 
 {
-	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="lit">123uL</span><span class="pun">;
+	</span><span class="typ">wchar</span><span class="pun">[] </span><span class="pln">data </span><span class="pun">= [</span><span class="kwd">cast</span><span class="pun">(</span><span class="typ">wchar</span><span class="pun">)</span><span class="str">'1'</span><span class="pun">, </span><span class="str">'2'</span><span class="pun">, </span><span class="str">'3'</span><span class="pun">];
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="pln">data</span><span class="pun">;
 	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"123"</span><span class="pun">);
 }</span></code></pre>
 </section>
-<h2 id="3">Function BasicString.this</h2><p>Copy constructor if <code class="lang-d"><a href="../basic_string/BasicString.Allocator.html"><span class="typ">Allocator</span></a></code> is statless.
+<h2 id="5">Function BasicString.this</h2><p>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object from char slice <code class="lang-d"><a href="../basic_string/BasicString.this.html#slice"><span class="pln">slice</span></a></code>.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="pln">this</span>(This)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">scope const </span><a href="../basic_string/BasicString.Char.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Char</span></a><span class="pun">[]</span> <span class="pln">slice</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<a href="../basic_string/BasicString.Allocator.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Allocator</span></a> <span class="pln">allocator</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span><span class="pun">;</span>
+			<br/>
+			<br/>
+			<span class="pln">this</span>(This, C)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">scope const </span><span class="pln">C</span><span class="pun">[]</span> <span class="pln">slice</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<a href="../basic_string/BasicString.Allocator.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Allocator</span></a> <span class="pln">allocator</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isSomeChar</span><span class="pun">!</span><span class="pln">C </span><span class="pun">&amp;&amp; !</span><span class="kwd">is</span><span class="pun">(</span><span class="kwd">immutable</span><span class="pun">(</span><span class="pln">C</span><span class="pun">) == </span><span class="kwd">immutable</span><span class="pun">(</span><span class="typ">Char</span><span class="pun">))</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section></section>
+
+			<section><h3>Parameters</h3>
+<p><code class="lang-d"><a href="../basic_string/BasicString.this.html#slice"><span class="pln">slice</span></a></code> is slice of characters (<code class="lang-d"><span class="kwd">const </span><span class="typ">char</span><span class="pun">[]</span></code>, <code class="lang-d"><span class="kwd">const </span><span class="typ">wchar</span><span class="pun">[]</span></code>, <code class="lang-d"><span class="kwd">const </span><span class="typ">dchar</span><span class="pun">[]</span></code>).
+</p>
+
+<p>				<code class="lang-d"><a href="../basic_string/BasicString.this.html#allocator"><span class="pln">allocator</span></a></code> allocator parameter.
+</p>
+</section>
+<section><h3>Examples</h3>
+<pre class="code"><code class="lang-d"><span class="pun">{
+	</span><span class="kwd">auto </span><span class="pln">str </span><span class="pun">= <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!(</span><span class="typ">char</span><span class="pun">, </span><span class="typ">Mallocator</span><span class="pun">)(</span><span class="str">"test"</span><span class="pun">, </span><span class="typ">Mallocator<wbr/></span><span class="pun">.</span><span class="pln">init</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"test"</span><span class="pun">);
+}
+
+{
+	</span><span class="kwd">auto </span><span class="pln">str </span><span class="pun">= <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!(</span><span class="typ">char</span><span class="pun">, </span><span class="typ">Mallocator</span><span class="pun">)(</span><span class="str">"test 読"d</span><span class="pun">, </span><span class="typ">Mallocator<wbr/></span><span class="pun">.</span><span class="pln">init</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"test 読"</span><span class="pun">);
+}
+
+{
+	</span><span class="typ">wchar</span><span class="pun">[] </span><span class="pln">data </span><span class="pun">= [</span><span class="kwd">cast</span><span class="pun">(</span><span class="typ">wchar</span><span class="pun">)</span><span class="str">'1'</span><span class="pun">, </span><span class="str">'2'</span><span class="pun">, </span><span class="str">'3'</span><span class="pun">];
+	</span><span class="kwd">auto </span><span class="pln">str </span><span class="pun">= <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!(</span><span class="typ">char</span><span class="pun">, </span><span class="typ">Mallocator</span><span class="pun">)(</span><span class="pln">data</span><span class="pun">, </span><span class="typ">Mallocator<wbr/></span><span class="pun">.</span><span class="pln">init</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"123"</span><span class="pun">);
+}</span></code></pre>
+</section>
+<h2 id="6">Function BasicString.this</h2><p>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object, initializing its value from integer <code class="lang-d"><a href="../basic_string/BasicString.this.html#integer"><span class="pln">integer</span></a></code>.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="pln">this</span>(I)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="pln">I</span> <span class="pln">integer</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isIntegral</span><span class="pun">!</span><span class="pln">I</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section></section>
+
+			<section><h3>Parameters</h3>
+<p><code class="lang-d"><a href="../basic_string/BasicString.this.html#integer"><span class="pln">integer</span></a></code> integers value.
+</p>
+</section>
+<section><h3>Examples</h3>
+<pre class="code"><code class="lang-d"><span class="pun">{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="lit">123uL</span><span class="pun">;
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"123"</span><span class="pun">);
+}
+
+{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">dchar </span><span class="pln">str </span><span class="pun">= -</span><span class="lit">123</span><span class="pun">;
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"-123"</span><span class="pun">);
+}</span></code></pre>
+</section>
+<h2 id="7">Function BasicString.this</h2><p>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object, initializing its value from integer <code class="lang-d"><a href="../basic_string/BasicString.this.html#integer"><span class="pln">integer</span></a></code>.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="pln">this</span>(I)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="pln">I</span> <span class="pln">integer</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<a href="../basic_string/BasicString.Allocator.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Allocator</span></a> <span class="pln">allocator</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isIntegral</span><span class="pun">!</span><span class="pln">I</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section></section>
+
+			<section><h3>Parameters</h3>
+<p><code class="lang-d"><a href="../basic_string/BasicString.this.html#integer"><span class="pln">integer</span></a></code> integers value.
+</p>
+
+<p>				<code class="lang-d"><a href="../basic_string/BasicString.this.html#allocator"><span class="pln">allocator</span></a></code> allocator parameter.
+</p>
+</section>
+<section><h3>Examples</h3>
+<pre class="code"><code class="lang-d"><span class="pun">{
+	</span><span class="kwd">auto </span><span class="pln">str </span><span class="pun">= <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!(</span><span class="typ">char</span><span class="pun">, </span><span class="typ">Mallocator</span><span class="pun">)(</span><span class="lit">123uL</span><span class="pun">, </span><span class="typ">Mallocator<wbr/></span><span class="pun">.</span><span class="pln">init</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"123"</span><span class="pun">);
+}
+
+{
+	</span><span class="kwd">auto </span><span class="pln">str </span><span class="pun">= <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!(</span><span class="typ">dchar</span><span class="pun">, </span><span class="typ">Mallocator</span><span class="pun">)(-</span><span class="lit">123</span><span class="pun">, </span><span class="typ">Mallocator<wbr/></span><span class="pun">.</span><span class="pln">init</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"-123"</span><span class="pun">);
+}</span></code></pre>
+</section>
+<h2 id="8">Function BasicString.this</h2><p>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object from other <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object.
+</p>
+			<div class="prototype">
+				<code class="lang-d">
+					<div class="single-prototype">
+			<span class="pln">this</span>(This, Rhs)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">auto scope const ref </span><span class="typ">Rhs</span> <span class="pln">rhs</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isBasicString</span><span class="pun">!</span><span class="typ">Rhs </span><span class="pun">&amp;&amp; </span><span class="pln">isConstructable</span><span class="pun">!(</span><span class="pln">rhs</span><span class="pun">, </span><span class="typ">This</span><span class="pun">) &amp;&amp; (</span><span class="pln">isRef</span><span class="pun">!</span><span class="pln">rhs </span><span class="pun">|| !</span><span class="kwd">is</span><span class="pun">(</span><span class="kwd">immutable</span><span class="pun">(</span><span class="typ">This</span><span class="pun">) == </span><span class="kwd">immutable</span><span class="pun">(</span><span class="typ">Rhs</span><span class="pun">)))</span><span class="pun">);</span>
+			<br/>
+			<br/>
+			<span class="pln">this</span>(This, Rhs)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">auto scope const ref </span><span class="typ">Rhs</span> <span class="pln">rhs</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<a href="../basic_string/BasicString.Allocator.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Allocator</span></a> <span class="pln">allocator</span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isBasicString</span><span class="pun">!</span><span class="typ">Rhs</span><span class="pun">);</span>
+			<br/>
+			<br/>
+			<span class="pln">this</span>(This, Rhs)
+			<span class="pun">(</span>
+			<br/>
+			&nbsp;&nbsp;<span class="kwd">auto scope const ref </span><span class="typ">Rhs</span> <span class="pln">rhs</span><span class="pun">,</span>
+			<br/>
+			&nbsp;&nbsp;<span class="typ">Evoid</span> <span class="pln"></span>
+			<br/>
+			<span class="pun">)</span><span class="pln"> </span><span class="kwd">scope scope</span>
+			<br/>
+			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isBasicString</span><span class="pun">!</span><span class="typ">Rhs </span><span class="pun">&amp;&amp; </span><span class="pln">isConstructable</span><span class="pun">!(</span><span class="pln">rhs</span><span class="pun">, </span><span class="typ">This</span><span class="pun">)</span><span class="pun">);</span>
+					</div>
+				</code>
+			</div>
+			<section></section>
+
+			<section><h3>Parameters</h3>
+<p><code class="lang-d"><a href="../basic_string/BasicString.this.html#rhs"><span class="pln">rhs</span></a></code> <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> rvalue/lvalue
+</p>
+
+<p>				<code class="lang-d"><a href="../basic_string/BasicString.allocator.html"><span class="pln">allocator</span></a></code> optional allocator parameter.
+</p>
+</section>
+<section><h3>Examples</h3>
+<pre class="code"><code class="lang-d"><span class="pun">{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">a </span><span class="pun">= </span><span class="str">"123"</span><span class="pun">;
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">b </span><span class="pun">= </span><span class="pln">a</span><span class="pun">;
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">b </span><span class="pun">== </span><span class="str">"123"</span><span class="pun">);
+}
+
+{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">dchar </span><span class="pln">a </span><span class="pun">= </span><span class="str">"123"</span><span class="pun">;
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">b </span><span class="pun">= </span><span class="pln">a</span><span class="pun">;
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">b </span><span class="pun">== </span><span class="str">"123"</span><span class="pun">);
+}
+
+{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">dchar </span><span class="pln">a </span><span class="pun">= </span><span class="str">"123"</span><span class="pun">;
+	</span><span class="kwd">auto </span><span class="pln">b </span><span class="pun">= <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char</span><span class="pun">(</span><span class="pln">a</span><span class="pun">, </span><span class="typ">Mallocator<wbr/></span><span class="pun">.</span><span class="pln">init</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">b </span><span class="pun">== </span><span class="str">"123"</span><span class="pun">);
+}
+
+</span><span class="kwd">import </span><span class="pln">core<wbr/></span><span class="pun">.</span><span class="pln">lifetime </span><span class="pun">: </span><span class="pln">move</span><span class="pun">;
+{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">a </span><span class="pun">= </span><span class="str">"123"</span><span class="pun">;
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">b </span><span class="pun">= </span><span class="pln">move</span><span class="pun">(</span><span class="pln">a</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">b </span><span class="pun">== </span><span class="str">"123"</span><span class="pun">);
+}</span></code></pre>
+</section>
+<h2 id="9">Function BasicString.this</h2><p>Copy constructor if <code class="lang-d"><a href="../basic_string/BasicString.Allocator.html"><span class="typ">Allocator</span></a></code> is statless.
 </p>
 			<div class="prototype">
 				<code class="lang-d">
@@ -168,7 +466,7 @@ $('#symbolSearchPane').show();</script>
 </p>
 </section>
 
-			<h2 id="4">Function BasicString.this</h2><p>Copy constructor if <code class="lang-d"><a href="../basic_string/BasicString.Allocator.html"><span class="typ">Allocator</span></a></code> has state.
+			<h2 id="10">Function BasicString.this</h2><p>Copy constructor if <code class="lang-d"><a href="../basic_string/BasicString.Allocator.html"><span class="typ">Allocator</span></a></code> has state.
 </p>
 			<div class="prototype">
 				<code class="lang-d">

@@ -557,11 +557,68 @@
   <section class="section ddoc_sections">
   <div class="ddoc_summary">
   <p class="para">
-    True if <code class="code">T</code> is a <a href="#BasicString"><code class="code">BasicString</code></a> or implicitly converts to one, otherwise <code class="code">false</code>.
+    True if <code class="code">T</code> is a <code class="code">BasicString</code> or implicitly converts to one, otherwise <code class="code">false</code>.
   </p>
 </div>
 
 </section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#String" id="String"><code class="code">String</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="String"></span>alias <code class="code">String</code> = BasicString!(char, Mallocator, 0LU).BasicString;
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Standard utf-8 string type (alias to <code class="code">BasicString!char</code>).
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#Evoid" id="Evoid"><code class="code">Evoid</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="Evoid"></span>struct <code class="code">Evoid</code>;
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  
 
 </div>
 
@@ -596,17 +653,17 @@
 <div class="ddoc_description">
   <h4>Discussion</h4>
   <p class="para">
-    <code class="code"><code class="code">BasicString</code></code> use utf8, utf16 and utf32 encoding.
+    <code class="code"><code class="code">BasicString</code></code> use utf-8, utf-16 or utf-32 encoding.
 <br><br>
-    <code class="code"><code class="code">BasicString</code></code> use sso(Small String Optimization).
+	<code class="code"><code class="code">BasicString</code></code> use SSO (Small String Optimization).
 <br><br>
-    Template parameters:
+	Template parameters:
 <br><br>
-        <code class="code">_Char</code> Character type. (<code class="code">char</code>, <code class="code">wchar</code> or <code class="code">dchar</code>).
+		<code class="code">_Char</code> Character type. (<code class="code">char</code>, <code class="code">wchar</code> or <code class="code">dchar</code>).
 <br><br>
-        <code class="code">_Allocator</code> Type of the allocator object used to define the storage allocation model. By default Mallocator is used.
+		<code class="code">_Allocator</code> Type of the allocator object used to define the storage allocation model. By default Mallocator is used.
 <br><br>
-        <code class="code">_Padding</code> Additional size of struct <code class="code"><code class="code">BasicString</code></code>, increase max length of small string.
+		<code class="code">_Padding</code> Additional size of struct <code class="code"><code class="code">BasicString</code></code>, increase max length of small string.
   </p>
 </div>
 
@@ -975,11 +1032,11 @@ BasicString!<span class="keyword">dchar</span> dstr = <span class="string_litera
   <p class="para">
     This <code class="code">capacity</code> is not necessarily equal to the string length. It can be equal or greater, with the extra space allowing the object to optimize its operations when new characters are added to the <code class="code">BasicString</code>.
 <br><br>
-            Notice that this <code class="code">capacity</code> does not suppose a limit on the length of the <code class="code">BasicString</code>. When this <code class="code">capacity</code> is exhausted and more is needed, it is automatically expanded by the object (reallocating it storage space).
+			Notice that this <code class="code">capacity</code> does not suppose a limit on the length of the <code class="code">BasicString</code>. When this <code class="code">capacity</code> is exhausted and more is needed, it is automatically expanded by the object (reallocating it storage space).
 <br><br>
-            The <code class="code">capacity</code> of a <code class="code">BasicString</code> can be altered any time the object is modified, even if this modification implies a reduction in size.
+			The <code class="code">capacity</code> of a <code class="code">BasicString</code> can be altered any time the object is modified, even if this modification implies a reduction in size.
 <br><br>
-            The <code class="code">capacity</code> of a <code class="code">BasicString</code> can be explicitly altered by calling member <code class="code">reserve</code>.
+			The <code class="code">capacity</code> of a <code class="code">BasicString</code> can be explicitly altered by calling member <code class="code">reserve</code>.
 
 
   </p>
@@ -1021,7 +1078,7 @@ str.reserve(str.<span class="psymbol">capacity</span> + 1);
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="BasicString.ptr"></span>inout pure nothrow @nogc @property scope @system inout(Char)* <code class="code">ptr</code>() return;
+            <span class="ddoc_anchor" id="BasicString.ptr"></span>inout pure nothrow @nogc @property @system inout(Char)* <code class="code">ptr</code>() return;
 
           </code>
         </p>
@@ -1093,6 +1150,38 @@ str.reserve(str.<span class="psymbol">capacity</span> + 1);
   <div class="ddoc_summary">
   <p class="para">
     Return <code class="code">true</code> if string is <code class="code">small</code> (Small String Optimization)
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#BasicString.valid" id="BasicString.valid"><code class="code">valid</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="BasicString.valid"></span>const pure nothrow @nogc @property scope @safe bool <code class="code">valid</code>();
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Return <code class="code">true</code> if string is <code class="code">valid</code> utf string.
   </p>
 </div>
 
@@ -1264,6 +1353,8 @@ str.<span class="psymbol">frontCodeUnit</span> = 'x';
         <p class="para">
           <code class="code">
             <span class="ddoc_anchor" id="BasicString.backCodePoint"></span>const pure nothrow @nogc @property scope @trusted dchar <code class="code">backCodePoint</code>();
+<br>
+@property scope dchar <code class="code">backCodePoint</code>()(const dchar <code class="code">val</code>);
 
           </code>
         </p>
@@ -1298,6 +1389,20 @@ str.<span class="psymbol">frontCodeUnit</span> = 'x';
         <li><code class="code">BasicString!<span class="keyword">char</span> str = <span class="string_literal">"123á"</span>;
 
 <span class="keyword">assert</span>(str.<span class="psymbol">backCodePoint</span> == 'á');
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+<br><br>
+
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code">BasicString!<span class="keyword">char</span> str = <span class="string_literal">"123á"</span>;
+str.<span class="psymbol">backCodePoint</span> = '4';
+<span class="keyword">assert</span>(str == <span class="string_literal">"1234"</span>);
 </code></li>
       </ol>
     </div>
@@ -1623,7 +1728,7 @@ str.<span class="psymbol">clear</span>();
 </li><li class="ddoc_member">
   <div class="ddoc_member_header">
   <div class="ddoc_header_anchor">
-  <a href="#BasicString.destroy" id="BasicString.destroy"><code class="code">destroy</code></a>
+  <a href="#BasicString.release" id="BasicString.release"><code class="code">release</code></a>
 </div>
 </div><div class="ddoc_decl">
   <section class="section">
@@ -1632,7 +1737,7 @@ str.<span class="psymbol">clear</span>();
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="BasicString.destroy"></span>scope void <code class="code">destroy</code>();
+            <span class="ddoc_anchor" id="BasicString.release"></span>scope void <code class="code">release</code>();
 
           </code>
         </p>
@@ -1665,7 +1770,7 @@ str.reserve(str.capacity * 2);
 str.clear();
 <span class="keyword">assert</span>(str.capacity == cap);
 
-str.<span class="psymbol">destroy</span>();
+str.<span class="psymbol">release</span>();
 <span class="keyword">assert</span>(str.capacity &lt; cap);
 <span class="keyword">assert</span>(str.capacity == BasicString!<span class="keyword">char</span>.MinimalCapacity);
 </code></li>
@@ -1713,9 +1818,9 @@ str.<span class="psymbol">destroy</span>();
   <p class="para">
     If <code class="code">n</code> is greater than the current string capacity, the function causes the container to increase its capacity to <code class="code">n</code> characters (or greater).
 <br><br>
-            In all other cases, it do nothing.
+			In all other cases, it do nothing.
 <br><br>
-            This function has no effect on the string length and cannot alter its content.
+			This function has no effect on the string length and cannot alter its content.
 
 
   </p>
@@ -1780,9 +1885,9 @@ str.<span class="psymbol">reserve</span>(cap);
   <p class="para">
     If <code class="code"><code class="code">n</code></code> is smaller than the current string length, the current value is shortened to its first <code class="code"><code class="code">n</code></code> character, removing the characters beyond the nth.
 <br><br>
-            If <code class="code"><code class="code">n</code></code> is greater than the current string length, the current content is extended by inserting at the end as many characters as needed to reach a size of <code class="code">n</code>.
+			If <code class="code"><code class="code">n</code></code> is greater than the current string length, the current content is extended by inserting at the end as many characters as needed to reach a size of <code class="code">n</code>.
 <br><br>
-            If <code class="code"><code class="code">ch</code></code> is specified, the new elements are initialized as copies of <code class="code"><code class="code">ch</code></code>, otherwise, they are <code class="code">_</code>.
+			If <code class="code"><code class="code">ch</code></code> is specified, the new elements are initialized as copies of <code class="code"><code class="code">ch</code></code>, otherwise, they are <code class="code">_</code>.
 
 
   </p>
@@ -1847,9 +1952,9 @@ str.<span class="psymbol">resize</span>(2);
   <p class="para">
     The request is non-binding.
 <br><br>
-            This function has no effect on the string length and cannot alter its content.
+			This function has no effect on the string length and cannot alter its content.
 <br><br>
-            Returns new capacity.
+			Returns new capacity.
 
 
   </p>
@@ -1894,7 +1999,7 @@ str.<span class="psymbol">shrinkToFit</span>();
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="BasicString.this"></span>pure nothrow @nogc scope @safe this(return scope Allocator <code class="code">a</code>);
+            <span class="ddoc_anchor" id="BasicString.this"></span>pure nothrow @nogc scope @safe this(typeof(null) <code class="code">nil</code>);
 
           </code>
         </p>
@@ -1906,85 +2011,7 @@ str.<span class="psymbol">shrinkToFit</span>();
   <section class="section ddoc_sections">
   <div class="ddoc_summary">
   <p class="para">
-    Constructs <code class="code">a</code> empty <code class="code">BasicString</code> with allocator <code class="code"><code class="code">a</code></code>.
-  </p>
-</div>
-
-</section>
-
-</div>
-
-</li><li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#BasicString.this" id="BasicString.this"><code class="code">this</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="BasicString.this.2"></span>pure nothrow @nogc scope @trusted this();
-
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  <section class="section ddoc_sections">
-  <div class="ddoc_summary">
-  <p class="para">
-    @disable init if <code class="code">BasicString</code> has allocator with state.
-  </p>
-</div>
-
-</section>
-
-</div>
-
-</li><li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#BasicString.this" id="BasicString.this"><code class="code">this</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="BasicString.this.3"></span>pure nothrow @nogc scope @safe this(return scope AllocatorWithState[0 .. $] <code class="code">allocator</code>, typeof(null) <code class="code">val</code>);
-<br>
-scope this(return scope AllocatorWithState[0 .. $] <code class="code">allocator</code>, scope const Char[] <code class="code">val</code>);
-<br>
-scope this(Val)(return scope AllocatorWithState[0 .. $] <code class="code">allocator</code>, auto ref scope const Val <code class="code">val</code>) if (isBasicString!Val || isSomeChar!Val || isOtherString!Val || isCharArray!Val || isIntegral!Val);
-
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  <section class="section ddoc_sections">
-  <div class="ddoc_summary">
-  <p class="para">
-    Constructs a <code class="code">BasicString</code> object, initializing its value to <code class="code"><code class="code">val</code></code>.
-
-  </p>
-</div>
-<div class="ddoc_section">
-  <p class="para">
-    <span class="ddoc_section_h">Parameters:</span>
-<code class="code"><code class="code">allocator</code></code> exists only if template parameter <code class="code">_Allocator</code> has state.
-<br><br>
-                <code class="code"><code class="code">val</code></code> can by type of <code class="code">null</code>, <code class="code">BasicString!(T...)</code>, char|wchar|dchar array/slice/character or integer (integers are transformed to string)
-
+    Constructs a empty <code class="code">BasicString</code> object.
 
   </p>
 </div>
@@ -1997,23 +2024,8 @@ scope this(Val)(return scope AllocatorWithState[0 .. $] <code class="code">alloc
     <div class="dlang">
       <ol class="code_lines">
         <li><code class="code">{
-    BasicString!<span class="keyword">char</span> str = <span class="keyword">null</span>;
-    <span class="keyword">assert</span>(str.empty);
-}
-
-{
-    BasicString!<span class="keyword">char</span> str = 'X';
-    <span class="keyword">assert</span>(str == <span class="string_literal">"X"</span>);
-}
-
-{
- BasicString!<span class="keyword">char</span> str = <span class="string_literal">"123"w</span>;
- <span class="keyword">assert</span>(str == <span class="string_literal">"123"</span>);
-}
-
-{
- BasicString!<span class="keyword">char</span> str = 123uL;
- <span class="keyword">assert</span>(str == <span class="string_literal">"123"</span>);
+	BasicString!<span class="keyword">char</span> str = <span class="keyword">null</span>;
+	<span class="keyword">assert</span>(str.empty);
 }
 </code></li>
       </ol>
@@ -2039,7 +2051,385 @@ scope this(Val)(return scope AllocatorWithState[0 .. $] <code class="code">alloc
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="BasicString.this.4"></span>scope this(ref scope const typeof(this) <code class="code">rhs</code>);
+            <span class="ddoc_anchor" id="BasicString.this.2"></span>scope this(Allocator <code class="code">allocator</code>);
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Constructs a empty <code class="code">BasicString</code> object.
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Parameters:</span>
+<code class="code"><code class="code">allocator</code></code> <code class="code">allocator</code> parameter.
+
+
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code">{
+    BasicString!(<span class="keyword">char</span>, Mallocator) str = Mallocator.init;
+    <span class="keyword">assert</span>(str.empty);
+}
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#BasicString.this" id="BasicString.this"><code class="code">this</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="BasicString.this.3"></span>scope this(C)(const C <code class="code">character</code>) if (isSomeChar!C);
+<br>
+scope this(C)(const C <code class="code">character</code>, Allocator <code class="code">allocator</code>) if (isSomeChar!C);
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Constructs a <code class="code">BasicString</code> object, initializing its value to char value <code class="code"><code class="code">character</code></code>.
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Parameters:</span>
+<code class="code"><code class="code">character</code></code> can by type char|wchar|dchar.
+<br><br>
+                <code class="code"><code class="code">allocator</code></code> optional <code class="code">allocator</code> parameter.
+
+
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code">{
+    BasicString!<span class="keyword">char</span> str = 'x';
+    <span class="keyword">assert</span>(str == <span class="string_literal">"x"</span>);
+}
+
+{
+    BasicString!<span class="keyword">char</span> str = '読';
+    <span class="keyword">assert</span>(str == <span class="string_literal">"読"</span>);
+}
+
+{
+    <span class="keyword">auto</span> str = BasicString!(<span class="keyword">char</span>, Mallocator)('x', Mallocator.init);
+    <span class="keyword">assert</span>(str == <span class="string_literal">"X"</span>);
+}
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#BasicString.this" id="BasicString.this"><code class="code">this</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="BasicString.this.4"></span>scope this(this This)(scope const Char[] <code class="code">slice</code>);
+<br>
+scope this(this This)(scope const Char[] <code class="code">slice</code>, Allocator <code class="code">allocator</code>);
+<br>
+scope this(this This, C)(scope const C[] <code class="code">slice</code>) if (isSomeChar!C &amp;&amp; !is(immutable(C) == immutable(Char)));
+<br>
+scope this(this This, C)(scope const C[] <code class="code">slice</code>, Allocator <code class="code">allocator</code>) if (isSomeChar!C &amp;&amp; !is(immutable(C) == immutable(Char)));
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Constructs a <code class="code">BasicString</code> object from char <code class="code">slice</code> <code class="code"><code class="code">slice</code></code>.
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Parameters:</span>
+<code class="code"><code class="code">slice</code></code> is <code class="code">slice</code> of characters (<code class="code">const char[]</code>, <code class="code">const wchar[]</code>, <code class="code">const dchar[]</code>).
+<br><br>
+                <code class="code"><code class="code">allocator</code></code> optional <code class="code">allocator</code> parameter.
+
+
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code">{
+    BasicString!<span class="keyword">char</span> str = <span class="string_literal">"test"</span>;
+    <span class="keyword">assert</span>(str == <span class="string_literal">"test"</span>);
+}
+
+{
+    BasicString!<span class="keyword">char</span> str = <span class="string_literal">"test 読"d</span>;
+    <span class="keyword">assert</span>(str == <span class="string_literal">"test 読"</span>);
+}
+
+{
+    <span class="keyword">wchar</span>[] data = [<span class="keyword">cast</span>(<span class="keyword">wchar</span>)'1', '2', '3'];
+    BasicString!<span class="keyword">char</span> str = data;
+    <span class="keyword">assert</span>(str == <span class="string_literal">"123"</span>);
+}
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#BasicString.this" id="BasicString.this"><code class="code">this</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="BasicString.this.5"></span>scope this(I)(I <code class="code">integer</code>) if (isIntegral!I);
+<br>
+scope this(I)(I <code class="code">integer</code>, Allocator <code class="code">allocator</code>) if (isIntegral!I);
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Constructs a <code class="code">BasicString</code> object, initializing its value from <code class="code">integer</code> <code class="code"><code class="code">integer</code></code>.
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Parameters:</span>
+<code class="code"><code class="code">integer</code></code> integers value.
+<br><br>
+                <code class="code"><code class="code">allocator</code></code> optional <code class="code">allocator</code> parameter.
+
+
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code">{
+    BasicString!<span class="keyword">char</span> str = <span class="keyword">null</span>;
+    <span class="keyword">assert</span>(str.empty);
+}
+
+{
+    BasicString!<span class="keyword">char</span> str = 'X';
+    <span class="keyword">assert</span>(str == <span class="string_literal">"X"</span>);
+}
+
+{
+    BasicString!<span class="keyword">char</span> str = <span class="string_literal">"123"w</span>;
+    <span class="keyword">assert</span>(str == <span class="string_literal">"123"</span>);
+}
+
+{
+    BasicString!<span class="keyword">char</span> str = 123uL;
+    <span class="keyword">assert</span>(str == <span class="string_literal">"123"</span>);
+}
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#BasicString.this" id="BasicString.this"><code class="code">this</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="BasicString.this.6"></span>scope this(this This, Rhs)(auto ref scope const Rhs <code class="code">rhs</code>) if (isBasicString!Rhs &amp;&amp; isConstructable!(<code class="code">rhs</code>, This) &amp;&amp; (isRef!<code class="code">rhs</code> || !is(immutable(This) == immutable(Rhs))));
+<br>
+scope this(this This, Rhs)(auto ref scope const Rhs <code class="code">rhs</code>, Allocator <code class="code">allocator</code>) if (isBasicString!Rhs);
+<br>
+scope this(this This, Rhs)(auto ref scope const Rhs <code class="code">rhs</code>, Evoid) if (isBasicString!Rhs &amp;&amp; isConstructable!(<code class="code">rhs</code>, This));
+
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Constructs a <code class="code">BasicString</code> object from other <code class="code">BasicString</code> object.
+
+  </p>
+</div>
+<div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">Parameters:</span>
+<code class="code"><code class="code">rhs</code></code> <code class="code">BasicString</code> rvalue/lvalue
+<br><br>
+                <code class="code"><code class="code">allocator</code></code> optional <code class="code">allocator</code> parameter.
+
+
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code">{
+    BasicString!<span class="keyword">char</span> a = <span class="string_literal">"123"</span>;
+    BasicString!<span class="keyword">char</span> b = a;
+    <span class="keyword">assert</span>(b == <span class="string_literal">"123"</span>);
+}
+
+{
+    BasicString!<span class="keyword">dchar</span> a = <span class="string_literal">"123"</span>;
+    BasicString!<span class="keyword">char</span> b = a;
+    <span class="keyword">assert</span>(b == <span class="string_literal">"123"</span>);
+}
+
+{
+    BasicString!<span class="keyword">dchar</span> a = <span class="string_literal">"123"</span>;
+    <span class="keyword">auto</span> b = BasicString!<span class="keyword">char</span>(a, Mallocator.init);
+    <span class="keyword">assert</span>(b == <span class="string_literal">"123"</span>);
+}
+
+<span class="keyword">import</span> core.lifetime : move;
+{
+    BasicString!<span class="keyword">char</span> a = <span class="string_literal">"123"</span>;
+    BasicString!<span class="keyword">char</span> b = move(a);
+    <span class="keyword">assert</span>(b == <span class="string_literal">"123"</span>);
+}
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#BasicString.this" id="BasicString.this"><code class="code">this</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="BasicString.this.7"></span>scope this(ref scope const typeof(this) <code class="code">rhs</code>);
 
           </code>
         </p>
@@ -2078,7 +2468,7 @@ scope this(Val)(return scope AllocatorWithState[0 .. $] <code class="code">alloc
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="BasicString.this.5"></span>scope this(ref scope typeof(this) <code class="code">rhs</code>);
+            <span class="ddoc_anchor" id="BasicString.this.8"></span>scope this(ref scope typeof(this) <code class="code">rhs</code>);
 
           </code>
         </p>
@@ -2142,7 +2532,7 @@ ref scope typeof(this) <code class="code">opAssign</code>(Val)(auto ref scope Va
   <p class="para">
     Parameter <code class="code"><code class="code">rhs</code></code> can by type of <code class="code">null</code>, <code class="code">BasicString!(...)</code>, <code class="code">char|wchar|dchar</code> array/slice/character or integer (integer is transformed to string).
 <br><br>
-            Return referece to <code class="code">this</code>.
+			Return referece to <code class="code">this</code>.
 
 
   </p>
@@ -2216,7 +2606,7 @@ ref scope typeof(this) <code class="code">opOpAssign</code>(string op : "+", Val
   <p class="para">
     Parameter <code class="code"><code class="code">rhs</code></code> can by type of <code class="code">BasicString!(...)</code>, <code class="code">char|wchar|dchar</code> array/slice/character or integer (integer is transformed to string).
 <br><br>
-            Return referece to <code class="code">this</code>.
+			Return referece to <code class="code">this</code>.
 
 
   </p>
@@ -2614,7 +3004,7 @@ str.reserve(str.capacity * 2);
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="BasicString.opSlice.2"></span>inout pure nothrow @nogc scope @system inout(Char)[] <code class="code">opSlice</code>(size_t <code class="code">begin</code>, size_t <code class="code">end</code>) return;
+            <span class="ddoc_anchor" id="BasicString.opSlice.2"></span>inout pure nothrow @nogc @system inout(Char)[] <code class="code">opSlice</code>(size_t <code class="code">begin</code>, size_t <code class="code">end</code>) return;
 
           </code>
         </p>
@@ -2915,7 +3305,7 @@ scope size_t <code class="code">append</code>(Val)(auto ref scope const Val <cod
     <span class="ddoc_section_h">Parameters:</span>
 <code class="code"><code class="code">val</code></code> appended value.
 <br><br>
-                <code class="code"><code class="code">count</code></code> Number of times <code class="code"><code class="code">val</code></code> is appended.
+				<code class="code"><code class="code">count</code></code> Number of times <code class="code"><code class="code">val</code></code> is appended.
 
 
   </p>
@@ -3029,9 +3419,9 @@ scope size_t <code class="code">insert</code>(Val)(const Char* <code class="code
   <p class="para">
     Return number of inserted characters.
 <br><br>
-            If parameters are out of range then there is no inserted value and in debug mode assert throw error.
+			If parameters are out of range then there is no inserted value and in debug mode assert throw error.
 <br><br>
-            Parameters are out of range if <code class="code"><code class="code">pos</code></code> is larger then <code class="code">.length</code> or <code class="code"><code class="code">ptr</code></code> is smaller then <code class="code">this.<code class="code">ptr</code></code> or <code class="code"><code class="code">ptr</code></code> point to address larger then <code class="code">this.<code class="code">ptr</code> + this.length</code>
+			Parameters are out of range if <code class="code"><code class="code">pos</code></code> is larger then <code class="code">.length</code> or <code class="code"><code class="code">ptr</code></code> is smaller then <code class="code">this.<code class="code">ptr</code></code> or <code class="code"><code class="code">ptr</code></code> point to address larger then <code class="code">this.<code class="code">ptr</code> + this.length</code>
 
 
   </p>
@@ -3041,11 +3431,11 @@ scope size_t <code class="code">insert</code>(Val)(const Char* <code class="code
     <span class="ddoc_section_h">Parameters:</span>
 <code class="code"><code class="code">pos</code></code> Insertion point, the new contents are inserted before the character at position <code class="code"><code class="code">pos</code></code>.
 <br><br>
-                <code class="code"><code class="code">ptr</code></code> Pointer pointing to the insertion point, the new contents are inserted before the character pointed by <code class="code">ptr</code>.
+				<code class="code"><code class="code">ptr</code></code> Pointer pointing to the insertion point, the new contents are inserted before the character pointed by <code class="code">ptr</code>.
 <br><br>
-                <code class="code"><code class="code">val</code></code> Value inserted before insertion point <code class="code"><code class="code">pos</code></code> or <code class="code"><code class="code">ptr</code></code>.
+				<code class="code"><code class="code">val</code></code> Value inserted before insertion point <code class="code"><code class="code">pos</code></code> or <code class="code"><code class="code">ptr</code></code>.
 <br><br>
-                <code class="code"><code class="code">count</code></code> Number of times <code class="code"><code class="code">val</code></code> is inserted.
+				<code class="code"><code class="code">count</code></code> Number of times <code class="code"><code class="code">val</code></code> is inserted.
 
 
   </p>
@@ -3191,11 +3581,11 @@ pure nothrow @nogc scope @trusted void <code class="code">erase</code>(scope con
     <span class="ddoc_section_h">Parameters:</span>
 <code class="code"><code class="code">pos</code></code> position of first character to be removed.
 <br><br>
-                <code class="code"><code class="code">n</code></code> number of character to be removed.
+				<code class="code"><code class="code">n</code></code> number of character to be removed.
 <br><br>
-                <code class="code"><code class="code">ptr</code></code> pointer to character to be removed.
+				<code class="code"><code class="code">ptr</code></code> pointer to character to be removed.
 <br><br>
-                <code class="code"><code class="code">slice</code></code> sub-<code class="code">slice</code> to be removed, <code class="code"><code class="code">slice</code></code> must be subset of <code class="code">this</code>
+				<code class="code"><code class="code">slice</code></code> sub-<code class="code">slice</code> to be removed, <code class="code"><code class="code">slice</code></code> must be subset of <code class="code">this</code>
 
 
   </p>
@@ -3211,7 +3601,7 @@ pure nothrow @nogc scope @trusted void <code class="code">erase</code>(scope con
         <li><code class="code">BasicString!<span class="keyword">char</span> str = <span class="string_literal">"123456"</span>;
 
 str.<span class="psymbol">erase</span>(2);
-<span class="keyword">assert</span>(str == <span class="string_literal">"12456"</span>);
+<span class="keyword">assert</span>(str == <span class="string_literal">"12"</span>);
 </code></li>
       </ol>
     </div>
@@ -3308,13 +3698,13 @@ ref scope typeof(this) <code class="code">replace</code>(Val)(scope const Char[]
     <span class="ddoc_section_h">Parameters:</span>
 <code class="code"><code class="code">pos</code></code> position of the first character to be replaced.
 <br><br>
-                <code class="code"><code class="code">len</code></code> number of characters to <code class="code">replace</code> (if the string is shorter, as many characters as possible are replaced).
+				<code class="code"><code class="code">len</code></code> number of characters to <code class="code">replace</code> (if the string is shorter, as many characters as possible are replaced).
 <br><br>
-                <code class="code"><code class="code">slice</code></code> sub-<code class="code">slice</code> to be removed, <code class="code"><code class="code">slice</code></code> must be subset of <code class="code">this</code>
+				<code class="code"><code class="code">slice</code></code> sub-<code class="code">slice</code> to be removed, <code class="code"><code class="code">slice</code></code> must be subset of <code class="code">this</code>
 <br><br>
-                <code class="code"><code class="code">val</code></code> inserted value.
+				<code class="code"><code class="code">val</code></code> inserted value.
 <br><br>
-                <code class="code"><code class="code">count</code></code> number of times <code class="code"><code class="code">val</code></code> is inserted.
+				<code class="code"><code class="code">count</code></code> number of times <code class="code"><code class="code">val</code></code> is inserted.
 
 
   </p>
@@ -3583,7 +3973,7 @@ str.<span class="psymbol">replace</span>(str[2 .. $], str2);
     <span class="ddoc_section_h">Parameters:</span>
 <code class="code"><code class="code">allocator</code></code> exists only if template parameter <code class="code">_Allocator</code> has state.
 <br><br>
-                <code class="code"><code class="code">args</code></code> values of type <code class="code">char|wchar|dchar</code> array/slice/character or <code class="code">BasicString</code>.
+				<code class="code"><code class="code">args</code></code> values of type <code class="code">char|wchar|dchar</code> array/slice/character or <code class="code">BasicString</code>.
 
 
   </p>

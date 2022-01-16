@@ -39,6 +39,10 @@ $('#symbolSearchPane').show();</script>
 			<br/>
 			<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isSomeChar</span><span class="pun">!</span><span class="pln">_Char </span><span class="pun">&amp;&amp; </span><span class="kwd">is</span><span class="pun">(</span><span class="typ">Unqual</span><span class="pun">!</span><span class="pln">_Char </span><span class="pun">== </span><span class="pln">_Char</span><span class="pun">)</span><span class="pun">);</span>
 					</div>
+					<div class="single-prototype">
+			<span class="kwd">alias</span> <span class="pln">BasicString</span>(_Char, <span class="typ">ulong</span> _Padding, _Allocator)
+			 <span class="pun">=</span> <a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a>!(_Char,_Allocator,_Padding)<span class="pun">;</span>
+					</div>
 				</code>
 			</div>
 			<section><p><code class="lang-d"><span class="typ">BasicString</span></code> use utf-8, utf-16 or utf-32 encoding.
@@ -59,8 +63,8 @@ $('#symbolSearchPane').show();</script>
 <p>		<code class="lang-d"><span class="pln">_Padding</span></code> Additional size of struct <code class="lang-d"><span class="typ">BasicString</span></code>, increase max length of small string.
 </p>
 </section>
-
-			<section><h2>Constructors</h2>
+<h2>Struct BasicString</h2>
+			<section><h3>Constructors</h3>
 				<table>
 					<col class="caption"/>
 					<tr>
@@ -71,9 +75,9 @@ $('#symbolSearchPane').show();</script>
 							<a href="../basic_string/BasicString.this.html" class="public">
 								<code>this</code>
 							</a>
-							<span class="tableEntryAnnotation">(a)</span>
+							<span class="tableEntryAnnotation">(nil)</span>
 						</td>
-						<td>Constructs a empty <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> with allocator <code class="lang-d"><a href="../basic_string/BasicString.this.html#a"><span class="pln">a</span></a></code>.
+						<td>Constructs a empty <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object.
 </td>
 					</tr>
 					<tr>
@@ -81,9 +85,9 @@ $('#symbolSearchPane').show();</script>
 							<a href="../basic_string/BasicString.this.html" class="public">
 								<code>this</code>
 							</a>
-							<span class="tableEntryAnnotation">()</span>
+							<span class="tableEntryAnnotation">(allocator)</span>
 						</td>
-						<td>@disable init if <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> has allocator with state.
+						<td>Constructs a empty <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object with <code class="lang-d"><a href="../basic_string/BasicString.this.html#allocator"><span class="pln">allocator</span></a></code>.
 </td>
 					</tr>
 					<tr>
@@ -91,9 +95,69 @@ $('#symbolSearchPane').show();</script>
 							<a href="../basic_string/BasicString.this.html" class="public">
 								<code>this</code>
 							</a>
-							<span class="tableEntryAnnotation">(allocator, val)</span>
+							<span class="tableEntryAnnotation">(character)</span>
 						</td>
-						<td>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object, initializing its value to <code class="lang-d"><a href="../basic_string/BasicString.this.html#val"><span class="pln">val</span></a></code>.
+						<td>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object, initializing its value to char value <code class="lang-d"><a href="../basic_string/BasicString.this.html#character"><span class="pln">character</span></a></code>.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../basic_string/BasicString.this.html" class="public">
+								<code>this</code>
+							</a>
+							<span class="tableEntryAnnotation">(character, allocator)</span>
+						</td>
+						<td>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object, initializing its value to char value <code class="lang-d"><a href="../basic_string/BasicString.this.html#character"><span class="pln">character</span></a></code>.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../basic_string/BasicString.this.html" class="public">
+								<code>this</code>
+							</a>
+							<span class="tableEntryAnnotation">(slice)</span>
+						</td>
+						<td>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object from char slice <code class="lang-d"><a href="../basic_string/BasicString.this.html#slice"><span class="pln">slice</span></a></code>.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../basic_string/BasicString.this.html" class="public">
+								<code>this</code>
+							</a>
+							<span class="tableEntryAnnotation">(slice, allocator)</span>
+						</td>
+						<td>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object from char slice <code class="lang-d"><a href="../basic_string/BasicString.this.html#slice"><span class="pln">slice</span></a></code>.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../basic_string/BasicString.this.html" class="public">
+								<code>this</code>
+							</a>
+							<span class="tableEntryAnnotation">(integer)</span>
+						</td>
+						<td>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object, initializing its value from integer <code class="lang-d"><a href="../basic_string/BasicString.this.html#integer"><span class="pln">integer</span></a></code>.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../basic_string/BasicString.this.html" class="public">
+								<code>this</code>
+							</a>
+							<span class="tableEntryAnnotation">(integer, allocator)</span>
+						</td>
+						<td>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object, initializing its value from integer <code class="lang-d"><a href="../basic_string/BasicString.this.html#integer"><span class="pln">integer</span></a></code>.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../basic_string/BasicString.this.html" class="public">
+								<code>this</code>
+							</a>
+							<span class="tableEntryAnnotation">(rhs)</span>
+						</td>
+						<td>Constructs a <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object from other <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> object.
 </td>
 					</tr>
 					<tr>
@@ -118,18 +182,11 @@ $('#symbolSearchPane').show();</script>
 					</tr>
 				</table>
 			</section>
-			<section><h2>Properties</h2>
+			<section><h3>Properties</h3>
 				<table>
 					<col class="caption"/>
 					<tr>
 						<th>Name</th><th>Type</th><th>Description</th>
-					</tr>
-					<tr>
-						<td>
-							<a href="../basic_string/BasicString.allocator.html" class="public property"><code>allocator</code></a><span class="tableEntryAnnotation">[get]</span>
-						</td>
-						<td class="typecol"><code class="prettyprint lang-d"><span class="kwd">auto</span></code></td><td>Returns copy of allocator.
-</td>
 					</tr>
 					<tr>
 						<td>
@@ -203,7 +260,7 @@ $('#symbolSearchPane').show();</script>
 					</tr>
 				</table>
 			</section>
-			<section><h2>Methods</h2>
+			<section><h3>Methods</h3>
 				<table>
 					<col class="caption"/>
 					<tr>
@@ -224,9 +281,19 @@ $('#symbolSearchPane').show();</script>
 							<a href="../basic_string/BasicString.build.html" class="public">
 								<code>build</code>
 							</a>
-							<span class="tableEntryAnnotation">(allocator, args)</span>
+							<span class="tableEntryAnnotation">(args)</span>
 						</td>
 						<td>Static function which return <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> construct from arguments <code class="lang-d"><a href="../basic_string/BasicString.build.html#args"><span class="pln">args</span></a></code>.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../basic_string/BasicString.build.html" class="public">
+								<code>build</code>
+							</a>
+							<span class="tableEntryAnnotation">(allocator, args)</span>
+						</td>
+						<td>dito
 </td>
 					</tr>
 					<tr>
@@ -264,7 +331,7 @@ $('#symbolSearchPane').show();</script>
 							<a href="../basic_string/BasicString.opAssign.html" class="public">
 								<code>opAssign</code>
 							</a>
-							<span class="tableEntryAnnotation">(rhs)</span>
+							<span class="tableEntryAnnotation">(nil)</span>
 						</td>
 						<td>Assigns a new value <code class="lang-d"><a href="../basic_string/BasicString.opAssign.html#rhs"><span class="pln">rhs</span></a></code> to the string, replacing its current contents.
 </td>
@@ -324,6 +391,16 @@ $('#symbolSearchPane').show();</script>
 							<a href="../basic_string/BasicString.opIndex.html" class="public">
 								<code>opIndex</code>
 							</a>
+							<span class="tableEntryAnnotation">()</span>
+						</td>
+						<td>Return slice of all character.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../basic_string/BasicString.opIndex.html" class="public">
+								<code>opIndex</code>
+							</a>
 							<span class="tableEntryAnnotation">(pos)</span>
 						</td>
 						<td>Returns character at specified location <code class="lang-d"><a href="../basic_string/BasicString.opIndex.html#pos"><span class="pln">pos</span></a></code>.
@@ -337,26 +414,6 @@ $('#symbolSearchPane').show();</script>
 							<span class="tableEntryAnnotation">(val, pos)</span>
 						</td>
 						<td>Assign character at specified location <code class="lang-d"><a href="../basic_string/BasicString.opIndexAssign.html#pos"><span class="pln">pos</span></a></code> to value <code class="lang-d"><a href="../basic_string/BasicString.opIndexAssign.html#val"><span class="pln">val</span></a></code>.
-</td>
-					</tr>
-					<tr>
-						<td>
-							<a href="../basic_string/BasicString.opOpAssign.html" class="public">
-								<code>opOpAssign</code>
-							</a>
-							<span class="tableEntryAnnotation">(rhs)</span>
-						</td>
-						<td>Extends the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> by appending additional characters at the end of its current value.
-</td>
-					</tr>
-					<tr>
-						<td>
-							<a href="../basic_string/BasicString.opSlice.html" class="public">
-								<code>opSlice</code>
-							</a>
-							<span class="tableEntryAnnotation">()</span>
-						</td>
-						<td>Return slice of all character.
 </td>
 					</tr>
 					<tr>
@@ -461,7 +518,7 @@ $('#symbolSearchPane').show();</script>
 					</tr>
 				</table>
 			</section>
-			<section><h2>Aliases</h2>
+			<section><h3>Aliases</h3>
 				<table>
 					<col class="caption"/>
 					<tr>
@@ -474,6 +531,15 @@ $('#symbolSearchPane').show();</script>
 							</a>
 						</td>
 						<td>Type of the allocator object used to define the storage allocation model. By default Mallocator is used.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../basic_string/BasicString.allocator.html" class="public">
+								<code>allocator</code>
+							</a>
+						</td>
+						<td>Returns allocator.
 </td>
 					</tr>
 					<tr>
@@ -523,6 +589,15 @@ $('#symbolSearchPane').show();</script>
 					</tr>
 					<tr>
 						<td>
+							<a href="../basic_string/BasicString.opOpAssign.html" class="public">
+								<code>opOpAssign</code>
+							</a>
+						</td>
+						<td>Extends the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code> by appending additional characters at the end of its current value.
+</td>
+					</tr>
+					<tr>
+						<td>
 							<a href="../basic_string/BasicString.popBack.html" class="public">
 								<code>popBack</code>
 							</a>
@@ -540,7 +615,7 @@ $('#symbolSearchPane').show();</script>
 </td>
 					</tr>
 				</table>
-			</section>
+			</section><h2>Alias BasicString</h2>
 			
 			<footer>
 				<table class="license-info">
