@@ -307,15 +307,16 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				--------------------
 		*/
 		public @property dchar backCodePoint()const scope pure nothrow @trusted @nogc{
-			auto chars = this.core.chars;
-
-			if(chars.length == 0)
-				return dchar.init;
 
 			static if(is(Char == dchar)){
 				return this.backCodeUnit();
 			}
 			else{
+				auto chars = this.core.chars;
+
+				if(chars.length == 0)
+					return dchar.init;
+
 				const ubyte len = strideBack(chars);
 				if(len == 0)
 					return dchar.init;
@@ -327,12 +328,13 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 		/// ditto
 		public @property dchar backCodePoint()(const dchar val)scope{
-			auto chars = this.core.chars;
 
 			static if(is(Char == dchar)){
 				return this.backCodeUnit(val);
 			}
 			else{
+				auto chars = this.core.chars;
+
 				if(chars.length == 0)
 					return dchar.init;
 
@@ -1020,6 +1022,12 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			assert(integer.encodedLength!Char <= MinimalCapacity);
 			this.core.length = integer.encodeTo(this.core.allChars);
 
+			return this;
+		}
+
+		/// ditto
+		public ref typeof(this) opAssign(scope typeof(this) rhs)scope{
+			this.proxySwap(rhs);
 			return this;
 		}
 
