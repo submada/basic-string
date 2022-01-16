@@ -42,29 +42,29 @@ $('#symbolSearchPane').show();</script>
 </section>
 
 			<section><h2>Examples</h2>
-<pre class="code"><code class="lang-d"><span class="pln">        </span><span class="pun">{
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"á1"</span><span class="pun">;    </span><span class="com">//'á' is encoded as 2 chars
+<pre class="code"><code class="lang-d"><span class="pun">{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"á1"</span><span class="pun">;    </span><span class="com">//'á' is encoded as 2 chars
 
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">popBackCodePoint </span><span class="pun">== </span><span class="lit">1</span><span class="pun">);
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"á"</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">popBackCodePoint </span><span class="pun">== </span><span class="lit">1</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"á"</span><span class="pun">);
 
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">popBackCodePoint </span><span class="pun">== </span><span class="lit">2</span><span class="pun">);
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">popBackCodePoint </span><span class="pun">== </span><span class="lit">2</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
 
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">popBackCodePoint </span><span class="pun">== </span><span class="lit">0</span><span class="pun">);
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
-        }
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">popBackCodePoint </span><span class="pun">== </span><span class="lit">0</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
+}
 
-        {
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"1á"</span><span class="pun">;    </span><span class="com">//'á' is encoded as 2 chars
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">length </span><span class="pun">== </span><span class="lit">3</span><span class="pun">);
+{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"1á"</span><span class="pun">;    </span><span class="com">//'á' is encoded as 2 chars
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">length </span><span class="pun">== </span><span class="lit">3</span><span class="pun">);
 
-</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">erase</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">length </span><span class="pun">- </span><span class="lit">1</span><span class="pun">);
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">length </span><span class="pun">== </span><span class="lit">2</span><span class="pun">);
+	</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">erase</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">length </span><span class="pun">- </span><span class="lit">1</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">length </span><span class="pun">== </span><span class="lit">2</span><span class="pun">);
 
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">popBackCodePoint </span><span class="pun">== </span><span class="lit">0</span><span class="pun">);   </span><span class="com">//popBackCodePoint cannot remove invalid code points
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">length </span><span class="pun">== </span><span class="lit">2</span><span class="pun">);
-        }</span></code></pre>
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">popBackCodePoint </span><span class="pun">== </span><span class="lit">0</span><span class="pun">);   </span><span class="com">//popBackCodePoint cannot remove invalid code points
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">length </span><span class="pun">== </span><span class="lit">2</span><span class="pun">);
+}</span></code></pre>
 </section>
 
 			<footer>

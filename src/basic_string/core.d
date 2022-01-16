@@ -109,8 +109,6 @@ package template BasicStringCore(
             });
         }
 
-        //private alias _allocator = allocator;
-
 
         public alias MaximalCapacity = Long.maxCapacity;
 
@@ -127,7 +125,7 @@ package template BasicStringCore(
 
         public this(this This)(Allocator allocator){
             static if(!hasStatelessAllocator)
-                this._allocator = forward!allocator;
+                this.allocator = forward!allocator;
         }
 
         public this(this This, Rhs)(auto ref scope const Rhs rhs, Evoid )scope
@@ -186,10 +184,7 @@ package template BasicStringCore(
             const size_t len = encodedLength!Char(integer);
 
             this.reserve(len);
-            const new_len = integer.encodeTo(this.allChars);
-            ()@trusted{
-                this.length = new_len;
-            }();
+            this.length = integer.encodeTo(this.allChars);
         }
 
 
@@ -200,7 +195,7 @@ package template BasicStringCore(
         }
 
 
-        public @property void length(const size_t len)scope pure nothrow @system @nogc{
+        public @property void length(const size_t len)scope pure nothrow @trusted @nogc{
             assert(len <= this.capacity);
 
             if(this._sso)
@@ -373,7 +368,7 @@ package template BasicStringCore(
             swap(this._raw, rhs._raw);
 
             static if(!hasStatelessAllocator)
-                swap(this._allocator, rhs._allocator);
+                swap(this.allocator, rhs.allocator);
 
         }
 
@@ -601,20 +596,6 @@ package template BasicStringCore(
             return this._short.isShort;
         }
 
-        /+private @property inout(Char)[] _chars()inout scope pure nothrow @trusted @nogc{
-            return this._sso
-                ? this._short_chars()
-                : this._long_chars();
-        }
-
-        private @property inout(Char)[] _all_chars()inout scope pure nothrow @trusted @nogc{
-            return this._sso
-                ? this._short_all_chars()
-                : this._long_all_chars();
-        }+/
-
-
-
         //allocation:
         private Char[] _allocate(const size_t capacity){
             void[] data = this.allocator.allocate(capacity * Char.sizeof);
@@ -777,7 +758,7 @@ package template BasicStringCore(
             }(this);
         }+/
 
-        private static void moveEmplaceImpl(ref typeof(this) source, ref typeof(this) target)@trusted pure nothrow @nogc{
+        /+private static void moveEmplaceImpl(ref typeof(this) source, ref typeof(this) target)@trusted pure nothrow @nogc{
             //  Unsafe when compiling without -dip1000
             assert(&source !is &target, "source and target must not be identical");
 
@@ -790,7 +771,7 @@ package template BasicStringCore(
                 source._short.setShort();
                 source._short.length = 0;
             }();
-        }
+        }+/
 
     }
 }

@@ -110,49 +110,49 @@ $('#symbolSearchPane').show();</script>
 </p>
 </section>
 <section><h2>Examples</h2>
-<pre class="code"><code class="lang-d"><span class="pln">        </span><span class="pun">{
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123456"</span><span class="pun">;
+<pre class="code"><code class="lang-d"><span class="pun">{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123456"</span><span class="pun">;
 
-</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="lit">2</span><span class="pun">, </span><span class="str">'x'</span><span class="pun">, </span><span class="lit">2</span><span class="pun">);
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"12xx3456"</span><span class="pun">);
-        }
+	</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="lit">2</span><span class="pun">, </span><span class="str">'x'</span><span class="pun">, </span><span class="lit">2</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"12xx3456"</span><span class="pun">);
+}
 
-        {
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123456"</span><span class="pun">;
+{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123456"</span><span class="pun">;
 
-</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="lit">2</span><span class="pun">, </span><span class="str">"abc"</span><span class="pun">);
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"12abc3456"</span><span class="pun">);
-        }
+	</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="lit">2</span><span class="pun">, </span><span class="str">"abc"</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"12abc3456"</span><span class="pun">);
+}
 
-        {
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123456"</span><span class="pun">;
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str2 </span><span class="pun">= </span><span class="str">"abc"</span><span class="pun">;
+{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123456"</span><span class="pun">;
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str2 </span><span class="pun">= </span><span class="str">"abc"</span><span class="pun">;
 
-</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="lit">2</span><span class="pun">, </span><span class="pln">str2</span><span class="pun">);
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"12abc3456"</span><span class="pun">);
-        }
+	</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="lit">2</span><span class="pun">, </span><span class="pln">str2</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"12abc3456"</span><span class="pun">);
+}
 
-        {
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123456"</span><span class="pun">;
+{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123456"</span><span class="pun">;
 
-</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">ptr </span><span class="pun">+ </span><span class="lit">2</span><span class="pun">, </span><span class="str">'x'</span><span class="pun">, </span><span class="lit">2</span><span class="pun">);
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"12xx3456"</span><span class="pun">);
-        }
+	</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">ptr </span><span class="pun">+ </span><span class="lit">2</span><span class="pun">, </span><span class="str">'x'</span><span class="pun">, </span><span class="lit">2</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"12xx3456"</span><span class="pun">);
+}
 
-        {
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123456"</span><span class="pun">;
+{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123456"</span><span class="pun">;
 
-</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">ptr </span><span class="pun">+ </span><span class="lit">2</span><span class="pun">, </span><span class="str">"abc"</span><span class="pun">);
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"12abc3456"</span><span class="pun">);
-        }
+	</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">ptr </span><span class="pun">+ </span><span class="lit">2</span><span class="pun">, </span><span class="str">"abc"</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"12abc3456"</span><span class="pun">);
+}
 
-        {
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123456"</span><span class="pun">;
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str2 </span><span class="pun">= </span><span class="str">"abc"</span><span class="pun">;
+{
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123456"</span><span class="pun">;
+	<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str2 </span><span class="pun">= </span><span class="str">"abc"</span><span class="pun">;
 
-</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">ptr </span><span class="pun">+ </span><span class="lit">2</span><span class="pun">, </span><span class="pln">str2</span><span class="pun">);
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"12abc3456"</span><span class="pun">);
-        }</span></code></pre>
+	</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">ptr </span><span class="pun">+ </span><span class="lit">2</span><span class="pun">, </span><span class="pln">str2</span><span class="pun">);
+	</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"12abc3456"</span><span class="pun">);
+}</span></code></pre>
 </section>
 
 			<footer>

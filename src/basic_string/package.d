@@ -159,7 +159,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				--------------------
 		*/
 		public @property size_t length()const scope pure nothrow @trusted @nogc{
-			return this.core.length();
+			return this.core.length;
 		}
 
 
@@ -340,9 +340,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				if(len == 0)
 					return dchar.init;
 
-				()@trusted{
-					this.length = (chars.length - len);
-				}();
+				this.length = (chars.length - len);
 				this.append(val);
 				return val;
 			}
@@ -521,11 +519,6 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			this.core.release();
 		}
 
-		deprecated("use `.release()` instead")
-		public void destroy()scope{
-			this.release();
-		}
-
 
 
 		/**
@@ -578,9 +571,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			const size_t old_length = this.length;
 
 			if(old_length > n){
-				()@trusted{
-					this.core.length = n;
-				}();
+				this.core.length = n;
 			}
 			else if(old_length < n){
 				this.append(ch, n - old_length);
@@ -897,7 +888,6 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		if(isBasicString!Rhs){
 			this.core = Core(forward!allocator);
 			this.core.ctor(rhs.core.chars);
-			//this(rhs.core.chars, forward!allocator);
 		}
 
 		/// ditto
@@ -995,9 +985,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			this.clear();
 
 			this.reserve(encodedLength!Char(slice));
-			()@trusted{
-				this.core.length = slice.encodeTo(this.core.allChars);
-			}();
+			this.core.length = slice.encodeTo(this.core.allChars);
 
 			return this;
 		}
@@ -1008,9 +996,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			this.clear();
 
 			this.reserve(encodedLength!Char(slice));
-			()@trusted{
-				this.core.length = slice.encodeTo(this.core.allChars);
-			}();
+			this.core.length = slice.encodeTo(this.core.allChars);
 
 			return this;
 		}
@@ -1021,9 +1007,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			this.clear();
 
 			assert(character.encodedLength!Char <= MinimalCapacity);
-			()@trusted{
-				this.core.length = character.encodeTo(this.core.allChars);
-			}();
+			this.core.length = character.encodeTo(this.core.allChars);
 
 			return this;
 		}
@@ -1034,9 +1018,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			this.clear();
 
 			assert(integer.encodedLength!Char <= MinimalCapacity);
-			()@trusted{
-				this.core.length = integer.encodeTo(this.core.allChars);
-			}();
+			this.core.length = integer.encodeTo(this.core.allChars);
 
 			return this;
 		}
@@ -1425,6 +1407,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		*/
 		public inout(Char)[] opSlice(const size_t begin, const size_t end)inout return pure nothrow @system @nogc{
 			const len = this.length;
+
 			return this.ptr[min(len, begin) .. min(len, end)];
 		}
 
@@ -1628,11 +1611,16 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		/// ditto
 		public size_t insert(Val)(const size_t pos, auto ref const scope Val val, const size_t count = 1)scope
 		if(isBasicString!Val || isSomeChar!Val || isSomeString!Val || isIntegral!Val){
-			static if(isBasicString!Val || isSomeString!Val)
+
+			static if(isBasicString!Val || isSomeString!Val){
 				return this.core.insert(pos, val[], count);
-			else static if(isSomeChar!Val || isIntegral!Val)
+			}
+			else static if(isSomeChar!Val || isIntegral!Val){
 				return this.core.insert(pos, val, count);
-			else static assert(0, "invalid type '" ~ Val.stringof ~ "'");
+			}
+			else{
+				static assert(0, "invalid type '" ~ Val.stringof ~ "'");
+			}
 		}
 
 		/// ditto
@@ -1647,12 +1635,15 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		if(isBasicString!Val || isSomeChar!Val || isSomeString!Val || isIntegral!Val){
 			const size_t pos = this._insert_ptr_to_pos(ptr);
 
-			static if(isBasicString!Val || isSomeString!Val)
+			static if(isBasicString!Val || isSomeString!Val){
 				return this.core.insert(pos, val[], count);
-			else static if(isSomeChar!Val || isIntegral!Val)
+			}
+			else static if(isSomeChar!Val || isIntegral!Val){
 				return this.core.insert(pos, val, count);
-			else
+			}
+			else{
 				static assert(0, "invalid type '" ~ Val.stringof ~ "'");
+			}
 		}
 
 
@@ -1834,12 +1825,15 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		public ref typeof(this) replace(Val)(const size_t pos, const size_t len, auto ref scope const Val val, const size_t count = 1)return scope
 		if(isBasicString!Val || isSomeChar!Val || isSomeString!Val || isIntegral!Val || isCharArray!Val){
 
-			static if(isBasicString!Val || isSomeString!Val || isCharArray!Val)
+			static if(isBasicString!Val || isSomeString!Val || isCharArray!Val){
 				this.core.replace(pos, len, val[], count);
-			else static if(isSomeChar!Val || isIntegral!Val)
+			}
+			else static if(isSomeChar!Val || isIntegral!Val){
 				this.core.replace(pos, len, val, count);
-			else
+			}
+			else{
 				static assert(0, "invalid type '" ~ Val.stringof ~ "'");
+			}
 
 			return this;
 		}
@@ -1854,12 +1848,15 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		public ref typeof(this) replace(Val)(scope const Char[] slice, auto ref scope const Val val, const size_t count = 1)return scope
 		if(isBasicString!Val || isSomeChar!Val || isSomeString!Val || isIntegral!Val || isCharArray!Val){
 
-			static if(isBasicString!Val || isSomeString!Val || isCharArray!Val)
+			static if(isBasicString!Val || isSomeString!Val || isCharArray!Val){
 				this.core.replace(slice, val[], count);
-			else static if(isSomeChar!Val || isIntegral!Val)
+			}
+			else static if(isSomeChar!Val || isIntegral!Val){
 				this.core.replace(slice, val, count);
-			else
+			}
+			else{
 				static assert(0, "invalid type '" ~ Val.stringof ~ "'");
+			}
 
 			return this;
 		}
@@ -1902,9 +1899,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			result._build_impl(forward!args);
 
-			return ()@trusted{
-				return result;
-			}();
+			return move(result);
 		}
 
 		/// dito
@@ -1915,9 +1910,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			result._build_impl(forward!args);
 
-			return ()@trusted{
-				return result;
-			}();
+			return move(result);
 		}
 
 		private void _build_impl(Args...)(auto ref scope const Args args)scope{
@@ -1945,8 +1938,6 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			result.reserve(new_length);
 
-
-
 			Char[] data = result.core.allChars;
 
 			static foreach(enum I, alias Arg; Args){
@@ -1959,9 +1950,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				else static assert(0, "wrong type '" ~ Arg.stringof ~ "'");
 			}
 
-			()@trusted{
-				result.core.length = new_length;
-			}();
+			result.core.length = new_length;
 		}
 	}
 }
