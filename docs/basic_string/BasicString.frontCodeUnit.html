@@ -50,26 +50,26 @@ $('#symbolSearchPane').show();</script>
 </section>
 
 			<section><h2>Examples</h2>
-<pre class="code"><code class="lang-d"><span class="pln">        </span><span class="pun">{
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123"</span><span class="pun">;
+<pre class="code"><code class="lang-d"><span class="pun">{
+    <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123"</span><span class="pun">;
 
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">frontCodeUnit </span><span class="pun">== </span><span class="str">'1'</span><span class="pun">);
-        }
+    </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">frontCodeUnit </span><span class="pun">== </span><span class="str">'1'</span><span class="pun">);
+}
 
-        {
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"á23"</span><span class="pun">;
+{
+    <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"á23"</span><span class="pun">;
 
-</span><span class="kwd">immutable</span><span class="pun">(</span><span class="typ">char</span><span class="pun">)[</span><span class="lit">2</span><span class="pun">] </span><span class="pln">a </span><span class="pun">= </span><span class="str">"á"</span><span class="pun">;
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">frontCodeUnit </span><span class="pun">== </span><span class="pln">a</span><span class="pun">[</span><span class="lit">0</span><span class="pun">]);
-        }
+    </span><span class="kwd">immutable</span><span class="pun">(</span><span class="typ">char</span><span class="pun">)[</span><span class="lit">2</span><span class="pun">] </span><span class="pln">a </span><span class="pun">= </span><span class="str">"á"</span><span class="pun">;
+    </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">frontCodeUnit </span><span class="pun">== </span><span class="pln">a</span><span class="pun">[</span><span class="lit">0</span><span class="pun">]);
+}
 
-        {
-<a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123"</span><span class="pun">;
+{
+    <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str </span><span class="pun">= </span><span class="str">"123"</span><span class="pun">;
 
-</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">frontCodeUnit </span><span class="pun">= </span><span class="str">'x'</span><span class="pun">;
+    </span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">frontCodeUnit </span><span class="pun">= </span><span class="str">'x'</span><span class="pun">;
 
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"x23"</span><span class="pun">);
-        }</span></code></pre>
+    </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"x23"</span><span class="pun">);
+}</span></code></pre>
 </section>
 
 			<footer>

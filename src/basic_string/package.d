@@ -253,26 +253,26 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			Examples:
 				--------------------
-                {
-				    BasicString!char str = "123";
+				{
+					BasicString!char str = "123";
 
-				    assert(str.frontCodeUnit == '1');
-                }
+					assert(str.frontCodeUnit == '1');
+				}
 
-                {
-				    BasicString!char str = "á23";
+				{
+					BasicString!char str = "á23";
 
-				    immutable(char)[2] a = "á";
-				    assert(str.frontCodeUnit == a[0]);
-                }
+					immutable(char)[2] a = "á";
+					assert(str.frontCodeUnit == a[0]);
+				}
 
-                {
-				    BasicString!char str = "123";
+				{
+					BasicString!char str = "123";
 
-				    str.frontCodeUnit = 'x';
+					str.frontCodeUnit = 'x';
 
-				    assert(str == "x23");
-                }
+					assert(str == "x23");
+				}
 				--------------------
 		*/
 		public @property Char frontCodeUnit()const scope pure nothrow @trusted @nogc{
@@ -293,17 +293,17 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			Examples:
 				--------------------
-                {
-				    BasicString!char str = "123á";
+				{
+					BasicString!char str = "123á";
 
-				    assert(str.backCodePoint == 'á');
-                }
+					assert(str.backCodePoint == 'á');
+				}
 
-                {
-				    BasicString!char str = "123á";
-				    str.backCodePoint = '4';
-				    assert(str == "1234");
-                }
+				{
+					BasicString!char str = "123á";
+					str.backCodePoint = '4';
+					assert(str == "1234");
+				}
 				--------------------
 		*/
 		public @property dchar backCodePoint()const scope pure nothrow @trusted @nogc{
@@ -356,25 +356,25 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			Examples:
 				--------------------
-                {
-				    BasicString!char str = "123";
+				{
+					BasicString!char str = "123";
 
-				    assert(str.backCodeUnit == '3');
-                }
+					assert(str.backCodeUnit == '3');
+				}
 
-                {
-				    BasicString!char str = "12á";
+				{
+					BasicString!char str = "12á";
 
-				    immutable(char)[2] a = "á";
-				    assert(str.backCodeUnit == a[1]);
-                }
+					immutable(char)[2] a = "á";
+					assert(str.backCodeUnit == a[1]);
+				}
 
-                {
-				    BasicString!char str = "123";
+				{
+					BasicString!char str = "123";
 
-				    str.backCodeUnit = 'x';
-				    assert(str == "12x");
-                }
+					str.backCodeUnit = 'x';
+					assert(str == "12x");
+				}
 				--------------------
 		*/
 		public @property Char backCodeUnit()const scope pure nothrow @trusted @nogc{
@@ -403,29 +403,29 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			Examples:
 				--------------------
-                {
-				    BasicString!char str = "á1";    //'á' is encoded as 2 chars
+				{
+					BasicString!char str = "á1";    //'á' is encoded as 2 chars
 
-				    assert(str.popBackCodePoint == 1);
-				    assert(str == "á");
+					assert(str.popBackCodePoint == 1);
+					assert(str == "á");
 
-				    assert(str.popBackCodePoint == 2);
-				    assert(str.empty);
+					assert(str.popBackCodePoint == 2);
+					assert(str.empty);
 
-				    assert(str.popBackCodePoint == 0);
-				    assert(str.empty);
-                }
+					assert(str.popBackCodePoint == 0);
+					assert(str.empty);
+				}
 
-                {
-				    BasicString!char str = "1á";    //'á' is encoded as 2 chars
-				    assert(str.length == 3);
+				{
+					BasicString!char str = "1á";    //'á' is encoded as 2 chars
+					assert(str.length == 3);
 
-				    str.erase(str.length - 1);
-				    assert(str.length == 2);
+					str.erase(str.length - 1);
+					assert(str.length == 2);
 
-				    assert(str.popBackCodePoint == 0);   //popBackCodePoint cannot remove invalid code points
-				    assert(str.length == 2);
-                }
+					assert(str.popBackCodePoint == 0);   //popBackCodePoint cannot remove invalid code points
+					assert(str.length == 2);
+				}
 				--------------------
 		*/
 		public ubyte popBackCodePoint()scope pure nothrow @trusted @nogc{
@@ -1501,34 +1501,34 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			Examples:
 				--------------------
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.append('x', 2);
-				    assert(str == "123456xx");
-                }
+					str.append('x', 2);
+					assert(str == "123456xx");
+				}
 
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.append("abc");
-				    assert(str == "123456abc");
-                }
+					str.append("abc");
+					assert(str == "123456abc");
+				}
 
-                {
-				    BasicString!char str = "123456";
-				    BasicString!char str2 = "xyz";
+				{
+					BasicString!char str = "123456";
+					BasicString!char str2 = "xyz";
 
-				    str.append(str2);
-				    assert(str == "123456xyz");
-                }
+					str.append(str2);
+					assert(str == "123456xyz");
+				}
 
-                {
-				    BasicString!char str = "12";
+				{
+					BasicString!char str = "12";
 
-				    str.append(+34);
-				    assert(str == "1234");
-                }
+					str.append(+34);
+					assert(str == "1234");
+				}
 				--------------------
 		*/
 		public size_t append(const Char[] val, const size_t count = 1)scope{
@@ -1575,49 +1575,49 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			Examples:
 				--------------------
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.insert(2, 'x', 2);
-				    assert(str == "12xx3456");
-                }
+					str.insert(2, 'x', 2);
+					assert(str == "12xx3456");
+				}
 
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.insert(2, "abc");
-				    assert(str == "12abc3456");
-                }
+					str.insert(2, "abc");
+					assert(str == "12abc3456");
+				}
 
-                {
-				    BasicString!char str = "123456";
-				    BasicString!char str2 = "abc";
+				{
+					BasicString!char str = "123456";
+					BasicString!char str2 = "abc";
 
-				    str.insert(2, str2);
-				    assert(str == "12abc3456");
-                }
+					str.insert(2, str2);
+					assert(str == "12abc3456");
+				}
 
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.insert(str.ptr + 2, 'x', 2);
-				    assert(str == "12xx3456");
-                }
+					str.insert(str.ptr + 2, 'x', 2);
+					assert(str == "12xx3456");
+				}
 
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.insert(str.ptr + 2, "abc");
-				    assert(str == "12abc3456");
-                }
+					str.insert(str.ptr + 2, "abc");
+					assert(str == "12abc3456");
+				}
 
-                {
-				    BasicString!char str = "123456";
-				    BasicString!char str2 = "abc";
+				{
+					BasicString!char str = "123456";
+					BasicString!char str2 = "abc";
 
-				    str.insert(str.ptr + 2, str2);
-				    assert(str == "12abc3456");
-                }
+					str.insert(str.ptr + 2, str2);
+					assert(str == "12abc3456");
+				}
 				--------------------
 
 		*/
@@ -1680,33 +1680,33 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			Examples:
 				--------------------
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.erase(2);
-				    assert(str == "12");
-                }
+					str.erase(2);
+					assert(str == "12");
+				}
 
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.erase(1, 2);
-				    assert(str == "23");
-                }
+					str.erase(1, 2);
+					assert(str == "23");
+				}
 
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.erase(str.ptr + 2);
-				    assert(str == "12456");
-                }
+					str.erase(str.ptr + 2);
+					assert(str == "12456");
+				}
 
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.erase(str[1 .. $-1]);
-				    assert(str == "2345");
-                }
+					str.erase(str[1 .. $-1]);
+					assert(str == "2345");
+				}
 				--------------------
 		*/
 		public void erase(const size_t pos)scope pure nothrow @trusted @nogc{
@@ -1779,50 +1779,50 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			Examples:
 				--------------------
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.replace(2, 2, 'x', 5);
-				    assert(str == "12xxxxx56");
-                }
+					str.replace(2, 2, 'x', 5);
+					assert(str == "12xxxxx56");
+				}
 
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.replace(2, 2, "abcdef");
-				    assert(str == "12abcdef56");
-                }
+					str.replace(2, 2, "abcdef");
+					assert(str == "12abcdef56");
+				}
 
-                {
-				    BasicString!char str = "123456";
-				    BasicString!char str2 = "xy";
+				{
+					BasicString!char str = "123456";
+					BasicString!char str2 = "xy";
 
-				    str.replace(2, 3, str2);
-				    writeln(str[]);
-				    assert(str == "12xy56");
-                }
+					str.replace(2, 3, str2);
+					writeln(str[]);
+					assert(str == "12xy56");
+				}
 
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.replace(str[2 .. 4], 'x', 5);
-				    assert(str == "12xxxxx56");
-                }
+					str.replace(str[2 .. 4], 'x', 5);
+					assert(str == "12xxxxx56");
+				}
 
-                {
-				    BasicString!char str = "123456";
+				{
+					BasicString!char str = "123456";
 
-				    str.replace(str[2 .. 4], "abcdef");
-				    assert(str == "12abcdef56");
-                }
+					str.replace(str[2 .. 4], "abcdef");
+					assert(str == "12abcdef56");
+				}
 
-                {
-				    BasicString!char str = "123456";
-				    BasicString!char str2 = "xy";
+				{
+					BasicString!char str = "123456";
+					BasicString!char str2 = "xy";
 
-				    str.replace(str[2 .. $], str2);
-				    assert(str == "12xy56");
-                }
+					str.replace(str[2 .. $], str2);
+					assert(str == "12xy56");
+				}
 				--------------------
 		*/
 		public ref typeof(this) replace(const size_t pos, const size_t len, scope const Char[] val, const size_t count = 1)return scope{

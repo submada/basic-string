@@ -109,7 +109,7 @@ package template BasicStringCore(
             });
         }
 
-        private alias _allocator = allocator;
+        //private alias _allocator = allocator;
 
 
         public alias MaximalCapacity = Long.maxCapacity;
@@ -617,7 +617,7 @@ package template BasicStringCore(
 
         //allocation:
         private Char[] _allocate(const size_t capacity){
-            void[] data = this._allocator.allocate(capacity * Char.sizeof);
+            void[] data = this.allocator.allocate(capacity * Char.sizeof);
 
             return (()@trusted => (cast(Char*)data.ptr)[0 .. capacity])();
         }
@@ -630,22 +630,22 @@ package template BasicStringCore(
 
             static if(safeAllocate)
                 return ()@trusted{
-                    return this._allocator.deallocate(data);
+                    return this.allocator.deallocate(data);
                 }();
             else
-                return this._allocator.deallocate(data);
+                return this.allocator.deallocate(data);
         }
 
         private Char[] _reallocate(scope return Char[] cdata, const size_t length, const size_t new_capacity){
             void[] data = (()@trusted => (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof] )();
 
-            static if(hasMember!(typeof(_allocator), "reallocate")){
+            static if(hasMember!(typeof(allocator), "reallocate")){
                 static if(safeAllocate)
                     const bool reallocated = ()@trusted{
-                        return this._allocator.reallocate(data, new_capacity * Char.sizeof);
+                        return this.allocator.reallocate(data, new_capacity * Char.sizeof);
                     }();
                 else
-                    const bool reallocated = this._allocator.reallocate(data, new_capacity * Char.sizeof);
+                    const bool reallocated = this.allocator.reallocate(data, new_capacity * Char.sizeof);
             }
             else
                 enum bool reallocated = false;
@@ -662,10 +662,10 @@ package template BasicStringCore(
 
             static if(safeAllocate)
                 ()@trusted{
-                    this._allocator.deallocate(data);
+                    this.allocator.deallocate(data);
                 }();
             else
-                this._allocator.deallocate(data);
+                this.allocator.deallocate(data);
 
             return new_cdata;
         }
@@ -673,14 +673,14 @@ package template BasicStringCore(
         private Char[] _reallocate_optional(scope return Char[] cdata, const size_t new_capacity)@trusted{
             void[] data = (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
 
-            static if(hasMember!(typeof(_allocator), "reallocate")){
+            static if(hasMember!(typeof(allocator), "reallocate")){
                 static if(safeAllocate)
                     const bool reallocated = ()@trusted{
-                        return this._allocator.reallocate(data, new_capacity * Char.sizeof);
+                        return this.allocator.reallocate(data, new_capacity * Char.sizeof);
                     }();
 
                 else
-                    const bool reallocated = this._allocator.reallocate(data, new_capacity * Char.sizeof);
+                    const bool reallocated = this.allocator.reallocate(data, new_capacity * Char.sizeof);
 
                 if(reallocated){
                     assert(data.length / Char.sizeof == new_capacity);
@@ -760,7 +760,7 @@ package template BasicStringCore(
             (ref source)@trusted pure{
                 target.release();
                 static if(!hasStatelessAllocator)
-                    target._allocator = move(source._allocator);
+                    target.allocator = move(source.allocator);
 
 
                 if(this._sso)
@@ -783,7 +783,7 @@ package template BasicStringCore(
 
             ()@trusted{
                 static if(hasStatelessAllocator == false)
-                    target._allocator = source._allocator;
+                    target.allocator = source.allocator;
 
 
                 memCopy(target._raw.ptr, source._raw.ptr, _raw.length); //target._raw[] = source._raw[];
