@@ -895,34 +895,10 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		/// ditto
 		public this(this This, Rhs)(auto ref scope const Rhs rhs, Evoid)scope
 		if(isBasicString!Rhs && isConstructable!(rhs, This)){
-			static if(false && isMoveConstructable!(rhs, This)){    //TODO
-				/+
-				static if(!hasStatelessAllocator)
-					this.core = Core(move(rhs.core.allcoator));
-
-				this.core.ctor(rhs.core.chars);
-
-
-				static if(!hasStatelessAllocator)
-					this._allcoator = move(rhs._allcoator);
-
-				()@trusted{
-					if(rhs._sso){
-						this._short = rhs._short;
-					}
-					else{
-						this._long = rhs._long;
-						rhs._short = Short.init;
-					}
-				}();+/
-			}
-			else static if(isCopyConstructable!(rhs, This)){
-				static if(!hasStatelessAllocator)
-					this.core = Core(rhs.core.allcoator);
-
-				this.core.ctor(rhs.core.chars);
-			}
-			else static assert(0, "no impl");
+			static if(isRef!rhs)
+				this.core = Core(rhs.core, Evoid.init);
+			else
+				this.core = Core(move(rhs.core), Evoid.init);
 		}
 
 
