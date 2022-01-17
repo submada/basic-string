@@ -1886,7 +1886,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			return move(result);
 		}
 
-		/// dito
+		/// ditto
 		public static typeof(this) build(Args...)(Allocator allocator, auto ref scope const Args args){
 			import core.lifetime : forward;
 
