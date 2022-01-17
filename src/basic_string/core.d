@@ -7,7 +7,7 @@ import basic_string.internal.encoding;
 import basic_string.internal.traits;
 
 
-package struct Evoid{}
+package struct Forward{}
 
 
 package template isBasicStringCore(T...)
@@ -129,7 +129,7 @@ package template BasicStringCore(
                 this.allocator = forward!allocator;
         }
 
-        public this(this This, Rhs)(auto ref scope const Rhs rhs, Evoid)scope
+        public this(this This, Rhs)(auto ref scope const Rhs rhs, Forward)scope
         if(isBasicStringCore!Rhs && isConstructable!(rhs, This)){
             static if(isMoveConstructable!(rhs, This)){    //TODO
 

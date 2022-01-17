@@ -882,8 +882,16 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			&& isConstructable!(rhs, This)
 			&& (isRef!rhs || !is(immutable This == immutable Rhs))
 		){
-			this(forward!rhs, Evoid.init);
+			this(forward!rhs, Forward.init);
 		}
+
+		/+public static auto opCall(Rhs)(scope Rhs rhs)scope
+		if(    isBasicString!Rhs
+			&& isMoveConstructable!(rhs, typeof(this))
+			&& is(immutable This == immutable Rhs)
+		){
+			assert(0);
+		}+/
 
 		/// ditto
 		public this(this This, Rhs)(auto ref scope const Rhs rhs, Allocator allocator)scope
@@ -893,12 +901,12 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		}
 
 		/// ditto
-		public this(this This, Rhs)(auto ref scope const Rhs rhs, Evoid)scope
+		public this(this This, Rhs)(auto ref scope const Rhs rhs, Forward)scope
 		if(isBasicString!Rhs && isConstructable!(rhs, This)){
 			static if(isRef!rhs)
-				this.core = Core(rhs.core, Evoid.init);
+				this.core = Core(rhs.core, Forward.init);
 			else
-				this.core = Core(move(rhs.core), Evoid.init);
+				this.core = Core(move(rhs.core), Forward.init);
 		}
 
 
@@ -2105,4 +2113,10 @@ version(unittest){
 //const char test:
 pure nothrow @safe @nogc unittest{
 
+}
+//opCall
+pure nothrow @safe @nogc unittest{
+	import core.lifetime : move;
+	BasicString!char str;
+	//auto str2 = BasicString!char(move(str));
 }
