@@ -119,7 +119,13 @@ $('#symbolSearchPane').show();</script>
 </span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"abc"</span><span class="pun">);
 
 </span><span class="pln">str </span><span class="pun">= -</span><span class="lit">123</span><span class="pun">;
-</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"-123"</span><span class="pun">);</span></code></pre>
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"-123"</span><span class="pun">);
+
+</span><span class="pln">str </span><span class="pun">= <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char</span><span class="pun">(</span><span class="str">"42"</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"42"</span><span class="pun">);
+
+</span><span class="pln">str </span><span class="pun">= <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">wchar</span><span class="pun">(</span><span class="str">"abc"</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str </span><span class="pun">== </span><span class="str">"abc"</span><span class="pun">);</span></code></pre>
 </section>
 
 			<footer>

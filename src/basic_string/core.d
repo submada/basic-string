@@ -7,12 +7,15 @@ import basic_string.internal.encoding;
 import basic_string.internal.traits;
 
 
+/*
+*/
 package struct Forward{}
 
 
-package template isBasicStringCore(T...)
-if(T.length == 1){
-    enum bool isBasicStringCore = is(Unqual!(T[0]) == BasicStringCore!Args, Args...);
+package template isBasicStringCore(T){
+    import std.traits : isInstanceOf;
+
+    enum bool isBasicStringCore = isInstanceOf!(BasicStringCore, T);
 }
 
 package template BasicStringCore(
@@ -521,7 +524,109 @@ package template BasicStringCore(
             }
         }
 
-        //Data data;
+
+
+        public bool opEquals(Range)(auto ref scope Range rhs)const scope
+        if(isInputCharRange!Range){
+            import std.range : empty, hasLength, ElementEncodingType;
+
+            alias RhsChar = Unqual!(ElementEncodingType!Range);
+            auto lhs = this.chars;
+
+            enum bool lengthComperable = hasLength!Range && is(Unqual!Char == RhsChar);
+
+            static if(lengthComperable){
+                if(lhs.length != rhs.length)
+                    return false;
+            }
+            /+TODO: else static if(hasLength!Range){ //TODO
+                static if(Char.sizeof < RhsChar.sizeof){
+                    if(lhs.length * (RhsChar.sizeof / Char.sizeof) < rhs.length)
+                        return false;
+                }
+                else static if(Char.sizeof > RhsChar.sizeof){
+                    if(lhs.length > rhs.length * (Char.sizeof / RhsChar.sizeof))
+                        return false;
+
+                }
+                else static assert(0, "no impl")
+            }+/
+
+            while(true){
+                static if(lengthComperable){
+                    if(lhs.length == 0){
+                        assert(rhs.empty);
+                        return true;
+                    }
+                }
+                else{
+                    if(lhs.length == 0)
+                        return rhs.empty;
+
+                    if(rhs.empty)
+                        return false;
+                }
+
+                static if(is(Unqual!Char == RhsChar)){
+
+                    const a = lhs.frontCodeUnit;
+                    lhs.popFrontCodeUnit();
+
+                    const b = rhs.frontCodeUnit;
+                    rhs.popFrontCodeUnit();
+
+                    static assert(is(Unqual!(typeof(a)) == Unqual!(typeof(b))));
+                }
+                else{
+                    const a = decode(lhs);
+                    const b = decode(rhs);
+                }
+
+                if(a != b)
+                    return false;
+
+            }
+        }
+
+
+        public int opCmp(Range)(Range rhs)const scope
+        if(isInputCharRange!Range){
+            import std.range : empty, ElementEncodingType;
+
+            auto lhs = this.chars;
+            alias RhsChar = Unqual!(ElementEncodingType!Range);
+
+            while(true){
+                if(lhs.empty)
+                    return rhs.empty ? 0 : -1;
+
+                if(rhs.empty)
+                    return 1;
+
+                static if(is(Unqual!Char == RhsChar)){
+
+                    const a = lhs.frontCodeUnit;
+                    lhs.popFrontCodeUnit();
+
+                    const b = rhs.frontCodeUnit;
+                    rhs.popFrontCodeUnit();
+
+                    static assert(is(Unqual!(typeof(a)) == Unqual!(typeof(b))));
+                }
+                else{
+                    const a = decode(lhs);
+                    const b = decode(rhs);
+                }
+
+                if(a < b)
+                    return -1;
+
+                if(a > b)
+                    return 1;
+            }
+        }
+
+
 
         private union{
             Short _short;
@@ -759,48 +864,38 @@ package template BasicStringCore(
                 return chars.ptr[old_length .. new_length];
             }();
         }
-
-        /+package void moveTo(ref typeof(this) target)@trusted pure nothrow @nogc{
-            //  Unsafe when compiling without -dip1000
-            assert(&this !is &target, "source and target must not be identical");
-
-            (ref source)@trusted pure{
-                target.release();
-                static if(!hasStatelessAllocator)
-                    target.allocator = move(source.allocator);
-
-
-                if(this._sso)
-                    target._short = source._short;
-                else
-                    target._long = source._long;
-
-                source._short.setShort();
-                source._short.length = 0;
-
-                /+memCopy(target._raw.ptr, source._raw.ptr, _raw.length); //target._raw[] = source._raw[];
-                source._short.setShort();
-                source._short.length = 0;+/
-            }(this);
-        }+/
-
-        /+private static void moveEmplaceImpl(ref typeof(this) source, ref typeof(this) target)@trusted pure nothrow @nogc{
-            //  Unsafe when compiling without -dip1000
-            assert(&source !is &target, "source and target must not be identical");
-
-            ()@trusted{
-                static if(hasStatelessAllocator == false)
-                    target.allocator = source.allocator;
-
-
-                memCopy(target._raw.ptr, source._raw.ptr, _raw.length); //target._raw[] = source._raw[];
-                source._short.setShort();
-                source._short.length = 0;
-            }();
-        }+/
-
     }
 }
+
+//range frontCodeUnit & popFrontCodeUnit:
+private{
+    auto frontCodeUnit(Range)(auto ref Range r){
+        import std.traits : isAutodecodableString;
+
+        static if(isAutodecodableString!Range){
+            assert(r.length > 0);
+            return r[0];
+        }
+        else{
+            import std.range.primitives : front;
+            return  r.front;
+        }
+    }
+
+    void popFrontCodeUnit(Range)(ref Range r){
+        import std.traits : isAutodecodableString;
+
+        static if(isAutodecodableString!Range){
+            assert(r.length > 0);
+            r = r[1 .. $];
+        }
+        else{
+            import std.range.primitives : popFront;
+            return  r.popFront;
+        }
+    }
+}
+
 
 //mem[move|copy]
 private{

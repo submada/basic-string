@@ -14,14 +14,14 @@ import basic_string.internal.encoding;
 import basic_string.internal.traits;
 import basic_string.core;
 
-debug import std.stdio : writeln;
 
 /**
 	True if `T` is a `BasicString` or implicitly converts to one, otherwise false.
 */
-template isBasicString(T...)
-if(T.length == 1){
-	enum bool isBasicString = is(Unqual!(T[0]) == BasicString!Args, Args...);
+template isBasicString(T){
+	import std.traits : isInstanceOf;
+
+	enum bool isBasicString = isInstanceOf!(BasicString, T);
 }
 
 
@@ -65,7 +65,6 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 	alias Core = BasicStringCore!(_Char, _Allocator, _Padding);
 
 	struct BasicString{
-		private Core core;
 
 		/**
 			True if allocator doesn't have state.
@@ -342,7 +341,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				if(len == 0)
 					return dchar.init;
 
-				this.length = (chars.length - len);
+				this.core.length = (chars.length - len);
 				this.append(val);
 				return val;
 			}
@@ -724,8 +723,8 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				}
 
 				{
-					wchar[] data = [cast(wchar)'1', '2', '3'];
-					BasicString!char str = data;
+					wchar[3] data = [cast(wchar)'1', '2', '3'];
+					BasicString!char str = data[];
 					assert(str == "123");
 				}
 				--------------------
@@ -763,8 +762,9 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				}
 
 				{
-					wchar[] data = [cast(wchar)'1', '2', '3'];
-					auto str = BasicString!(char, Mallocator)(data, Mallocator.init);
+
+					wchar[3] data = [cast(wchar)'1', '2', '3'];
+					auto str = BasicString!(char, Mallocator)(data[], Mallocator.init);
 					assert(str == "123");
 				}
 				--------------------
@@ -959,6 +959,12 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 				str = -123;
 				assert(str == "-123");
+
+				str = BasicString!char("42");
+				assert(str == "42");
+
+				str = BasicString!wchar("abc");
+				assert(str == "abc");
 				--------------------
 		*/
 		public ref typeof(this) opAssign(typeof(null) nil)scope pure nothrow @safe @nogc{
@@ -1026,27 +1032,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		/**
 			Extends the `BasicString` by appending additional characters at the end of its current value.
 
-			Parameter `rhs` can by type of `BasicString!(...)`, `char|wchar|dchar` array/slice/character or integer (integer is transformed to string).
-
-			Return referece to `this`.
-
-			Examples:
-				--------------------
-				BasicString!char str = null;
-				assert(str.empty);
-
-				str += '1';
-				assert(str == "1");
-
-				str += "23"d;
-				assert(str == "123");
-
-				str += Str!dchar("456");
-				assert(str == "123456");
-
-				str += (+78);
-				assert(str == "12345678");
-				--------------------
+			This is alias to `append`
 		*/
 		public template opOpAssign(string op)
 		if(op == "+" || op == "~"){
@@ -1071,7 +1057,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				str = str + "23"d;
 				assert(str == "123");
 
-				str = str + Str!dchar("456");
+				str = str + BasicString!dchar("456");
 				assert(str == "123456");
 				--------------------
 		*/
@@ -1112,7 +1098,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				str = "32"d + str;
 				assert(str == "321");
 
-				str = Str!dchar("654") + str;
+				str = BasicString!dchar("654") + str;
 				assert(str == "654321");
 				--------------------
 		*/
@@ -1176,7 +1162,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 				--------------------
 		*/
 		public bool opEquals(scope const Char[] rhs)const scope pure nothrow @safe @nogc{
-			return this._op_equals(rhs[]);
+			return this.core.opEquals(rhs[]);
 		}
 
 		/// ditto
@@ -1184,87 +1170,24 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		if(isBasicString!Rhs || isSomeChar!Rhs || isSomeString!Rhs || isCharArray!Rhs || isIntegral!Rhs || isInputCharRange!Rhs){
 
 			static if(isBasicString!Rhs){
-				return this._op_equals(rhs.core.chars);
+				return this.core.opEquals(rhs.core.chars);
 			}
 			else static if(isSomeString!Rhs || isCharArray!Rhs){
-				return this._op_equals(rhs[]);
+				return this.core.opEquals(rhs[]);
 			}
 			else static if(isSomeChar!Rhs){
 				import std.range : only;
-				return this._op_equals(only(rhs));
+				return this.core.opEquals(only(rhs));
 			}
 			else static if(isIntegral!Rhs){
 				import std.conv : toChars;
-				return  this._op_equals(toChars(rhs + 0));
+				return  this.core.opEquals(toChars(rhs + 0));
 			}
 			else static if(isInputRange!Rhs){
-				return this._op_equals(rhs);
+				return this.core.opEquals(rhs);
 			}
 			else{
 				static assert(0, "invalid type '" ~ Rhs.stringof ~ "'");
-			}
-		}
-
-
-		private bool _op_equals(Range)(auto ref scope Range rhs)const scope
-		if(isInputCharRange!Range){
-			import std.range : empty, hasLength;
-
-			alias RhsChar = Unqual!(ElementEncodingType!Range);
-			auto lhs = this.core.chars;
-
-			enum bool lengthComperable = hasLength!Range && is(Unqual!Char == RhsChar);
-
-			static if(lengthComperable){
-				if(lhs.length != rhs.length)
-					return false;
-			}
-			/+TODO: else static if(hasLength!Range){
-				static if(Char.sizeof < RhsChar.sizeof){
-					if(lhs.length * (RhsChar.sizeof / Char.sizeof) < rhs.length)
-						return false;
-				}
-				else static if(Char.sizeof > RhsChar.sizeof){
-					if(lhs.length > rhs.length * (Char.sizeof / RhsChar.sizeof))
-						return false;
-				
-				}
-				else static assert(0, "no impl")
-			}+/
-
-			while(true){
-				static if(lengthComperable){
-					if(lhs.length == 0){
-						assert(rhs.empty);
-						return true;
-					}
-				}
-				else{
-					if(lhs.length == 0)
-						return rhs.empty;
-					
-					if(rhs.empty)
-						return false;
-				}
-
-				static if(is(Unqual!Char == RhsChar)){
-					
-					const a = lhs.frontCodeUnit;
-					lhs.popFrontCodeUnit();
-
-					const b = rhs.frontCodeUnit;
-					rhs.popFrontCodeUnit();
-
-					static assert(is(Unqual!(typeof(a)) == Unqual!(typeof(b))));
-				}
-				else{
-					const a = decode(lhs);
-					const b = decode(rhs);
-				}
-				
-				if(a != b)
-					return false;
-
 			}
 		}
 
@@ -1274,7 +1197,7 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 			Compares the contents of a string with another string, range, char/wchar/dchar or integer.
 		*/
 		public int opCmp(scope const Char[] rhs)const scope pure nothrow @safe @nogc{
-			return this._op_cmp(rhs[]);
+			return this.core.opCmp(rhs[]);
 		}
 
 		/// ditto
@@ -1282,62 +1205,24 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 		if(isBasicString!Rhs || isSomeChar!Rhs || isSomeString!Rhs || isCharArray!Rhs || isIntegral!Rhs || isInputCharRange!Rhs){
 
 			static if(isBasicString!Val){
-				return this._op_cmp(rhs._chars);
+				return this.core.opCmp(rhs._chars);
 			}
 			else static if(isSomeString!Val || isCharArray!Val){
-				return this._op_cmp(rhs[]);
+				return this.core.opCmp(rhs[]);
 			}
 			else static if(isSomeChar!Val){
 				import std.range : only;
-				return this._op_cmp(only(rhs));
+				return this.core.opCmp(only(rhs));
 			}
 			else static if(isIntegral!Val){
 				import std.conv : toChars;
-				return this._op_cmp(toChars(rhs + 0));
+				return this.core.opCmp(toChars(rhs + 0));
 			}
 			else static if(isInputRange!Val){
-				return this._op_cmp(val);
+				return this.core.opCmp(val);
 			}
 			else{
 				static assert(0, "invalid type '" ~ Val.stringof ~ "'");
-			}
-		}
-
-
-		private int _op_cmp(Range)(Range rhs)const scope
-		if(isInputCharRange!Range){
-			import std.range : empty;
-
-			auto lhs = this.core.chars;
-			alias RhsChar = Unqual!(ElementEncodingType!Range);
-
-			while(true){
-				if(lhs.empty)
-					return rhs.empty ? 0 : -1;
-
-				if(rhs.empty)
-					return 1;
-
-				static if(is(Unqual!Char == RhsChar)){
-
-					const a = lhs.frontCodeUnit;
-					lhs.popFrontCodeUnit();
-
-					const b = rhs.frontCodeUnit;
-					rhs.popFrontCodeUnit();
-
-					static assert(is(Unqual!(typeof(a)) == Unqual!(typeof(b))));
-				}
-				else{
-					const a = decode(lhs);
-					const b = decode(rhs);
-				}
-
-				if(a < b)
-					return -1;
-
-				if(a > b)
-					return 1;
 			}
 		}
 
@@ -1640,14 +1525,12 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 
 		private size_t _insert_ptr_to_pos(const Char* ptr)scope const pure nothrow @trusted @nogc{
-			const chars = this.core.chars;
-
-			return (ptr > chars.ptr)
-				? (ptr - chars.ptr)
+			return (ptr > this.ptr)
+				? (ptr - this.ptr)
 				: 0;
 		}
 
-	    
+
 
 		/**
 			Removes specified characters from the string.
@@ -1674,21 +1557,21 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 					BasicString!char str = "123456";
 
 					str.erase(1, 2);
-					assert(str == "23");
+					assert(str == "1456");
 				}
 
 				{
 					BasicString!char str = "123456";
 
 					str.erase(str.ptr + 2);
-					assert(str == "12456");
+					assert(str == "12");
 				}
 
 				{
 					BasicString!char str = "123456";
 
 					str.erase(str[1 .. $-1]);
-					assert(str == "2345");
+					assert(str == "16");
 				}
 				--------------------
 		*/
@@ -1781,7 +1664,6 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 					BasicString!char str2 = "xy";
 
 					str.replace(2, 3, str2);
-					writeln(str[]);
 					assert(str == "12xy56");
 				}
 
@@ -1944,6 +1826,12 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 
 			result.core.length = new_length;
 		}
+
+
+		/*
+			Core
+		*/
+		private Core core;
 	}
 }
 
@@ -1959,48 +1847,262 @@ if(isSomeChar!_Char && is(Unqual!_Char == _Char)){
 	alias BasicString = .BasicString!(_Char, _Allocator, _Padding);
 }
 
-private{
-	auto frontCodeUnit(Range)(auto ref Range r){
-		import std.traits : isAutodecodableString;
-
-		static if(isAutodecodableString!Range){
-			assert(r.length > 0);
-			return r[0];
-		}
-		else{
-			import std.range.primitives : front;
-			return  r.front;
-		}
-	}
-
-	void popFrontCodeUnit(Range)(ref Range r){
-		import std.traits : isAutodecodableString;
-
-		static if(isAutodecodableString!Range){
-			assert(r.length > 0);
-			r = r[1 .. $];
-		}
-		else{
-			import std.range.primitives : popFront;
-			return  r.popFront;
-		}
-	}
-}
+//doc:
 version(unittest){
-	//ctor(null) and ctor(allcoator)
+	//doc.MinimalCapacity:
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str;
+		assert(str.empty);
+		assert(str.capacity == BasicString!char.MinimalCapacity);
+		assert(str.capacity > 0);
+	}
+
+	//doc.empty:
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str;
+		assert(str.empty);
+
+		str = "123";
+		assert(!str.empty);
+	}
+
+	//doc.length:
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = "123";
+		assert(str.length == 3);
+
+		BasicString!wchar wstr = "123";
+		assert(wstr.length == 3);
+
+		BasicString!dchar dstr = "123";
+		assert(dstr.length == 3);
+	}
+
+	//doc.capacity:
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str;
+		assert(str.capacity == BasicString!char.MinimalCapacity);
+
+		str.reserve(str.capacity + 1);
+		assert(str.capacity > BasicString!char.MinimalCapacity);
+	}
+
+	//doc.ptr:
+	pure nothrow @system @nogc unittest{
+		BasicString!char str = "123";
+		char* ptr = str.ptr;
+		assert(ptr[0 .. 3] == "123");
+	}
+
+	//doc.frontCodePoint:
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = "á123";
+
+		assert(str.frontCodePoint == 'á');
+	}
+
+	//doc.frontCodeUnit:
+	pure nothrow @safe @nogc unittest{
+		{
+			BasicString!char str = "123";
+
+			assert(str.frontCodeUnit == '1');
+		}
+
+		{
+			BasicString!char str = "á23";
+
+			immutable(char)[2] a = "á";
+			assert(str.frontCodeUnit == a[0]);
+		}
+
+		{
+			BasicString!char str = "123";
+
+			str.frontCodeUnit = 'x';
+
+			assert(str == "x23");
+		}
+	}
+
+	//doc.backCodePoint:
+	pure nothrow @safe @nogc unittest{
+		{
+			BasicString!char str = "123á";
+
+			assert(str.backCodePoint == 'á');
+		}
+
+		{
+			BasicString!char str = "123á";
+			str.backCodePoint = '4';
+			assert(str == "1234");
+		}
+	}
+
+	//doc.backCodeUnit:
+	pure nothrow @safe @nogc unittest{
+		{
+			BasicString!char str = "123";
+
+			assert(str.backCodeUnit == '3');
+		}
+
+		{
+			BasicString!char str = "12á";
+
+			immutable(char)[2] a = "á";
+			assert(str.backCodeUnit == a[1]);
+		}
+
+		{
+			BasicString!char str = "123";
+
+			str.backCodeUnit = 'x';
+			assert(str == "12x");
+		}
+	}
+
+	//doc.popBackCodePoint:
+	pure nothrow @safe @nogc unittest{
+		{
+			BasicString!char str = "á1";    //'á' is encoded as 2 chars
+
+			assert(str.popBackCodePoint == 1);
+			assert(str == "á");
+
+			assert(str.popBackCodePoint == 2);
+			assert(str.empty);
+
+			assert(str.popBackCodePoint == 0);
+			assert(str.empty);
+		}
+
+		{
+			BasicString!char str = "1á";    //'á' is encoded as 2 chars
+			assert(str.length == 3);
+
+			str.erase(str.length - 1);
+			assert(str.length == 2);
+
+			assert(str.popBackCodePoint == 0);   //popBackCodePoint cannot remove invalid code points
+			assert(str.length == 2);
+		}
+	}
+
+	//doc.popBackCodeUnit:
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = "á1";    //'á' is encoded as 2 chars
+		assert(str.length == 3);
+
+		assert(str.popBackCodeUnit);
+		assert(str.length == 2);
+
+		assert(str.popBackCodeUnit);
+		assert(str.length == 1);
+
+		assert(str.popBackCodeUnit);
+		assert(str.empty);
+
+		assert(!str.popBackCodeUnit);
+		assert(str.empty);
+
+	}
+
+	//doc.clear:
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = "123";
+
+		str.reserve(str.capacity * 2);
+		assert(str.length == 3);
+
+		const size_t cap = str.capacity;
+		str.clear();
+		assert(str.capacity == cap);
+
+	}
+
+	//doc.release:
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = "123";
+
+		str.reserve(str.capacity * 2);
+		assert(str.length == 3);
+
+		const size_t cap = str.capacity;
+		str.clear();
+		assert(str.capacity == cap);
+
+		str.release();
+		assert(str.capacity < cap);
+		assert(str.capacity == BasicString!char.MinimalCapacity);
+
+	}
+
+	//doc.reserve:
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = "123";
+		assert(str.capacity == BasicString!char.MinimalCapacity);
+
+		const size_t cap = (str.capacity * 2);
+		str.reserve(cap);
+		assert(str.capacity > BasicString!char.MinimalCapacity);
+		assert(str.capacity >= cap);
+
+	}
+
+	//doc.reserve:
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = "123";
+		assert(str.capacity == BasicString!char.MinimalCapacity);
+
+		const size_t cap = (str.capacity * 2);
+		str.reserve(cap);
+		assert(str.capacity > BasicString!char.MinimalCapacity);
+		assert(str.capacity >= cap);
+	}
+
+	//doc.resize:
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = "123";
+
+		str.resize(5, 'x');
+		assert(str == "123xx");
+
+		str.resize(2);
+		assert(str == "12");
+
+	}
+
+	//doc.shrinkToFit:
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = "123";
+		assert(str.capacity == BasicString!char.MinimalCapacity);
+
+		str.reserve(str.capacity * 2);
+		assert(str.capacity > BasicString!char.MinimalCapacity);
+
+		str.shrinkToFit();
+		assert(str.capacity == BasicString!char.MinimalCapacity);
+	}
+
+	//doc.ctor(null):
 	pure nothrow @safe @nogc unittest{
 		{
 			BasicString!char str = null;
 			assert(str.empty);
 		}
+	}
 
+	//doc.ctor(allocator):
+	pure nothrow @safe @nogc unittest{
 		{
 			BasicString!(char, Mallocator) str = Mallocator.init;
 			assert(str.empty);
 		}
 	}
 
-	//ctor(char) and ctor(char, allcoator)
+	//doc.ctor(character):
 	pure nothrow @safe @nogc unittest{
 		{
 			BasicString!char str = 'x';
@@ -2011,15 +2113,18 @@ version(unittest){
 			BasicString!char str = '読';
 			assert(str == "読");
 		}
+	}
 
+	//doc.ctor(character, allocator):
+	pure nothrow @safe @nogc unittest{
 		{
-			auto str = BasicString!(char, Mallocator)('x', Mallocator.init);
-			assert(str == "x");
+			auto str = BasicString!(char, Mallocator)('読', Mallocator.init);
+			assert(str == "読");
 		}
 	}
 
-	//ctor(slice) and ctor(slice, allocator)
-	pure nothrow @safe unittest{
+	//doc.ctor(slice):
+	pure nothrow @safe @nogc unittest{
 		{
 			BasicString!char str = "test";
 			assert(str == "test");
@@ -2031,32 +2136,32 @@ version(unittest){
 		}
 
 		{
-			wchar[] data = [cast(wchar)'1', '2', '3'];
-			BasicString!char str = data;
+			wchar[3] data = [cast(wchar)'1', '2', '3'];
+			BasicString!char str = data[];
 			assert(str == "123");
 		}
 	}
 
-	//ctor(slice) and ctor(slice, allocator)
+	//doc.ctor(slice, allocator):
 	pure nothrow @safe @nogc unittest{
 		{
-			BasicString!char str = 123;
+			auto str = BasicString!(char, Mallocator)("test", Mallocator.init);
+			assert(str == "test");
+		}
+
+		{
+			auto str = BasicString!(char, Mallocator)("test 読"d, Mallocator.init);
+			assert(str == "test 読");
+		}
+
+		{
+			wchar[3] data = [cast(wchar)'1', '2', '3'];
+			auto str = BasicString!(char, Mallocator)(data[], Mallocator.init);
 			assert(str == "123");
-		}
-
-		{
-			BasicString!dchar str = 321;
-			assert(str == "321");
-			assert(str == "321"d);
-		}
-
-		{
-			auto str = BasicString!(wchar, Mallocator)(42, Mallocator.init);
-			assert(str == "42");
 		}
 	}
 
-	//ctor(integer) and ctor(integer, allocator)
+	//doc.ctor(integer):
 	pure nothrow @safe @nogc unittest{
 		{
 			BasicString!char str = 123uL;
@@ -2067,7 +2172,10 @@ version(unittest){
 			BasicString!dchar str = -123;
 			assert(str == "-123");
 		}
+	}
 
+	//doc.ctor(integer, allocator):
+	pure nothrow @safe @nogc unittest{
 		{
 			auto str = BasicString!(char, Mallocator)(123uL, Mallocator.init);
 			assert(str == "123");
@@ -2079,7 +2187,8 @@ version(unittest){
 		}
 	}
 
-	//ctor(BasicString) and ctor(BasicString, allocator)
+	//doc.ctor(rhs):
+	//doc.ctor(rhs, allcoator):
 	pure nothrow @safe @nogc unittest{
 		{
 			BasicString!char a = "123";
@@ -2105,18 +2214,327 @@ version(unittest){
 			BasicString!char b = move(a);
 			assert(b == "123");
 		}
+
 	}
 
+	//doc.opAssign(null):
+	//doc.opAssign(slice):
+	//doc.opAssign(character):
+	//doc.opAssign(integer):
+	//doc.opAssign(rhs):
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = "123";
+		assert(!str.empty);
+
+		str = null;
+		assert(str.empty);
+
+		str = 'X';
+		assert(str == "X");
+
+		str = "abc"w;
+		assert(str == "abc");
+
+		str = -123;
+		assert(str == "-123");
+
+		str = BasicString!char("42");
+		assert(str == "42");
+
+		str = BasicString!wchar("abc");
+		assert(str == "abc");
+
+	}
+
+	//doc.opBinary(rhs):
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = null;
+		assert(str.empty);
+
+		str = str + '1';
+		assert(str == "1");
+
+		str = str + "23"d;
+		assert(str == "123");
+
+		str = str + BasicString!dchar("456");
+		assert(str == "123456");
+
+	}
+
+	//doc.opBinaryRight(rhs):
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = null;
+		assert(str.empty);
+
+		str = '1' + str;
+		assert(str == "1");
+
+		str = "32"d + str;
+		assert(str == "321");
+
+		str = BasicString!dchar("654") + str;
+		assert(str == "654321");
+	}
+
+	//doc.opEquals(rhs):
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = "123";
+
+		assert(str == "123");
+		assert("123" == str);
+
+		assert(str == "123"w);
+		assert("123"w == str);
+
+		assert(str == "123"d);
+		assert("123"d == str);
+
+		assert(str == BasicString!wchar("123"));
+		assert(BasicString!wchar("123") == str);
+
+		assert(str == 123);
+		assert(123 == str);
+
+		import std.range : only;
+		assert(str == only('1', '2', '3'));
+		assert(only('1', '2', '3') == str);
+	}
+
+	//doc.opCmp(rhs):
+	pure nothrow @safe @nogc unittest{
+
+	}
+
+	//doc.opIndex():
+	pure nothrow @system @nogc unittest{
+		BasicString!char str = "123";
+
+		char[] slice = str[];
+		assert(slice.length == str.length);
+		assert(slice.ptr is str.ptr);
+
+		str.reserve(str.capacity * 2);
+		assert(slice.length == str.length);
+		assert(slice.ptr !is str.ptr);  // slice contains dangling pointer.
+
+	}
+
+	//doc.opIndex(pos):
+	pure nothrow @system @nogc unittest{
+		BasicString!char str = "abcd";
+
+		assert(str[1] == 'b');
+	}
+
+	//doc.opSlice(begin, end):
+	pure nothrow @system @nogc unittest{
+		BasicString!char str = "123456";
+
+		assert(str[1 .. $-1] == "2345");
+	}
+
+	//doc.opIndexAssign(begin, end):
+	pure nothrow @safe @nogc unittest{
+		BasicString!char str = "abcd";
+
+		str[1] = 'x';
+
+		assert(str == "axcd");
+	}
+
+	//doc.proxySwap(rhs):
+	pure nothrow @safe @nogc unittest{
+		BasicString!char a = "1";
+		BasicString!char b = "2";
+
+		a.proxySwap(b);
+		assert(a == "2");
+		assert(b == "1");
+
+		import std.algorithm.mutation : swap;
+
+		swap(a, b);
+		assert(a == "1");
+		assert(b == "2");
+	}
+
+	//doc.append(val, count):
+	pure nothrow @safe @nogc unittest{
+		{
+			BasicString!char str = "123456";
+
+			str.append('x', 2);
+			assert(str == "123456xx");
+		}
+
+		{
+			BasicString!char str = "123456";
+
+			str.append("abc");
+			assert(str == "123456abc");
+		}
+
+		{
+			BasicString!char str = "123456";
+			BasicString!char str2 = "xyz";
+
+			str.append(str2);
+			assert(str == "123456xyz");
+		}
+
+		{
+			BasicString!char str = "12";
+
+			str.append(+34);
+			assert(str == "1234");
+		}
+	}
+
+	//doc.insert(pos, val, count):
+	//doc.insert(ptr, val, count):
+	pure nothrow @system @nogc unittest{
+		{
+			BasicString!char str = "123456";
+
+			str.insert(2, 'x', 2);
+			assert(str == "12xx3456");
+		}
+
+		{
+			BasicString!char str = "123456";
+
+			str.insert(2, "abc");
+			assert(str == "12abc3456");
+		}
+
+		{
+			BasicString!char str = "123456";
+			BasicString!char str2 = "abc";
+
+			str.insert(2, str2);
+			assert(str == "12abc3456");
+		}
+
+		{
+			BasicString!char str = "123456";
+
+			str.insert(str.ptr + 2, 'x', 2);
+			assert(str == "12xx3456");
+		}
+
+		{
+			BasicString!char str = "123456";
+
+			str.insert(str.ptr + 2, "abc");
+			assert(str == "12abc3456");
+		}
+
+		{
+			BasicString!char str = "123456";
+			BasicString!char str2 = "abc";
+
+			str.insert(str.ptr + 2, str2);
+			assert(str == "12abc3456");
+		}
+	}
+
+
+	//doc.erase(pos):
+	//doc.erase(pos, n):
+	//doc.erase(ptr):
+	//doc.erase(slice):
+	pure nothrow @system @nogc unittest{
+		{
+			BasicString!char str = "123456";
+
+			str.erase(2);
+			assert(str == "12");
+		}
+
+		{
+			BasicString!char str = "123456";
+
+			str.erase(1, 2);
+			assert(str == "1456");
+		}
+
+		{
+			BasicString!char str = "123456";
+
+			str.erase(str.ptr + 2);
+			assert(str == "12");
+		}
+
+		{
+			BasicString!char str = "123456";
+
+			str.erase(str[1 .. $-1]);
+			assert(str == "16");
+		}
+	}
+
+
+	//doc.replace(pos, len val, count):
+	//doc.replace(slice, val, count):
+	pure nothrow @system @nogc unittest{
+		{
+			BasicString!char str = "123456";
+
+			str.replace(2, 2, 'x', 5);
+			assert(str == "12xxxxx56");
+		}
+
+		{
+			BasicString!char str = "123456";
+
+			str.replace(2, 2, "abcdef");
+			assert(str == "12abcdef56");
+		}
+
+		{
+			BasicString!char str = "123456";
+			BasicString!char str2 = "xy";
+
+			str.replace(2, 3, str2);
+			assert(str == "12xy56");
+		}
+
+		{
+			BasicString!char str = "123456";
+
+			str.replace(str[2 .. 4], 'x', 5);
+			assert(str == "12xxxxx56");
+		}
+
+		{
+			BasicString!char str = "123456";
+
+			str.replace(str[2 .. 4], "abcdef");
+			assert(str == "12abcdef56");
+		}
+
+		{
+			BasicString!char str = "123456";
+			BasicString!char str2 = "xy";
+
+			str.replace(str[2 .. $], str2);
+			assert(str == "12xy56");
+		}
+	}
+
+
+	//doc.build(...):
+	pure nothrow @system @nogc unittest{
+		BasicString!char str = BasicString!char.build('1', cast(dchar)'2', "345"d, BasicString!wchar("678"));
+
+		assert(str == "12345678");
+
+	}
+
+
 }
 
 
-//const char test:
-pure nothrow @safe @nogc unittest{
 
-}
-//opCall
-pure nothrow @safe @nogc unittest{
-	import core.lifetime : move;
-	BasicString!char str;
-	//auto str2 = BasicString!char(move(str));
-}
+
