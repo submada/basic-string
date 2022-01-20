@@ -234,7 +234,7 @@ version(basic_string_unittest){
 
         ///reserve:
         Str str = Str("1", allocatorWithState);
-        assert(str.capacity == Str.MinimalCapacity);
+        assert(str.capacity == Str.minimalCapacity);
         //----------------------------
         const size_t new_capacity = str.capacity * 2 + 1;
         str.reserve(new_capacity);
@@ -254,19 +254,19 @@ version(basic_string_unittest){
 
         ///resize:
         Str str = Str("1", allocatorWithState);
-        assert(str.capacity == Str.MinimalCapacity);
+        assert(str.capacity == Str.minimalCapacity);
         //----------------------------
-        str.resize(Str.MinimalCapacity);
-        assert(str.capacity == Str.MinimalCapacity);
-        assert(str.length == Str.MinimalCapacity);
+        str.resize(Str.minimalCapacity);
+        assert(str.capacity == Str.minimalCapacity);
+        assert(str.length == Str.minimalCapacity);
         //----------------------------
-        str.resize(Str.MinimalCapacity - 1, '_');
-        assert(str.capacity == Str.MinimalCapacity);
-        assert(str.length == Str.MinimalCapacity - 1);
+        str.resize(Str.minimalCapacity - 1, '_');
+        assert(str.capacity == Str.minimalCapacity);
+        assert(str.length == Str.minimalCapacity - 1);
         //----------------------------
-        str.resize(Str.MinimalCapacity + 3, '_');
-        assert(str.capacity > Str.MinimalCapacity);
-        assert(str.length == Str.MinimalCapacity + 3);
+        str.resize(Str.minimalCapacity + 3, '_');
+        assert(str.capacity > Str.minimalCapacity);
+        assert(str.length == Str.minimalCapacity + 3);
 
     }
 
@@ -381,7 +381,7 @@ version(basic_string_unittest){
             alias allocatorWithState = AliasSeq!(allocator);
 
         Str str = Str("123", allocatorWithState);
-        assert(str.capacity == Str.MinimalCapacity);
+        assert(str.capacity == Str.minimalCapacity);
 
         //----------------------------
         assert(str.small);
@@ -401,7 +401,7 @@ version(basic_string_unittest){
 
         str.shrinkToFit();
         assert(str.length == 3);
-        assert(str.capacity == Str.MinimalCapacity);
+        assert(str.capacity == Str.minimalCapacity);
 
         //----------------------------
         str.clear();
@@ -446,7 +446,7 @@ version(basic_string_unittest){
 
 
             Str str = Str("123", allocatorWithState);
-            assert(str.capacity == Str.MinimalCapacity);
+            assert(str.capacity == Str.minimalCapacity);
 
             ////----------------------------
             str = (str + s);
@@ -493,7 +493,7 @@ version(basic_string_unittest){
 
 
             Str str = Str("123", allocatorWithState);
-            assert(str.capacity == Str.MinimalCapacity);
+            assert(str.capacity == Str.minimalCapacity);
 
             ////----------------------------
             str = (str + c);

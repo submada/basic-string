@@ -167,7 +167,7 @@ $('#symbolSearchPane').show();</script>
 							</a>
 							<span class="tableEntryAnnotation">(rhs)</span>
 						</td>
-						<td>Copy constructor if <code class="lang-d"><a href="../basic_string/BasicString.Allocator.html"><span class="typ">Allocator</span></a></code> is statless.
+						<td>Copy constructor if <code class="lang-d"><a href="../basic_string/BasicString.AllocatorType.html"><span class="typ">AllocatorType</span></a></code> is statless.
 </td>
 					</tr>
 					<tr>
@@ -177,7 +177,7 @@ $('#symbolSearchPane').show();</script>
 							</a>
 							<span class="tableEntryAnnotation">(rhs)</span>
 						</td>
-						<td>Copy constructor if <code class="lang-d"><a href="../basic_string/BasicString.Allocator.html"><span class="typ">Allocator</span></a></code> has state.
+						<td>Copy constructor if <code class="lang-d"><a href="../basic_string/BasicString.AllocatorType.html"><span class="typ">AllocatorType</span></a></code> has state.
 </td>
 					</tr>
 				</table>
@@ -199,7 +199,7 @@ $('#symbolSearchPane').show();</script>
 						<td>
 							<a href="../basic_string/BasicString.backCodeUnit.html" class="public property"><code>backCodeUnit</code></a><span class="tableEntryAnnotation">[get, set]</span>
 						</td>
-						<td class="typecol"><code class="prettyprint lang-d"><a href="../basic_string/BasicString.Char.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Char</span></a></code></td><td>Returns the last character(utf8: <code class="lang-d"><span class="typ">char</span></code>, utf16: <code class="lang-d"><span class="typ">wchar</span></code>, utf32: <code class="lang-d"><span class="typ">dchar</span></code>) of the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code>.
+						<td class="typecol"><code class="prettyprint lang-d"><a href="../basic_string/BasicString.CharType.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">CharType</span></a></code></td><td>Returns the last character(utf8: <code class="lang-d"><span class="typ">char</span></code>, utf16: <code class="lang-d"><span class="typ">wchar</span></code>, utf32: <code class="lang-d"><span class="typ">dchar</span></code>) of the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code>.
 </td>
 					</tr>
 					<tr>
@@ -227,7 +227,7 @@ $('#symbolSearchPane').show();</script>
 						<td>
 							<a href="../basic_string/BasicString.frontCodeUnit.html" class="public property"><code>frontCodeUnit</code></a><span class="tableEntryAnnotation">[get, set]</span>
 						</td>
-						<td class="typecol"><code class="prettyprint lang-d"><a href="../basic_string/BasicString.Char.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Char</span></a></code></td><td>Returns the first character(utf8: <code class="lang-d"><span class="typ">char</span></code>, utf16: <code class="lang-d"><span class="typ">wchar</span></code>, utf32: <code class="lang-d"><span class="typ">dchar</span></code>) of the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code>.
+						<td class="typecol"><code class="prettyprint lang-d"><a href="../basic_string/BasicString.CharType.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">CharType</span></a></code></td><td>Returns the first character(utf8: <code class="lang-d"><span class="typ">char</span></code>, utf16: <code class="lang-d"><span class="typ">wchar</span></code>, utf32: <code class="lang-d"><span class="typ">dchar</span></code>) of the <code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a></code>.
 </td>
 					</tr>
 					<tr>
@@ -241,7 +241,7 @@ $('#symbolSearchPane').show();</script>
 						<td>
 							<a href="../basic_string/BasicString.ptr.html" class="public property"><code>ptr</code></a><span class="tableEntryAnnotation">[get]</span>
 						</td>
-						<td class="typecol"><code class="prettyprint lang-d"><span class="kwd">inout</span><span class="pun">(</span><a href="../basic_string/BasicString.Char.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">Char</span></a><span class="pun">)</span><span class="pun">*</span></code></td><td>Return pointer to the first element.
+						<td class="typecol"><code class="prettyprint lang-d"><span class="kwd">inout</span><span class="pun">(</span><a href="../basic_string/BasicString.CharType.html"><span class="typ">BasicString<wbr/></span><span class="pun">.<wbr/></span><span class="typ">CharType</span></a><span class="pun">)</span><span class="pun">*</span></code></td><td>Return pointer to the first element.
 </td>
 					</tr>
 					<tr>
@@ -516,20 +516,20 @@ $('#symbolSearchPane').show();</script>
 					</tr>
 					<tr>
 						<td>
-							<a href="../basic_string/BasicString.Allocator.html" class="public">
-								<code>Allocator</code>
-							</a>
-						</td>
-						<td>Type of the allocator object used to define the storage allocation model. By default Mallocator is used.
-</td>
-					</tr>
-					<tr>
-						<td>
 							<a href="../basic_string/BasicString.allocator.html" class="public">
 								<code>allocator</code>
 							</a>
 						</td>
 						<td>Returns allocator.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../basic_string/BasicString.AllocatorType.html" class="public">
+								<code>AllocatorType</code>
+							</a>
+						</td>
+						<td>Type of the allocator object used to define the storage allocation model. By default Mallocator is used.
 </td>
 					</tr>
 					<tr>
@@ -543,8 +543,8 @@ $('#symbolSearchPane').show();</script>
 					</tr>
 					<tr>
 						<td>
-							<a href="../basic_string/BasicString.Char.html" class="public">
-								<code>Char</code>
+							<a href="../basic_string/BasicString.CharType.html" class="public">
+								<code>CharType</code>
 							</a>
 						</td>
 						<td>Character type. (<code class="lang-d"><span class="typ">char</span></code>, <code class="lang-d"><span class="typ">wchar</span></code> or  <code class="lang-d"><span class="typ">dchar</span></code>).
@@ -561,8 +561,17 @@ $('#symbolSearchPane').show();</script>
 					</tr>
 					<tr>
 						<td>
-							<a href="../basic_string/BasicString.MaximalCapacity.html" class="public">
-								<code>MaximalCapacity</code>
+							<a href="../basic_string/BasicString.hasStatelessAllocator.html" class="public">
+								<code>hasStatelessAllocator</code>
+							</a>
+						</td>
+						<td>True if allocator doesn't have state.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a href="../basic_string/BasicString.maximalCapacity.html" class="public">
+								<code>maximalCapacity</code>
 							</a>
 						</td>
 						<td>Maximal capacity of string, in terms of number of characters (utf code units).
@@ -570,8 +579,8 @@ $('#symbolSearchPane').show();</script>
 					</tr>
 					<tr>
 						<td>
-							<a href="../basic_string/BasicString.MinimalCapacity.html" class="public">
-								<code>MinimalCapacity</code>
+							<a href="../basic_string/BasicString.minimalCapacity.html" class="public">
+								<code>minimalCapacity</code>
 							</a>
 						</td>
 						<td>Minimal capacity of string (same as maximum capacity of small string), in terms of number of characters (utf code units).

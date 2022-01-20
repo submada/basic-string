@@ -90,12 +90,12 @@ package template BasicStringCore(
     struct BasicStringCore{
         public enum bool hasStatelessAllocator = (stateSize!_Allocator == 0);
 
-        public alias Char = _Char;
+        public alias CharType = _Char;
 
-        public alias Allocator = _Allocator;
+        public alias AllocatorType = _Allocator;
 
         static if(hasStatelessAllocator){
-            public alias allocator = Allocator.instance;
+            public alias allocator = AllocatorType.instance;
 
             private enum safeAllocate = isSafe!((){
                 size_t capacity = size_t.max;
@@ -104,9 +104,9 @@ package template BasicStringCore(
             });
         }
         else{
-            public Allocator allocator;
+            public AllocatorType allocator;
 
-            private enum safeAllocate = isSafe!((ref Allocator a){
+            private enum safeAllocate = isSafe!((ref AllocatorType a){
                 size_t capacity = size_t.max;
 
                 cast(void)a.allocate(capacity);
@@ -114,9 +114,9 @@ package template BasicStringCore(
         }
 
 
-        public alias MaximalCapacity = Long.maxCapacity;
+        public alias maximalCapacity = Long.maxCapacity;
 
-        public alias MinimalCapacity = Short.capacity;
+        public alias minimalCapacity = Short.capacity;
 
 
         public ~this()scope{
@@ -127,7 +127,7 @@ package template BasicStringCore(
             }
         }
 
-        public this(this This)(Allocator allocator){
+        public this(this This)(AllocatorType allocator){
             static if(!hasStatelessAllocator)
                 this.allocator = forward!allocator;
         }
@@ -172,7 +172,7 @@ package template BasicStringCore(
             auto self = (()@trusted => cast(Unqual!This*)&this )();
             assert(self._sso);
 
-            const size_t str_length = encodedLength!Char(str);
+            const size_t str_length = encodedLength!CharType(str);
 
             if(str_length > self._short.capacity){
 
@@ -183,7 +183,7 @@ package template BasicStringCore(
                 assert(new_capacity % 2 == 0);
 
 
-                Char[] cdata = self._allocate(new_capacity);
+                CharType[] cdata = self._allocate(new_capacity);
 
                 ()@trusted{
                     self._long.ptr = cdata.ptr;
@@ -208,7 +208,7 @@ package template BasicStringCore(
 
         public void ctor(I)(const I integer)scope
         if(isIntegral!I){
-            const size_t len = encodedLength!Char(integer);
+            const size_t len = encodedLength!CharType(integer);
 
             this.reserve(len);
             this.length = integer.encodeTo(this.allChars);
@@ -244,21 +244,21 @@ package template BasicStringCore(
         }
 
 
-        public @property inout(Char)* ptr()inout return pure nothrow @system @nogc{
+        public @property inout(CharType)* ptr()inout return pure nothrow @system @nogc{
             return this._sso
                 ? this._short_ptr
                 : this._long_ptr;
         }
 
 
-        public @property inout(Char)[] chars()inout scope pure nothrow @trusted @nogc{
+        public @property inout(CharType)[] chars()inout scope pure nothrow @trusted @nogc{
             return this._sso
                 ? this._short_chars()
                 : this._long_chars();
         }
 
 
-        public @property inout(Char)[] allChars()inout scope pure nothrow @trusted @nogc{
+        public @property inout(CharType)[] allChars()inout scope pure nothrow @trusted @nogc{
             return this._sso
                 ? this._short_all_chars()
                 : this._long_all_chars();
@@ -294,7 +294,7 @@ package template BasicStringCore(
                 assert(new_capacity % 2 == 0);
 
 
-                Char[] cdata = this._allocate(new_capacity);
+                CharType[] cdata = this._allocate(new_capacity);
 
                 ()@trusted{
                     memCopy(cdata.ptr, this._short_ptr, length);    //cdata[0 .. length] = this._short_chars();
@@ -323,7 +323,7 @@ package template BasicStringCore(
                 //assert(new_capacity >= max(old_capacity * 2, n));
                 assert(new_capacity % 2 == 0);
 
-                Char[] cdata = this._reallocate(this._long_all_chars(), length, new_capacity);
+                CharType[] cdata = this._reallocate(this._long_all_chars(), length, new_capacity);
 
                 ()@trusted{
                     this._long.capacity = new_capacity;
@@ -343,7 +343,7 @@ package template BasicStringCore(
 
         public size_t shrinkToFit()scope{
             if(this._sso)
-                return MinimalCapacity;
+                return minimalCapacity;
 
             const size_t old_capacity = this._long_capacity;
             const size_t length = this._long_length;
@@ -352,9 +352,9 @@ package template BasicStringCore(
             if(length == old_capacity)
                 return length;
 
-            Char[] cdata = this._long_all_chars();
+            CharType[] cdata = this._long_all_chars();
 
-            if(length <= MinimalCapacity){
+            if(length <= minimalCapacity){
                 //alias new_capacity = length;
 
                 this._short.setShort();
@@ -367,7 +367,7 @@ package template BasicStringCore(
                 this._deallocate(cdata);
 
                 assert(this._sso);
-                return MinimalCapacity;
+                return minimalCapacity;
             }
 
             const size_t new_capacity = (length + 1) & ~0x1;
@@ -406,9 +406,9 @@ package template BasicStringCore(
                 return 0;
 
             const size_t old_length = this.length;
-            const size_t new_count = count * encodedLength!Char(val);
+            const size_t new_count = count * encodedLength!CharType(val);
 
-            Char[] new_chars = this._expand(new_count);
+            CharType[] new_chars = this._expand(new_count);
             const size_t tmp = val.encodeTo(new_chars, count);
             assert(tmp == new_count);
 
@@ -419,11 +419,11 @@ package template BasicStringCore(
         public size_t insert(Val)(const size_t pos, const Val val, const size_t count)scope
         if(isSomeChar!Val || isSomeString!Val || isIntegral!I){
 
-            const size_t new_count = count * encodedLength!Char(val);
+            const size_t new_count = count * encodedLength!CharType(val);
             if(new_count == 0)
                 return 0;
 
-            Char[] new_chars = this._expand_move(pos, new_count);
+            CharType[] new_chars = this._expand_move(pos, new_count);
 
             return val.encodeTo(new_chars, count);
         }
@@ -445,7 +445,7 @@ package template BasicStringCore(
 
 
 
-        public void replace(Val)(scope const Char[] slice, scope const Val val, const size_t count)return scope
+        public void replace(Val)(scope const CharType[] slice, scope const Val val, const size_t count)return scope
         if(isSomeChar!Val || isSomeString!Val || isIntegral!Val){
             const chars = this.chars;
 
@@ -470,7 +470,7 @@ package template BasicStringCore(
         public void replace(Val)(const size_t pos, const size_t len, scope const Val val, const size_t count)return scope
         if(isSomeChar!Val || isSomeString!Val || isIntegral!Val){
 
-            const size_t new_count = count * encodedLength!Char(val);
+            const size_t new_count = count * encodedLength!CharType(val);
             if(new_count == 0){
                 if(pos < this.length)
                     this.erase(pos, len);
@@ -492,7 +492,7 @@ package template BasicStringCore(
 
             if(begin == end){
                 ///insert:
-                Char[] new_chars = this._expand_move(begin, new_count);
+                CharType[] new_chars = this._expand_move(begin, new_count);
                 const x = val.encodeTo(new_chars, count);
                 assert(x == new_count);
 
@@ -517,7 +517,7 @@ package template BasicStringCore(
 
                 const size_t expand_len = (new_count - new_len);
 
-                Char[] new_chars = this._expand_move(end, expand_len);
+                CharType[] new_chars = this._expand_move(end, expand_len);
 
                 const x = val.encodeTo((()@trusted => (new_chars.ptr - new_len)[0 .. new_count])(), count);
                 assert(x == new_count);
@@ -533,19 +533,19 @@ package template BasicStringCore(
             alias RhsChar = Unqual!(ElementEncodingType!Range);
             auto lhs = this.chars;
 
-            enum bool lengthComperable = hasLength!Range && is(Unqual!Char == RhsChar);
+            enum bool lengthComperable = hasLength!Range && is(Unqual!CharType == RhsChar);
 
             static if(lengthComperable){
                 if(lhs.length != rhs.length)
                     return false;
             }
             /+TODO: else static if(hasLength!Range){ //TODO
-                static if(Char.sizeof < RhsChar.sizeof){
-                    if(lhs.length * (RhsChar.sizeof / Char.sizeof) < rhs.length)
+                static if(CharType.sizeof < RhsChar.sizeof){
+                    if(lhs.length * (RhsChar.sizeof / CharType.sizeof) < rhs.length)
                         return false;
                 }
-                else static if(Char.sizeof > RhsChar.sizeof){
-                    if(lhs.length > rhs.length * (Char.sizeof / RhsChar.sizeof))
+                else static if(CharType.sizeof > RhsChar.sizeof){
+                    if(lhs.length > rhs.length * (CharType.sizeof / RhsChar.sizeof))
                         return false;
 
                 }
@@ -567,7 +567,7 @@ package template BasicStringCore(
                         return false;
                 }
 
-                static if(is(Unqual!Char == RhsChar)){
+                static if(is(Unqual!CharType == RhsChar)){
 
                     const a = lhs.frontCodeUnit;
                     lhs.popFrontCodeUnit();
@@ -603,7 +603,7 @@ package template BasicStringCore(
                 if(rhs.empty)
                     return 1;
 
-                static if(is(Unqual!Char == RhsChar)){
+                static if(is(Unqual!CharType == RhsChar)){
 
                     const a = lhs.frontCodeUnit;
                     lhs.popFrontCodeUnit();
@@ -642,7 +642,7 @@ package template BasicStringCore(
 
 
         //_long:
-        private @property inout(Char)* _long_ptr()inout scope pure nothrow @nogc @trusted{
+        private @property inout(CharType)* _long_ptr()inout scope pure nothrow @nogc @trusted{
             assert(this._long.isLong);
 
             return this._long.ptr;
@@ -651,7 +651,7 @@ package template BasicStringCore(
         private @property inout(void)[] _long_data()inout scope pure nothrow @nogc @trusted{
             assert(this._long.isLong);
 
-            return (cast(void*)this._long.ptr)[0 .. this._long.capacity * Char.sizeof];
+            return (cast(void*)this._long.ptr)[0 .. this._long.capacity * CharType.sizeof];
         }
 
         private @property size_t _long_capacity()const scope pure nothrow @nogc @trusted{
@@ -666,13 +666,13 @@ package template BasicStringCore(
             return this._long.length;
         }
 
-        private @property inout(Char)[] _long_chars()inout scope pure nothrow @nogc @trusted{
+        private @property inout(CharType)[] _long_chars()inout scope pure nothrow @nogc @trusted{
             assert(this._long.isLong);
 
             return this._long.ptr[0 .. this._long.length];
         }
 
-        private @property inout(Char)[] _long_all_chars()inout scope pure nothrow @nogc @trusted{
+        private @property inout(CharType)[] _long_all_chars()inout scope pure nothrow @nogc @trusted{
             assert(this._long.isLong);
 
             return this._long.ptr[0 .. this._long.capacity];
@@ -680,7 +680,7 @@ package template BasicStringCore(
 
 
         //_short:
-        private @property inout(Char)* _short_ptr()inout scope pure nothrow @nogc @trusted{
+        private @property inout(CharType)* _short_ptr()inout scope pure nothrow @nogc @trusted{
             assert(this._short.isShort);
 
             auto ret = this._short.data.ptr;
@@ -690,7 +690,7 @@ package template BasicStringCore(
         private @property inout(void)[] _short_data()inout scope pure nothrow @nogc @trusted{
             assert(this._short.isShort);
 
-            auto ret = (cast(void*)this._short.data.ptr)[0 .. this._short.capacity * Char.sizeof];
+            auto ret = (cast(void*)this._short.data.ptr)[0 .. this._short.capacity * CharType.sizeof];
             return *&ret;
         }
 
@@ -706,14 +706,14 @@ package template BasicStringCore(
             return this._short.length;
         }
 
-        private @property inout(Char)[] _short_chars()inout scope pure nothrow @nogc @trusted{
+        private @property inout(CharType)[] _short_chars()inout scope pure nothrow @nogc @trusted{
             assert(this._short.isShort);
 
             auto ret = this._short.data[0 .. this._short.length];
             return *&ret;
         }
 
-        private @property inout(Char)[] _short_all_chars()inout scope pure nothrow @nogc @trusted{
+        private @property inout(CharType)[] _short_all_chars()inout scope pure nothrow @nogc @trusted{
             assert(this._short.isShort);
 
             auto ret = this._short.data[];
@@ -728,15 +728,15 @@ package template BasicStringCore(
         }
 
         //allocation:
-        private Char[] _allocate(const size_t capacity){
-            void[] data = this.allocator.allocate(capacity * Char.sizeof);
+        private CharType[] _allocate(const size_t capacity){
+            void[] data = this.allocator.allocate(capacity * CharType.sizeof);
 
-            return (()@trusted => (cast(Char*)data.ptr)[0 .. capacity])();
+            return (()@trusted => (cast(CharType*)data.ptr)[0 .. capacity])();
         }
 
-        private bool _deallocate(scope Char[] cdata){
+        private bool _deallocate(scope CharType[] cdata){
             void[] data = ()@trusted{
-                return (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
+                return (cast(void*)cdata.ptr)[0 .. cdata.length * CharType.sizeof];
 
             }();
 
@@ -748,26 +748,26 @@ package template BasicStringCore(
                 return this.allocator.deallocate(data);
         }
 
-        private Char[] _reallocate(scope return Char[] cdata, const size_t length, const size_t new_capacity){
-            void[] data = (()@trusted => (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof] )();
+        private CharType[] _reallocate(scope return CharType[] cdata, const size_t length, const size_t new_capacity){
+            void[] data = (()@trusted => (cast(void*)cdata.ptr)[0 .. cdata.length * CharType.sizeof] )();
 
             static if(hasMember!(typeof(allocator), "reallocate")){
                 static if(safeAllocate)
                     const bool reallocated = ()@trusted{
-                        return this.allocator.reallocate(data, new_capacity * Char.sizeof);
+                        return this.allocator.reallocate(data, new_capacity * CharType.sizeof);
                     }();
                 else
-                    const bool reallocated = this.allocator.reallocate(data, new_capacity * Char.sizeof);
+                    const bool reallocated = this.allocator.reallocate(data, new_capacity * CharType.sizeof);
             }
             else
                 enum bool reallocated = false;
 
             if(reallocated){
-                assert(data.length / Char.sizeof == new_capacity);
-                return (()@trusted => (cast(Char*)data.ptr)[0 .. new_capacity])();
+                assert(data.length / CharType.sizeof == new_capacity);
+                return (()@trusted => (cast(CharType*)data.ptr)[0 .. new_capacity])();
             }
 
-            Char[] new_cdata = this._allocate(new_capacity);
+            CharType[] new_cdata = this._allocate(new_capacity);
             ()@trusted{
                 memCopy(new_cdata.ptr, cdata.ptr, length);  //new_cdata[0 .. length] = cdata[0 .. length];
             }();
@@ -782,21 +782,21 @@ package template BasicStringCore(
             return new_cdata;
         }
 
-        private Char[] _reallocate_optional(scope return Char[] cdata, const size_t new_capacity)@trusted{
-            void[] data = (cast(void*)cdata.ptr)[0 .. cdata.length * Char.sizeof];
+        private CharType[] _reallocate_optional(scope return CharType[] cdata, const size_t new_capacity)@trusted{
+            void[] data = (cast(void*)cdata.ptr)[0 .. cdata.length * CharType.sizeof];
 
             static if(hasMember!(typeof(allocator), "reallocate")){
                 static if(safeAllocate)
                     const bool reallocated = ()@trusted{
-                        return this.allocator.reallocate(data, new_capacity * Char.sizeof);
+                        return this.allocator.reallocate(data, new_capacity * CharType.sizeof);
                     }();
 
                 else
-                    const bool reallocated = this.allocator.reallocate(data, new_capacity * Char.sizeof);
+                    const bool reallocated = this.allocator.reallocate(data, new_capacity * CharType.sizeof);
 
                 if(reallocated){
-                    assert(data.length / Char.sizeof == new_capacity);
-                    return (cast(Char*)data.ptr)[0 .. new_capacity];
+                    assert(data.length / CharType.sizeof == new_capacity);
+                    return (cast(CharType*)data.ptr)[0 .. new_capacity];
                 }
             }
 
@@ -823,7 +823,7 @@ package template BasicStringCore(
             this.length = (chars.length - n);
         }
 
-        private Char[] _expand_move(const size_t pos, const size_t n)scope return {
+        private CharType[] _expand_move(const size_t pos, const size_t n)scope return {
             assert(n > 0);
 
             auto chars = this.chars;
@@ -850,7 +850,7 @@ package template BasicStringCore(
             }();
         }
 
-        private Char[] _expand(const size_t n)scope return{
+        private CharType[] _expand(const size_t n)scope return{
             const size_t old_length = this.length;
             const size_t new_length = (old_length + n);
 
@@ -938,15 +938,15 @@ package {
         import std.traits : CopyTypeQualifiers;
 
         alias From = typeof(from);
-        alias FromAllcoator = CopyTypeQualifiers!(From, From.Allocator);
-        alias ToAllcoator = CopyTypeQualifiers!(To, To.Allocator);
+        alias FromAllcoator = CopyTypeQualifiers!(From, From.AllocatorType);
+        alias ToAllcoator = CopyTypeQualifiers!(To, To.AllocatorType);
 
         enum bool isMoveConstructable = true
             && !__traits(isRef, from)
-            && is(immutable From.Char == immutable To.Char)
-            && (From.MinimalCapacity == To.MinimalCapacity)
-            && is(immutable From.Allocator == immutable To.Allocator)
-            && is(CopyTypeQualifiers!(From, From.Char)*: CopyTypeQualifiers!(To, To.Char)*)
+            && is(immutable From.CharType == immutable To.CharType)
+            && (From.minimalCapacity == To.minimalCapacity)
+            && is(immutable From.AllocatorType == immutable To.AllocatorType)
+            && is(CopyTypeQualifiers!(From, From.CharType)*: CopyTypeQualifiers!(To, To.CharType)*)
             &&(false
                 || From.hasStatelessAllocator //&& To.hasStatelessAllocator
                 || is(typeof((FromAllcoator f){ToAllcoator t = move(f);}))
@@ -956,11 +956,11 @@ package {
         import std.traits : CopyTypeQualifiers;
 
         alias From = typeof(from);
-        alias FromAllcoator = CopyTypeQualifiers!(From, From.Allocator);
-        alias ToAllcoator = CopyTypeQualifiers!(To, To.Allocator);
+        alias FromAllcoator = CopyTypeQualifiers!(From, From.AllocatorType);
+        alias ToAllcoator = CopyTypeQualifiers!(To, To.AllocatorType);
 
         enum bool isCopyConstructable = true
-            && is(immutable From.Allocator == immutable To.Allocator)
+            && is(immutable From.AllocatorType == immutable To.AllocatorType)
             &&(false
                 || From.hasStatelessAllocator //&& To.hasStatelessAllocator
                 || is(typeof((ref FromAllcoator f){ToAllcoator t = f;}))
@@ -985,8 +985,8 @@ package {
         import std.traits : CopyTypeQualifiers;
 
         alias From = typeof(from);
-        alias F = CopyTypeQualifiers!(From, From.Allocator);
-        alias T = CopyTypeQualifiers!(To, To.Allocator);
+        alias F = CopyTypeQualifiers!(From, From.AllocatorType);
+        alias T = CopyTypeQualifiers!(To, To.AllocatorType);
 
         enum bool hasMoveConstructableAllocator = true
             && !__traits(isRef, from)
@@ -998,8 +998,8 @@ package {
         import std.traits : CopyTypeQualifiers;
 
         alias From = typeof(from);
-        alias F = CopyTypeQualifiers!(From, From.Allocator);
-        alias T = CopyTypeQualifiers!(To, To.Allocator);
+        alias F = CopyTypeQualifiers!(From, From.AllocatorType);
+        alias T = CopyTypeQualifiers!(To, To.AllocatorType);
 
         enum bool hasMoveAssignableAllocator = true
             && !__traits(isRef, from)
@@ -1010,8 +1010,8 @@ package {
         import std.traits : CopyTypeQualifiers;
 
         alias From = typeof(from);
-        alias F = CopyTypeQualifiers!(From, From.Allocator);
-        alias T = CopyTypeQualifiers!(To, To.Allocator);
+        alias F = CopyTypeQualifiers!(From, From.AllocatorType);
+        alias T = CopyTypeQualifiers!(To, To.AllocatorType);
 
         enum bool hasCopyConstructableAllocator = true
             && is(F : T)
@@ -1021,8 +1021,8 @@ package {
         import std.traits : CopyTypeQualifiers;
 
         alias From = typeof(from);
-        alias F = CopyTypeQualifiers!(From, From.Allocator);
-        alias T = CopyTypeQualifiers!(To, To.Allocator);
+        alias F = CopyTypeQualifiers!(From, From.AllocatorType);
+        alias T = CopyTypeQualifiers!(To, To.AllocatorType);
 
         enum bool hasCopyAssignableAllocator = true
             && is(F : T)

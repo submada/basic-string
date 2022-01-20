@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Alias BasicString.Allocator</title>
+		<title>Alias BasicString.minimalCapacity</title>
 		<link rel="stylesheet" type="text/css" href="../styles/ddox.css"/>
 		<link rel="stylesheet" href="../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../scripts/jquery.js">/**/</script><script type="text/javascript" src="../scripts/ddox.js">/**/</script>
@@ -28,7 +28,7 @@ $('#symbolSearchPane').show();</script>
 			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Alias BasicString.Allocator</h1><p>Type of the allocator object used to define the storage allocation model. By default Mallocator is used.
+			<h1>Alias BasicString.minimalCapacity</h1><p>Minimal capacity of string (same as maximum capacity of small string), in terms of number of characters (utf code units).
 </p>
 			<div class="prototype">
 				<code class="lang-d">
@@ -41,8 +41,8 @@ $('#symbolSearchPane').show();</script>
 			</span>
 			&nbsp;&nbsp;<span class="com">// ...</span>
 			<br/>
-			&nbsp;&nbsp;<span class="kwd">alias</span> <span class="pln">Allocator</span>
-			 <span class="pun">=</span> <span class="typ">Core<wbr/></span><span class="pun">.</span><span class="typ">Allocator</span><span class="pun">;</span>
+			&nbsp;&nbsp;<span class="kwd">alias</span> <span class="pln">minimalCapacity</span>
+			 <span class="pun">=</span> <span class="typ">Core<wbr/></span><span class="pun">.</span><span class="pln">minimalCapacity</span><span class="pun">;</span>
 			<br/>
 			&nbsp;&nbsp;<span class="com">// ...</span>
 			<br/>
@@ -50,8 +50,15 @@ $('#symbolSearchPane').show();</script>
 					</div>
 				</code>
 			</div>
-			
-			
+			<section></section>
+
+			<section><h2>Examples</h2>
+<pre class="code"><code class="lang-d"><a href="../basic_string/BasicString.html"><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char </span><span class="pln">str</span><span class="pun">;
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">empty</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">capacity </span><span class="pun">== <a href="../basic_string/BasicString.html"></span><span class="typ">BasicString</span></a><span class="pun">!</span><span class="typ">char<wbr/></span><span class="pun">.</span><span class="pln">minimalCapacity</span><span class="pun">);
+</span><span class="kwd">assert</span><span class="pun">(</span><span class="pln">str<wbr/></span><span class="pun">.</span><span class="pln">capacity </span><span class="pun">&gt; </span><span class="lit">0</span><span class="pun">);</span></code></pre>
+</section>
+
 			<footer>
 				<table class="license-info">
 					<tr>
