@@ -1,4 +1,10 @@
 # BasicString
+
+## Content of basic-string repository was moved to [BTL](https://github.com/submada/btl) repository as subpackage [btl:string](https://code.dlang.org/packages/btl%3Astring)
+
+## Documentation
+https://submada.github.io/btl/btl/string.html
+
 ## C++-style string for D using `std.experimental.allocator`.
 
 The `BasicString` is the generalization of struct string for character type `char`, `wchar` and `dchar`.
@@ -16,9 +22,6 @@ Compatible with `-betterC`
 `-dip1000` is too unstable, for now is not supported.
 
 Does not rely on runtime type information (`TypeInfo`).
-
-## Documentation
-https://submada.github.io/basic-string
 
 ## Example
 
