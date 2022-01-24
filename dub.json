@@ -7,6 +7,6 @@
 		"Adam Búš"
 	],
 	"dependencies":{
-		"btl:string": "~>1.0.0-rc.1"
+		"btl:string": "~>1.0.0-rc.2"
 	}
 }
